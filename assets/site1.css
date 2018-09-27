@@ -1,0 +1,36 @@
+.container{
+    display: flex;
+}
+.fixed{
+    width: 200px;
+    min-width: 200px;
+}
+.flex-item{
+    margin: 2pt;
+    flex-grow: 1;
+}
+.nav-home>.list>.item {
+    min-width: 80px;
+}
+.pub-table {
+    display: table;
+    width: 100%;
+}
+.pub-row {
+    display: table-row;
+}
+.thumb-div{
+    width: 200px;
+    display: table-cell;
+}
+.thumb{
+    width: 190px;
+}
+.logo{
+    width: 120px;
+}
+.pub-title {
+    
+    font-size: 1.265em;
+    display: table-cell;
+}

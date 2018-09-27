@@ -1,0 +1,60 @@
+---
+layout: page
+title: Research
+---
+
+<h1 id="toc_0">Research</h1>
+
+<h2 id="toc_0_1">Current Projects</h2>
+<section class="list">
+    {% assign sorted = site.projs | sort: 'date' | reverse %}
+    {% if site.projs.size == 0 %}
+        <p class="text-center">Nothing published yet!</p>
+    {% elsif site.paginate %}
+        {% for post in paginator.posts %}
+            {% if post.old == false %}
+                {% include proj-post.html %}
+            {% endif %}
+        {% endfor %}
+
+        {% if site.paginate %}
+            {% include pagination.html%}
+        {% endif %}
+    {% else %}
+        {% for post in sorted %}
+            {% if post.old == false %}
+                {% include proj-post.html %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</section>
+
+<p style="margin-bottom:20px;"> </p>
+
+<h2 id="toc_0_2">Past Projects</h2>
+
+<section class="list">
+    {% assign sorted = site.projs | sort: 'date' | reverse %}
+    {% if site.projs.size == 0 %}
+        <p class="text-center">Nothing published yet!</p>
+    {% elsif site.paginate %}
+        {% for post in paginator.posts %}
+            {% if post.old %}
+                {% include proj-post.html %}
+            {% endif %}
+        {% endfor %}
+
+        {% if site.paginate %}
+            {% include pagination.html%}
+        {% endif %}
+    {% else %}
+        {% for post in sorted %}
+            {% if post.old %}
+                {% include proj-post.html %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</section>
+
+
+
