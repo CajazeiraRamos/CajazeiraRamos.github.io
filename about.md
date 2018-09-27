@@ -1,5 +1,5 @@
 ---
-title: Sobre
+title: about
 layout: page
 ---
 <div class="side-by-side"> 
