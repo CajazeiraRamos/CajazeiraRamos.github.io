@@ -9,9 +9,9 @@ description: Site pessoal
 # if it's an external image, update below for true
 # better with square images
 external-image: false
-picture: assets/images/profile.jpg
+picture: /assets/images/profile.jpg
 
-url: CajazeiraRamos.github.io
+url: http://CajazeiraRamos.github.io
 # your url: http://USERNAME.github.io
 
 permalink: /:title/
@@ -54,7 +54,7 @@ authors:
 # do you want a larger site? change the option below
 # options: [normal, large] | default: normal
 # normal = 560px / large = 810px
-width: large
+width: normal
 
 timezone: America/Fortaleza
 
@@ -83,7 +83,7 @@ show-tags: true
 related: true
 
 # show next & prev links in blog post?
-blog-nav-links: false
+blog-nav-links: true
 
 # show author block at the end of a post ?
 show-author: true
