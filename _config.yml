@@ -11,7 +11,7 @@ description: Site pessoal
 external-image: false
 picture: assets/images/profile.jpg
 
-url: http://CajazeiraRamos.github.io
+url: http://cajazeiraramos.github.io
 # your url: http://USERNAME.github.io
 
 permalink: /:title/
@@ -48,7 +48,7 @@ authors:
 # do you want a larger site? change the option below
 # options: [normal, large] | default: normal
 # normal = 560px / large = 810px
-width: normal
+width: large
 
 timezone: America/Fortaleza
 
