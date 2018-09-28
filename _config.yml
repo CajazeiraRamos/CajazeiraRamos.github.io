@@ -1,7 +1,7 @@
 # main text of home
 
 name: Alexandre Cajazeira Ramos
-bio: Analísta de Sistemas (UFPI); Esp. em Gestão de T.I. (UCAM); Mestrando em Ciências da Computação(UFC);
+bio: Analista de Sistemas (UFPI); Esp. em Gestão de T.I. (UCAM); Mestrando em Ciências da Computação(UFC);
 
 # twitter summary info
 description: Site pessoal
@@ -32,7 +32,7 @@ disqus: mydisqus
 facebook: Alexandre.Cajamos
 twitter: CajazeiraRamos
 instagram: Alexandre.Cajazeira
-github: AlexandreCRamos
+github: CajazeiraRamos
 gitlab: AlexandreCajazeira
 lattes: "0238517471078564"
 email: alexandre.cajamos@gmail.com
@@ -40,7 +40,7 @@ email: alexandre.cajamos@gmail.com
 authors:
     Alexandre:
         name: Alexandre Cajazeira Ramos
-        bio: Analísta de Sistemas
+        bio: Analista de Sistemas
         external-image: false
         picture: assets/images/profile.jpg
         twitter: CajazeiraRamos
