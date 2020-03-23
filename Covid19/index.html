@@ -21,7 +21,7 @@
 
 	
     <style type="text/css">
-      	#mapid { width: 80%; height: 600px;}
+      	#mapid { width: 80%; height: 800px;}
 		.info {
 			padding: 6px 8px;
 			font: 14px/16px Arial, Helvetica, sans-serif;
@@ -73,7 +73,7 @@
 
     	// var dataTable = dc.dataTable("#dc-table-graph");
       	var Centro = [-5.6, -42.75];
-      	var mymap = L.map('mapid').setView(Centro, 6);
+      	var mymap = L.map('mapid').setView(Centro, 7);
 
       	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {maxZoom: 18, attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>`}).addTo(mymap);
 
@@ -156,7 +156,24 @@
 			e.layer.bindPopup(Nome+": Suspeitos: "+sus+
 				"; Confirmados: "+conf);
 
-			});	
+			});
+
+		Mapas.on('click', function(e) { 
+
+			// e.layer.options.fillColor = "#c7c6bf";
+
+
+			var cidade = e.layer.feature.properties; 
+			var Nome = cidade.name;
+			var id = cidade.id.substr(0, 6);
+			var sus = susByID.get(id);
+			var conf = confByID.get(id);
+
+			var classe = ClasseByID.get(id);
+			alert(Nome+": \nSuspeitos: "+sus+
+				"\nConfirmados: "+conf);
+
+		});	
 
 		let legend = L.control({position: 'bottomright'});
 		var Legendas = ["Sem registro", "Com Suspeitos", "Casos confirmados"]
