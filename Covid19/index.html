@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+  	<meta charset="utf-8">
+    <title>Coronavirus no Piauí</title>
+
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+
+
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"  integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+
+    <script type="text/javascript" src="cidadesPI.js"></script>
+	
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<!-- <script src="dc.js" charset="utf-8"></script> -->
+	<!-- <link rel="stylesheet" href="dc.css"> -->
+	<!-- <script src="crossfilter.js" charset="utf-8"></script> -->
+
+	
+    <style type="text/css">
+      	#mapid { width: 80%; height: 600px;}
+		.info {
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255,255,255,0.8);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+		}
+		.info h4 {
+			margin: 0 0 5px;
+			color: #777;
+		}
+
+		.legend {
+			text-align: left;
+			line-height: 18px;
+			color: #555;
+		}
+		.legend i {
+			width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 8px;
+			opacity: 0.7;
+		}
+    </style>
+
+  </head>
+
+  <body style="margin-left: 100px;">
+
+    <h1> Mapa do Coronavirus no Piauí </h1>
+    
+	<div id="mapid"></div>
+
+	<h5>*Atualizado em 21 de março de 2020. Fonte: Coord. Epidemiologia/CIEVS </h5>
+
+<!-- 	<table class="table table-hover" id="dc-table-graph">
+        <thead>
+    	    <tr class="header">
+                <th>Cidade</th>
+                <th>Suspeitos</th>
+                <th>Confirmados</th>
+            </tr>
+        </thead>
+    </table> -->
+
+    <script>
+
+    	// var dataTable = dc.dataTable("#dc-table-graph");
+      	var Centro = [-5.6, -42.75];
+      	var mymap = L.map('mapid').setView(Centro, 6);
+
+      	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {maxZoom: 18, attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>`}).addTo(mymap);
+
+
+
+		let susByID = d3.map();
+		let confByID = d3.map();
+		let ClasseByID = d3.map();
+
+	d3.csv("covid19PI.csv", function(data){
+        
+        data.forEach(function(d) {
+           	
+           	// console.log(d);
+
+           	d.nome = d.Cidade;
+           	d.id = d.ID;
+           	d.sus = d.Suspeitos;
+           	d.conf = d.Confirmados;
+           	susByID.set(d.id,+d.sus);
+           	confByID.set(d.id,+d.conf); 
+
+
+           	d.Classe = 0;
+
+           	if(d.sus > 0)
+           		d.Classe = 1;
+           	if(d.conf >0)
+           		d.Classe = 2; 
+
+            ClasseByID.set(d.id, +d.Classe);
+
+        });
+        // var facts = crossfilter(data);
+        // var CityDimention = facts.dimension(function(d){
+        //     return d.nome;
+
+        // });
+
+	
+		var escalaCores = ["#fee8c8","#fdbb84","#e34a33"];
+
+
+		// var Mapas = L.geoJSON(Cidades).addTo(mymap);
+
+
+		var Mapas = L.geoJSON(Cidades, {
+
+		    style: function(feature) {
+
+		    	var ID = feature.properties.id.substr(0, 6);
+		    	var classe = ClasseByID.get(ID);
+		    	
+		    	cor = escalaCores[classe];
+
+		       	return {
+		       		color: "black",
+			        weight: 0.1,
+			        fillColor: cor,
+			        fillOpacity: 1,
+
+
+		        }
+		      }
+		}).addTo(mymap);
+
+
+		Mapas.on('mouseover', function(e) { 
+
+			// e.layer.options.fillColor = "#c7c6bf";
+
+
+			var cidade = e.layer.feature.properties; 
+			var Nome = cidade.name;
+			var id = cidade.id.substr(0, 6);
+			var sus = susByID.get(id);
+			var conf = confByID.get(id);
+
+			var classe = ClasseByID.get(id);
+			e.layer.bindPopup(Nome+": Suspeitos: "+sus+
+				"; Confirmados: "+conf);
+
+			});	
+
+		let legend = L.control({position: 'bottomright'});
+		var Legendas = ["Sem registro", "Com Suspeitos", "Casos confirmados"]
+		
+
+		legend.onAdd = function (mymap) {
+
+			let div = L.DomUtil.create('div', 'info legend'),
+				labels = [],
+	            n = escalaCores.length;
+
+			for (let i = 0; i < n; i++) {
+				let c = escalaCores[i];
+				labels.push(
+					'<i style="background:' + escalaCores[i] + '"></i> '+Legendas[i]
+				);
+			}
+
+			div.innerHTML = labels.join('<br>');
+			return div;
+		};
+
+	   	legend.addTo(mymap);
+
+	   	// dataTable.width(960)
+     //            .height(800)
+     //            .dimension(CityDimention)
+     //            .group(function(d){
+     //              return "Tabela";
+     //            })
+     //            .size(10)
+     //            .columns([
+     //              function(d){return d.nome;},
+     //              function(d){return d.sus;},
+     //              function(d){return d.conf;},
+     //              ])
+     //            .sortBy(function (d) {return d.sus; })
+     //            .order(d3.descending);
+
+
+	  // dc.renderAll();
+
+	});			
+
+    </script>
+
+
+  </body>
+</html>
