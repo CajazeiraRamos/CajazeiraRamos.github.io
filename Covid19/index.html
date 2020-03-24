@@ -13,8 +13,11 @@
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"  integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
 
     <script type="text/javascript" src="cidadesPI.js"></script>
-	
-	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<link rel="stylesheet" href="css/dc.css">
+	<script src="js/crossfilter.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/dc.js" charset="utf-8"></script>
+
 	<!-- <script src="dc.js" charset="utf-8"></script> -->
 	<!-- <link rel="stylesheet" href="dc.css"> -->
 	<!-- <script src="crossfilter.js" charset="utf-8"></script> -->
@@ -22,6 +25,7 @@
 	
     <style type="text/css">
       	#mapid { width: 80%; height: 800px;}
+      	/*#chart { width: 40%; }*/
 		.info {
 			padding: 6px 8px;
 			font: 14px/16px Arial, Helvetica, sans-serif;
@@ -51,24 +55,14 @@
 
   </head>
 
-  <body style="margin-left: 100px;">
-
-    <h1> Mapa do Coronavirus no Piauí </h1>
-    
+  <body>
+	<h1> Mapa do Coronavirus no Piauí </h1>
 	<div id="mapid"></div>
-
 	<h5>*Atualizado em 21 de março de 2020. Fonte: Coord. Epidemiologia/CIEVS </h5>
-
-<!-- 	<table class="table table-hover" id="dc-table-graph">
-        <thead>
-    	    <tr class="header">
-                <th>Cidade</th>
-                <th>Suspeitos</th>
-                <th>Confirmados</th>
-            </tr>
-        </thead>
-    </table> -->
-
+	
+	<h1> Boletins diários SESAPI - Coronavirus</h1>
+	<div id="chart"></div>
+	
     <script>
 
     	// var dataTable = dc.dataTable("#dc-table-graph");
@@ -83,140 +77,183 @@
 		let confByID = d3.map();
 		let ClasseByID = d3.map();
 
-	d3.csv("covid19PI.csv", function(data){
-        
-        data.forEach(function(d) {
-           	
-           	// console.log(d);
+		d3.csv("covid19PI.csv", function(data){
+	        
+	        data.forEach(function(d) {
+	           	
+	           	// console.log(d);
 
-           	d.nome = d.Cidade;
-           	d.id = d.ID;
-           	d.sus = d.Suspeitos;
-           	d.conf = d.Confirmados;
-           	susByID.set(d.id,+d.sus);
-           	confByID.set(d.id,+d.conf); 
-
-
-           	d.Classe = 0;
-
-           	if(d.sus > 0)
-           		d.Classe = 1;
-           	if(d.conf >0)
-           		d.Classe = 2; 
-
-            ClasseByID.set(d.id, +d.Classe);
-
-        });
-        // var facts = crossfilter(data);
-        // var CityDimention = facts.dimension(function(d){
-        //     return d.nome;
-
-        // });
-
-	
-		var escalaCores = ["#fee8c8","#fdbb84","#e34a33"];
+	           	d.nome = d.Cidade;
+	           	d.id = d.ID;
+	           	d.sus = d.Suspeitos;
+	           	d.conf = d.Confirmados;
+	           	susByID.set(d.id,+d.sus);
+	           	confByID.set(d.id,+d.conf); 
 
 
-		// var Mapas = L.geoJSON(Cidades).addTo(mymap);
+	           	d.Classe = 0;
+
+	           	if(d.sus > 0)
+	           		d.Classe = 1;
+	           	if(d.conf >0)
+	           		d.Classe = 2; 
+
+	            ClasseByID.set(d.id, +d.Classe);
+
+	        });
+	        // var facts = crossfilter(data);
+	        // var CityDimention = facts.dimension(function(d){
+	        //     return d.nome;
+
+	        // });
+
+		
+			var escalaCores = ["#fee8c8","#fdbb84","#e34a33"];
 
 
-		var Mapas = L.geoJSON(Cidades, {
-
-		    style: function(feature) {
-
-		    	var ID = feature.properties.id.substr(0, 6);
-		    	var classe = ClasseByID.get(ID);
-		    	
-		    	cor = escalaCores[classe];
-
-		       	return {
-		       		color: "black",
-			        weight: 0.1,
-			        fillColor: cor,
-			        fillOpacity: 1,
+			// var Mapas = L.geoJSON(Cidades).addTo(mymap);
 
 
-		        }
-		      }
-		}).addTo(mymap);
+			var Mapas = L.geoJSON(Cidades, {
+
+			    style: function(feature) {
+
+			    	var ID = feature.properties.id.substr(0, 6);
+			    	var classe = ClasseByID.get(ID);
+			    	
+			    	cor = escalaCores[classe];
+
+			       	return {
+			       		color: "black",
+				        weight: 0.1,
+				        fillColor: cor,
+				        fillOpacity: 1,
 
 
-		Mapas.on('mouseover', function(e) { 
-
-			// e.layer.options.fillColor = "#c7c6bf";
-
-
-			var cidade = e.layer.feature.properties; 
-			var Nome = cidade.name;
-			var id = cidade.id.substr(0, 6);
-			var sus = susByID.get(id);
-			var conf = confByID.get(id);
-
-			var classe = ClasseByID.get(id);
-			e.layer.bindPopup(Nome+": Suspeitos: "+sus+
-				"; Confirmados: "+conf);
-
-			});
-
-		Mapas.on('click', function(e) { 
-
-			// e.layer.options.fillColor = "#c7c6bf";
+			        }
+			      }
+			}).addTo(mymap);
 
 
-			var cidade = e.layer.feature.properties; 
-			var Nome = cidade.name;
-			var id = cidade.id.substr(0, 6);
-			var sus = susByID.get(id);
-			var conf = confByID.get(id);
+			Mapas.on('mouseover', function(e) { 
 
-			var classe = ClasseByID.get(id);
-			alert(Nome+": \nSuspeitos: "+sus+
-				"\nConfirmados: "+conf);
+				// e.layer.options.fillColor = "#c7c6bf";
 
-		});	
 
-		let legend = L.control({position: 'bottomright'});
-		var Legendas = ["Sem registro", "Com Suspeitos", "Casos confirmados"]
+				var cidade = e.layer.feature.properties; 
+				var Nome = cidade.name;
+				var id = cidade.id.substr(0, 6);
+				var sus = susByID.get(id);
+				var conf = confByID.get(id);
+
+				var classe = ClasseByID.get(id);
+				e.layer.bindPopup(Nome+": Suspeitos: "+sus+
+					"; Confirmados: "+conf);
+
+				});
+
+
+			let legend = L.control({position: 'bottomright'});
+			var Legendas = ["Sem registro", "Com Suspeitos", "Casos confirmados"]
+			
+
+			legend.onAdd = function (mymap) {
+
+				let div = L.DomUtil.create('div', 'info legend'),
+					labels = [],
+		            n = escalaCores.length;
+
+				for (let i = 0; i < n; i++) {
+					let c = escalaCores[i];
+					labels.push(
+						'<i style="background:' + escalaCores[i] + '"></i> '+Legendas[i]
+					);
+				}
+
+				div.innerHTML = labels.join('<br>');
+				return div;
+			};
+
+		   	legend.addTo(mymap);
+		});		
+
 		
 
-		legend.onAdd = function (mymap) {
 
-			let div = L.DomUtil.create('div', 'info legend'),
-				labels = [],
-	            n = escalaCores.length;
-
-			for (let i = 0; i < n; i++) {
-				let c = escalaCores[i];
-				labels.push(
-					'<i style="background:' + escalaCores[i] + '"></i> '+Legendas[i]
-				);
-			}
-
-			div.innerHTML = labels.join('<br>');
-			return div;
-		};
-
-	   	legend.addTo(mymap);
-
-	   	// dataTable.width(960)
-     //            .height(800)
-     //            .dimension(CityDimention)
-     //            .group(function(d){
-     //              return "Tabela";
-     //            })
-     //            .size(10)
-     //            .columns([
-     //              function(d){return d.nome;},
-     //              function(d){return d.sus;},
-     //              function(d){return d.conf;},
-     //              ])
-     //            .sortBy(function (d) {return d.sus; })
-     //            .order(d3.descending);
+		var compositeChart = dc.compositeChart('#chart');
 
 
-	  // dc.renderAll();
+		d3.csv("data/covid19PI.csv", function(data){	
 
-	});			
+            var dtgFormat = d3.time.format("%Y/%m/%d");
+
+            data.forEach(function(d){
+            	d.date = dtgFormat.parse(d.date);
+            	d.sus = +d.suspeitos;
+            	d.conf = +d.confirmados;
+            	d.des = +d.descartados;
+            	d.total = +d.total;
+
+            });
+
+             //criando um crossfilter
+            var facts = crossfilter(data);
+
+            var dateDim = facts.dimension(function(d){
+                return d.date;
+            });
+            console.log(dateDim);
+           
+            var SusByDayGroup = dateDim.group().reduceSum(function(d){
+                return d.sus;
+            });
+
+            var ConfByDayGroup = dateDim.group().reduceSum(function(d){
+                return d.conf;
+            });
+
+           	var DesByDayGroup = dateDim.group().reduceSum(function(d){
+                return d.des;
+            });
+
+           	var TotalByDayGroup = dateDim.group().reduceSum(function(d){
+                return d.total;
+            });
+
+            console.log(SusByDayGroup);
+            // console.log(SuspeitosByDay);
+ 			
+ 		  compositeChart.width(800)
+                     .height(400)
+                     .margins({top: 50, right: 50, bottom: 25, left: 50})
+                     .dimension(dateDim)
+                     .x(d3.time.scale().domain([new Date(2020, 2, 16), new Date(2020, 2, 25)]))
+                     .xUnits(d3.time.days)
+                     .renderHorizontalGridLines(true)
+                     .legend(dc.legend().x(80).y(0).itemHeight(20).gap(10))
+                     .brushOn(false)    
+                     .compose([
+                        dc.lineChart(compositeChart)
+                            .group(SusByDayGroup, 'Suspeitos')
+                            .ordinalColors(['#377eb8']),
+                        dc.lineChart(compositeChart)
+                            .group(ConfByDayGroup, 'Confirmados')
+                            .ordinalColors(['#e41a1c']),
+                        dc.lineChart(compositeChart)
+                            .group(DesByDayGroup, 'Descartados')
+                            .ordinalColors(['#4daf4a']),
+                        // dc.lineChart(compositeChart)
+                        //     .group(TotalByDayGroup, 'Notificações')
+                            // .ordinalColors(['#984ea3'])
+                      ]);
+
+
+            dc.renderAll();
+
+
+
+
+		});
 
     </script>
 
