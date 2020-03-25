@@ -3,7 +3,7 @@ Teresina,221100,128,4
 Floriano,220390,4,0
 Picos,220800,8,0
 Parnaiba,220770,8,0
-Bom Jesus,220190,0,0
+Bom Jesus,220190,1,0
 Sao Raimundo Nonato,221060,8,0
 Campo Maior,220220,1,0
 Guadalupe,220450,0,0
@@ -14,7 +14,7 @@ Agua Branca,220020,1,0
 Piripiri,220840,4,0
 Oeiras,220700,2,0
 Bocaina,220180,0,0
-Urucui,221120,0,0
+Urucui,221120,1,0
 Ipiranga do Piaui,220480,1,0
 Angical do Piaui,220060,0,0
 Colonia do Gurgueia,220275,0,0
@@ -23,7 +23,7 @@ Inhuma,220470,0,0
 Miguel Leao,220630,0,0
 Antonio Almeida,220080,0,0
 Santo Antonio dos Milagres,220945,0,0
-Fronteiras,220430,0,0
+Fronteiras,220430,1,0
 Jose de Freitas,220550,0,0
 Demerval Lobao,220330,0,0
 Sao Goncalo do Piaui,220980,0,0
@@ -40,7 +40,7 @@ Nazaria,220672,0,0
 Ribeiro Goncalves,220890,0,0
 Santa Cruz do Piaui,220910,0,0
 Dom Expedito Lopes,220340,0,0
-Paulistana,220780,0,0
+Paulistana,220780,1,0
 Hugo Napoleao,220460,0,0
 Agricolandia,220010,0,0
 Amarante,220050,1,0
@@ -48,10 +48,10 @@ Lagoinha do Piaui,220554,0,0
 Sao Braz do Piaui,220955,0,0
 Piracuruca,220830,0,0
 Sao Lourenco do Piaui,221035,0,0
-Barras,220120,0,0
+Barras,220120,1,0
 Eliseu Martins,220360,0,0
 Sao Pedro do Piaui,221050,0,0
-Anisio de Abreu,220070,0,0
+Anisio de Abreu,220070,1,0
 Sao Juliao,221030,0,0
 Jardim do Mulato,220525,0,0
 Jerumenha,220530,0,0
@@ -60,12 +60,12 @@ Marcos Parente,220600,0,0
 Redencao do Gurgueia,220870,2,0
 Conceicao do Caninde,220280,0,0
 Colonia do Piaui,220277,0,0
-Santa Luz,220930,0,0
+Santa Luz,220930,1,0
 Caldeirao Grande do Piaui,220209,0,0
 Castelo do Piaui,220260,1,0
 Nossa Senhora de Nazare,220675,0,0
 Sussuapara,221093,0,0
-Alegrete do Piaui,220027,0,0
+Alegrete do Piaui,220027,1,0
 Alto Longa,220030,0,0
 Santo Antonio de Lisboa,220940,0,0
 Landri Sales,220560,0,0
@@ -81,14 +81,14 @@ Sao Joao da Serra,220990,0,0
 Sigefredo Pacheco,221065,0,0
 Elesbao Veloso,220350,0,0
 Tanque do Piaui,221097,0,0
-Monte Alegre do Piaui,220660,0,0
+Monte Alegre do Piaui,220660,1,0
 Alvorada do Gurgueia,220045,1,0
 Uniao,221110,0,0
 Santa Cruz dos Milagres,220915,0,0
 Barra D'Alcantara,220117,0,0
 Francisco Ayres,220410,0,0
 Brasileira,220196,0,0
-Bela Vista do Piaui,220155,0,0
+Bela Vista do Piaui,220155,1,0
 Olho D'Agua do Piaui,220710,0,0
 Nazare do Piaui,220670,0,0
 Canto do Buriti,220230,0,0
@@ -107,7 +107,7 @@ Pedro II,220790,0,0
 Sao Francisco do Piaui,220970,0,0
 Juazeiro do Piaui,220551,0,0
 Santa Rosa do Piaui,220937,0,0
-Jatoba do Piaui,220527,0,0
+Jatoba do Piaui,220527,1,0
 Pimenteiras,220810,0,0
 Cristino Castro,220310,0,0
 Vila Nova do Piaui,221160,0,0
@@ -116,7 +116,7 @@ Prata do Piaui,220860,0,0
 Coivaras,220273,0,0
 Sao Jose do Divino,221005,0,0
 Francinopolis,220400,0,0
-Pio IX,220820,0,0
+Pio IX,220820,1,0
 Baixa Grande do Ribeiro,220115,0,0
 Madeiro,220585,0,0
 Patos do Piaui,220777,0,0
@@ -124,7 +124,7 @@ Ilha Grande,220465,0,0
 Sao Miguel da Baixa Grande,221038,0,0
 Porto Alegre do Piaui,220855,0,0
 Cajazeiras do Piaui,220207,0,0
-Palmeirais,220750,0,0
+Palmeirais,220750,1,0
 Marcolandia,220595,0,0
 Sebastiao Leal,221063,0,0
 Novo Oriente do Piaui,220690,0,0
@@ -135,7 +135,7 @@ Joao Costa,220535,0,0
 Passagem Franca do Piaui,220775,0,0
 Geminiano,220435,0,0
 Socorro do Piaui,221090,0,0
-Dirceu Arcoverde,220335,0,0
+Dirceu Arcoverde,220335,1,0
 Campo Grande do Piaui,220213,0,0
 Arraial,220100,0,0
 Boqueirao do Piaui,220194,2,0
@@ -163,7 +163,7 @@ Domingos Mourao,220342,0,0
 Lagoa Alegre,220555,0,0
 Morro do Chapeu do Piaui,220667,0,0
 Dom Inocencio,220345,0,0
-Porto,220850,0,0
+Porto,220850,1,0
 Fartura do Piaui,220375,0,0
 Gilbues,220440,0,0
 Flores do Piaui,220380,0,0
@@ -183,26 +183,26 @@ Lagoa do Sitio,220559,0,0
 Luis Correia,220570,0,0
 Padre Marcos,220720,0,0
 Riacho Frio,220885,0,0
-Miguel Alves,220620,0,0
+Miguel Alves,220620,1,0
 Floresta do Piaui,220385,0,0
 Campo Alegre do Fidalgo,220211,0,0
 Sebastiao Barros,221062,0,0
 Sao Miguel do Fidalgo,221039,0,0
 Jacobina do Piaui,220515,0,0
 Nossa Senhora dos Remedios,220680,0,0
-Bom Principio do Piaui,220191,0,0
+Bom Principio do Piaui,220191,1,0
 Alagoinha do Piaui,220025,0,0
 Murici dos Portelas,220669,0,0
-Lagoa de Sao Francisco,220557,0,0
+Lagoa de Sao Francisco,220557,1,0
 Novo Santo Antonio,220695,0,0
 Campo Largo do Piaui,220217,0,0
-Acaua,220005,0,0
+Acaua,220005,1,0
 Curral Novo do Piaui,220327,0,0
 Pavussu,220785,0,0
 Massape do Piaui,220605,0,0
 Jaicos,220520,1,0
 Sao Joao do Arraial,220997,0,0
-Joaquim Pires,220540,0,0
+Joaquim Pires,220540,1,0
 Ribeira do Piaui,220887,0,0
 Aroeiras do Itaim,220095,0,0
 Queimada Nova,220865,0,0
@@ -220,6 +220,6 @@ Tamboril do Piaui,221095,0,0
 Assuncao do Piaui,220105,0,0
 Cocal dos Alves,220272,0,0
 Cocal,220270,1,0
-Betania do Piaui,220173,0,0
+Betania do Piaui,220173,1,0
 Caxingo,220265,0,0
 Sao Francisco de Assis do Piaui,220965,0,0
