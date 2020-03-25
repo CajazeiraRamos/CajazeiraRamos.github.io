@@ -59,8 +59,8 @@
 	<h1> Mapa do Coronavirus no Piauí </h1>
 	<div id="mapid"></div>
 	
-	<h5>*Atualizado em 24 de março de 2020. Fonte: Coord. Epidemiologia/CIEVS <br />
-		*Infelizmente o Gov. do Estado não fornece os dados exatos da distribuição de suspeitos por município. O único dado público neste sentido está em: <a href="http://portal.saude.pi.gov.br/2020/inf_saude/epidemiologia/covid-19/mapa/mapa_covid-19.asp">Aqui. </a> </h5>
+	<p>*Atualizado em 24 de março de 2020. Fonte: Coord. Epidemiologia/CIEVS <br />
+		*O Gov. do Estado não fornece a distribuição de suspeitos por município, apenas quais municípios possuem suspeitos. O único dado público neste sentido está <a href="http://portal.saude.pi.gov.br/2020/inf_saude/epidemiologia/covid-19/mapa/mapa_covid-19.asp">Aqui. </a> </p>
 	
 	<h1> Boletins diários SESAPI - Coronavirus</h1>
 	<div id="chart"></div>
@@ -68,7 +68,7 @@
     <script>
 
     	// var dataTable = dc.dataTable("#dc-table-graph");
-      	var Centro = [-6.57, -42.75];
+      	var Centro = [-6.65, -42.75];
       	var mymap = L.map('mapid').setView(Centro, 7);
 
       	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {maxZoom: 18, attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>`}).addTo(mymap);
@@ -81,6 +81,70 @@
 
 		let TotalSus = 0;
 		let TotalConf = 0;
+
+
+
+		let info = L.control();
+
+			info.onAdd = function (map) {
+				this._div = L.DomUtil.create('div', 'info');
+				this.update();
+				return this._div;
+			};
+
+			info.update = function (e) {
+				// console.log("teste");
+				if(e){
+					var cidade = e.layer.feature.properties; 
+					var Nome = cidade.name;
+					var id = cidade.id.substr(0, 6);
+					var sus = susByID.get(id);
+					var conf = confByID.get(id);
+				}
+						            //console.log(feat);
+					this._div.innerHTML = '<h4>Número de casos por município: </h4>' +  (e ?
+						'<b>' + Nome + '</b><br />' + sus + ' Suspeitos' + '</b><br />' + conf + ' Confirmados'
+						: 'Passe o mouse sobre sua cidade');
+			};
+
+			info.addTo(mymap);
+
+
+		// function highlightFeature(e) {
+		// 		let layer = e.target;
+		// 		layer.setStyle({
+		// 					weight: 2,
+		// 					color: '#AAA',
+		// 					dashArray: '',
+		// 					fillOpacity: 0.7
+		// 		});
+
+		// 		if (!L.Browser.ie && !L.Browser.opera) {
+		// 			layer.bringToFront();
+		// 		}
+
+		// 		info.update(layer.feature);
+		// 	}
+		// 	let geojson;
+
+		// 	function resetHighlight(e) {
+		// 		geojson.resetStyle(e.target);
+		// 		info.update();
+		// 	}
+
+		// 	function zoomToFeature(e) {
+		// 		map.fitBounds(e.target.getBounds());
+		// 	}
+
+		// 	function onEachFeature(feature, layer) {
+		// 		layer.on({
+		// 					mouseover: highlightFeature,
+		// 					mouseout: resetHighlight,
+		// 					click: zoomToFeature
+		// 				});
+		// 	}
+
+
 
 		d3.csv("covid19PI.csv", function(data){
 	        
@@ -148,17 +212,17 @@
 			Mapas.on('mouseover', function(e) { 
 
 				// e.layer.options.fillColor = "#c7c6bf";
+				info.update(e);
 
+				// var cidade = e.layer.feature.properties; 
+				// var Nome = cidade.name;
+				// var id = cidade.id.substr(0, 6);
+				// var sus = susByID.get(id);
+				// var conf = confByID.get(id);
 
-				var cidade = e.layer.feature.properties; 
-				var Nome = cidade.name;
-				var id = cidade.id.substr(0, 6);
-				var sus = susByID.get(id);
-				var conf = confByID.get(id);
-
-				var classe = ClasseByID.get(id);
-				e.layer.bindPopup(Nome+": Suspeitos: "+sus+
-					"; Confirmados: "+conf);
+				// var classe = ClasseByID.get(id);
+				// e.layer.bindPopup(Nome+": Suspeitos: "+sus+
+				// 	"; Confirmados: "+conf);
 
 				});
 
