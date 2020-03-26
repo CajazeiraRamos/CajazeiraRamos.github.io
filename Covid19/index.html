@@ -59,7 +59,7 @@
 	<h1> Mapa do Coronavirus no Piauí </h1>
 	<div id="mapid"></div>
 	
-	<p>*Atualizado em 24 de março de 2020. Fonte: Coord. Epidemiologia/CIEVS <br />
+	<p>*Atualizado em 25 de março de 2020. Fonte: Coord. Epidemiologia/CIEVS <br />
 		*O Gov. do Estado não fornece a distribuição de suspeitos por município, apenas quais municípios possuem suspeitos. O único dado público neste sentido está <a href="http://portal.saude.pi.gov.br/2020/inf_saude/epidemiologia/covid-19/mapa/mapa_covid-19.asp">Aqui. </a> </p>
 	
 	<h1> Boletins diários SESAPI - Coronavirus</h1>
@@ -102,48 +102,12 @@
 					var conf = confByID.get(id);
 				}
 						            //console.log(feat);
-					this._div.innerHTML = '<h4>Número de casos por município: </h4>' +  (e ?
+					this._div.innerHTML = '<h4>Número de casos por município** </h4>' +  (e ?
 						'<b>' + Nome + '</b><br />' + sus + ' Suspeitos' + '</b><br />' + conf + ' Confirmados'
 						: 'Passe o mouse sobre sua cidade');
 			};
 
 			info.addTo(mymap);
-
-
-		// function highlightFeature(e) {
-		// 		let layer = e.target;
-		// 		layer.setStyle({
-		// 					weight: 2,
-		// 					color: '#AAA',
-		// 					dashArray: '',
-		// 					fillOpacity: 0.7
-		// 		});
-
-		// 		if (!L.Browser.ie && !L.Browser.opera) {
-		// 			layer.bringToFront();
-		// 		}
-
-		// 		info.update(layer.feature);
-		// 	}
-		// 	let geojson;
-
-		// 	function resetHighlight(e) {
-		// 		geojson.resetStyle(e.target);
-		// 		info.update();
-		// 	}
-
-		// 	function zoomToFeature(e) {
-		// 		map.fitBounds(e.target.getBounds());
-		// 	}
-
-		// 	function onEachFeature(feature, layer) {
-		// 		layer.on({
-		// 					mouseover: highlightFeature,
-		// 					mouseout: resetHighlight,
-		// 					click: zoomToFeature
-		// 				});
-		// 	}
-
 
 
 		d3.csv("covid19PI.csv", function(data){
@@ -226,7 +190,7 @@
 
 				});
 
-			Mapas.on('click', function(e) { 
+			Mapas.on('clic', function(e) { 
 
 				// e.layer.options.fillColor = "#c7c6bf";
 				info.update(e);
@@ -284,6 +248,7 @@
             	d.conf = +d.confirmados;
             	d.des = +d.descartados;
             	d.total = +d.total;
+            	d.mortes = +d.mortes;
 
             });
 
@@ -310,6 +275,9 @@
            	var TotalByDayGroup = dateDim.group().reduceSum(function(d){
                 return d.total;
             });
+            var MortesByDayGroup = dateDim.group().reduceSum(function(d){
+                return d.mortes;
+            });
 
             console.log(SusByDayGroup);
             // console.log(SuspeitosByDay);
@@ -318,7 +286,7 @@
                      .height(400)
                      .margins({top: 50, right: 50, bottom: 25, left: 50})
                      .dimension(dateDim)
-                     .x(d3.time.scale().domain([new Date(2020, 2, 16), new Date(2020, 2, 25)]))
+                     .x(d3.time.scale().domain([new Date(2020, 2, 16), new Date(2020, 2, 26)]))
                      .xUnits(d3.time.days)
                      .renderHorizontalGridLines(true)
                      .legend(dc.legend().x(80).y(0).itemHeight(20).gap(10))
@@ -333,9 +301,13 @@
                         dc.lineChart(compositeChart)
                             .group(DesByDayGroup, 'Descartados')
                             .ordinalColors(['#4daf4a']),
+                        dc.lineChart(compositeChart)
+                            .group(TotalByDayGroup, 'Notificações')
+                            .ordinalColors(['#984ea3'])
+                            // ,
                         // dc.lineChart(compositeChart)
-                        //     .group(TotalByDayGroup, 'Notificações')
-                            // .ordinalColors(['#984ea3'])
+                        //     .group(MortesByDayGroup, 'Mortes')
+                        //     .ordinalColors(['black']),
                       ]);
 
 
