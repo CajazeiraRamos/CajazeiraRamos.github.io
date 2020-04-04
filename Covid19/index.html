@@ -24,7 +24,7 @@
 
 	
     <style type="text/css">
-      	#mapid { width: 80%; height: 800px;}
+      	#mapid { width: 60%; height: 800px;}
       	/*#chart { width: 40%; }*/
 		.info {
 			padding: 6px 8px;
@@ -41,7 +41,7 @@
 
 		.legend {
 			text-align: left;
-			line-height: 18px;
+			line-height: 25px;
 			color: #555;
 		}
 		.legend i {
@@ -59,8 +59,10 @@
 	<h1> Mapa do Coronavirus no Piauí </h1>
 	<div id="mapid"></div>
 	
-	<p>*Atualizado em 25 de março de 2020. Fonte: Coord. Epidemiologia/CIEVS <br />
-		*O Gov. do Estado não fornece a distribuição de suspeitos por município, apenas quais municípios possuem suspeitos. O único dado público neste sentido está <a href="http://portal.saude.pi.gov.br/2020/inf_saude/epidemiologia/covid-19/mapa/mapa_covid-19.asp">Aqui. </a> </p>
+	<p>
+		*Atualizado em 03 de Abril de 2020. Fonte: <a href="http://portal.saude.pi.gov.br/2020/inf_saude/epidemiologia/covid-19/covid-19.asp">Coord. Epidemiologia/CIEVS.</a> 
+		<br />
+		*O Gov. do Estado não fornece a distribuição de suspeitos por município. </p>
 	
 	<h1> Boletins diários SESAPI - Coronavirus</h1>
 	<div id="chart"></div>
@@ -77,12 +79,15 @@
 
 		let susByID = d3.map();
 		let confByID = d3.map();
+		let mortesByID = d3.map();
 		let ClasseByID = d3.map();
 
-		let TotalSus = 0;
-		let TotalConf = 0;
+		let TotalSus = 0;  //Cidades
+		let TotalConf = 0; //Cidades
+		let TotalObt = 0;  //Cidades
 
-
+		let TotalCasos = 0;  //Casos
+		let TotalMortes = 0; //Casos
 
 		let info = L.control();
 
@@ -100,17 +105,21 @@
 					var id = cidade.id.substr(0, 6);
 					var sus = susByID.get(id);
 					var conf = confByID.get(id);
+					var mortes = mortesByID.get(id);
 				}
 						            //console.log(feat);
-					this._div.innerHTML = '<h4>Número de casos por município** </h4>' +  (e ?
-						'<b>' + Nome + '</b><br />' + sus + ' Suspeitos' + '</b><br />' + conf + ' Confirmados'
+					this._div.innerHTML = '<h4>Número de casos por município* </h4>' +  (e ?
+						'<b>' + Nome + '</b><br />' + conf + ' Confirmado(s)' + '</b><br />' + mortes + ' Óbito(s)'
 						: 'Passe o mouse sobre sua cidade');
 			};
 
-			info.addTo(mymap);
+			
 
 
-		d3.csv("covid19PI.csv", function(data){
+		
+
+
+		d3.csv("covid19PIv2.csv", function(data){
 	        
 	        data.forEach(function(d) {
 	           	
@@ -118,10 +127,12 @@
 
 	           	d.nome = d.Cidade;
 	           	d.id = d.ID;
-	           	d.sus = d.Suspeitos;
-	           	d.conf = d.Confirmados;
+	           	d.sus = +d.Suspeitos;
+	           	d.conf = +d.Confirmados;
+	           	d.mortes = +d.Mortes;
 	           	susByID.set(d.id,+d.sus);
-	           	confByID.set(d.id,+d.conf); 
+	           	confByID.set(d.id,+d.conf);
+	           	mortesByID.set(d.id,+d.mortes); 
 
 
 	           	d.Classe = 0;
@@ -130,11 +141,19 @@
 	           		d.Classe = 1;
 	           		TotalSus++;
 	           	}
+
 	           	if(d.conf > 0){
 	           		d.Classe = 2;
 	           		TotalConf++;
-	           		TotalSus--; 
+	           		TotalCasos+=d.conf;
 	           	}
+
+	           	if(d.mortes > 0){
+	           		d.Classe = 3;
+	           		TotalObt++;
+	           		TotalMortes+=d.mortes;
+	           	}
+
 
 	            ClasseByID.set(d.id, +d.Classe);
 
@@ -146,7 +165,7 @@
 	        // });
 
 		
-			var escalaCores = ["#fee8c8","#fdbb84","#e34a33"];
+			var escalaCores = ["#fee8c8","#fdbb84","#e34a33", "black"];
 
 
 			// var Mapas = L.geoJSON(Cidades).addTo(mymap);
@@ -209,7 +228,7 @@
 
 
 			let legend = L.control({position: 'bottomright'});
-			var Legendas = ["Sem registro( "+(224-(TotalSus+TotalConf))+")", "Com Suspeitos ("+TotalSus+")", "Casos confirmados ("+TotalConf+")"]
+			var Legendas = ["Cidades sem registro ("+(224-(TotalSus+TotalConf))+")","Com suspeitos (Não Informado)" ,"Com casos confirmados ("+TotalConf+")", "Com óbitos ("+TotalObt+")"]
 			
 
 			legend.onAdd = function (mymap) {
@@ -229,7 +248,36 @@
 				return div;
 			};
 
-		   	legend.addTo(mymap);
+		   	
+
+		   	// Teste:
+
+		   	let legend2 = L.control({position: 'topright'});
+			var escalaCores2 = ["#e34a33", "black"];
+			var Legendas2 = ["Total de casos confirmados: <b>"+TotalCasos+"</b>", "Total de óbitos: <b>"+TotalMortes+"</b>"];
+
+
+			legend2.onAdd = function (mymap) {
+
+				let div = L.DomUtil.create('div', 'info legend'),
+					labels = [],
+		            n = escalaCores2.length;
+		            labels.push("<b>Piauí - 03 de Abril de 2020: </b> ");
+				for (let i = 0; i < n; i++) {
+					let c = escalaCores[i];
+					labels.push(
+						'<i style="background:' + escalaCores2[i] + '"></i> '+Legendas2[i]
+					);
+				}
+
+				div.innerHTML = labels.join('<br>');
+				return div;
+			};
+
+			legend.addTo(mymap);
+		   	legend2.addTo(mymap);
+		   	info.addTo(mymap);
+
 		});		
 
 		
@@ -249,6 +297,7 @@
             	d.des = +d.descartados;
             	d.total = +d.total;
             	d.mortes = +d.mortes;
+            	// console.log(d.mortes);
 
             });
 
@@ -256,9 +305,15 @@
             var facts = crossfilter(data);
 
             var dateDim = facts.dimension(function(d){
+            	// var dia = d.date.toLocaleDateString();
+            	// console.log(dia);
+            	// var dia = dateFormat(d.date)/;
                 return d.date;
+
+
+
             });
-            console.log(dateDim);
+            // console.log(dateDim);
            
             var SusByDayGroup = dateDim.group().reduceSum(function(d){
                 return d.sus;
@@ -279,42 +334,73 @@
                 return d.mortes;
             });
 
-            console.log(SusByDayGroup);
+            // console.log(MortesByDayGroup);
             // console.log(SuspeitosByDay);
  			
+            var dia0 = new Date(2020, 2, 16);
+            var dia1 = new Date(2020, 3, 03);
+
  		  compositeChart.width(800)
                      .height(400)
                      .margins({top: 50, right: 50, bottom: 25, left: 50})
                      .dimension(dateDim)
-                     .x(d3.time.scale().domain([new Date(2020, 2, 16), new Date(2020, 2, 26)]))
+                     .x(d3.time.scale().domain([dia0, dia1]))
+                     .elasticX(false)
+                     .elasticY(true)
+                     .mouseZoomable(true)
                      .xUnits(d3.time.days)
                      .renderHorizontalGridLines(true)
+                     .renderVerticalGridLines(true)
                      .legend(dc.legend().x(80).y(0).itemHeight(20).gap(10))
-                     .brushOn(false)    
+                     .brushOn(false)
+                     .title(function (d){
+			            var value = d.value.avg?d.value.avg:d.value;
+			            if(isNaN(value)) value = 0;
+			            var data = dateFormat(d.key);
+			            return (data+": "+d.value);
+			        })
                      .compose([
+                     	dc.lineChart(compositeChart)
+                            .group(DesByDayGroup, 'Descartados')
+                            .ordinalColors(['#4daf4a']),
                         dc.lineChart(compositeChart)
                             .group(SusByDayGroup, 'Suspeitos')
                             .ordinalColors(['#377eb8']),
                         dc.lineChart(compositeChart)
                             .group(ConfByDayGroup, 'Confirmados')
                             .ordinalColors(['#e41a1c']),
-                        dc.lineChart(compositeChart)
-                            .group(DesByDayGroup, 'Descartados')
-                            .ordinalColors(['#4daf4a']),
-                        dc.lineChart(compositeChart)
-                            .group(TotalByDayGroup, 'Notificações')
-                            .ordinalColors(['#984ea3'])
-                            // ,
+                    
                         // dc.lineChart(compositeChart)
-                        //     .group(MortesByDayGroup, 'Mortes')
-                        //     .ordinalColors(['black']),
+                        //     .group(TotalByDayGroup, 'Notificações')
+                        //     .ordinalColors(['#984ea3'])
+                        //     ,
+                        dc.lineChart(compositeChart)
+                            .group(MortesByDayGroup, 'Mortes')
+                            .ordinalColors(['black'])
                       ]);
+
+
+     
 
 
             dc.renderAll();
 
+            function dateFormat(d){  //Retorna Dia/Mês
+            	var data = "",
+            	month = '' + (d.getMonth() + 1),
+        		day = '' + d.getDate(),
+        		year = d.getFullYear();
 
+        		if (month.length < 2) 
+			        month = '0' + month;
+			    if (day.length < 2) 
+			        day = '0' + day;
 
+        		data = (day+"/"+month);
+        		// console.log(data);
+            	// console.log(key.getMonth()+1);
+            	return data;
+            }
 
 		});
 
