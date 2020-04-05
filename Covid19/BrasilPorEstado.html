@@ -22,11 +22,11 @@
 	
 	
     <style type="text/css">
-      	#mapid { width: 80%; height: 1000px;}
+      	#mapid { width: 90%; height: 1000px;}
       	/*#chart { width: 40%; }*/
 		.info {
 			padding: 6px 8px;
-			font: 16px/18px Arial, Helvetica, sans-serif;
+			font: 22px/24px Arial, Helvetica, sans-serif;
 			background: white;
 			background: rgba(255,255,255,0.8);
 			box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -35,6 +35,13 @@
 		.info h3 {
 			margin: 0 0 5px;
 			color: #777;
+		}
+		.info i {
+
+			margin-top: 5px;
+			height: 20px;
+			float: left;
+			opacity: 1;
 		}
 
 		.legend {
@@ -119,7 +126,7 @@
 
   </head>
 
-  <body style="margin-left: 100px; margin-top: 100px;">
+  <body style="margin-left: 5%; margin-top: 100px;">
 
         
 	<nav class="nav"> 
@@ -138,7 +145,7 @@
 
 
 
-	<h1> Coronavírus no Brasil: taxa de casos para cada 100 mil habitantes </h1>
+	<!-- <h1> Coronavírus no Brasil</h1> -->
 	<div id="mapid"></div>
 	<p>*Fonte: <a href="https://covid.saude.gov.br/">Ministério da Saúde</a> e <a href="https://www.ibge.gov.br/apps/populacao/projecao/index.html?utm_source=portal&utm_medium=popclock&utm_campaign=novo_popclock">IBGE</a></p>
 	<!-- https://covid.saude.gov.br/ -->
@@ -269,9 +276,15 @@
 					taxa = TaxaByUF.get(id),
 					pop = PopByUF.get(id),
 					let = LetByUF.get(id);
+
+					var quantize = getQuantize(Escala),
+	    			ind = getIndicador(Escala, id),
+	    			cor = quantize(ind);
+//  + 'População: ' + pop + '<br /><br />' 
 				}
 				this._div.innerHTML = '<h3>Dados por estado* </h3>' +  (e ?
-							'<b>' + Nome + '</b><br />' + conf + ' Casos confirmados' + '</b><br />' + mortes + ' Óbito(s)' + '</b><br />' + taxa + ' para cada 100mil/h'+ '</b><br />' + let + '% Letalidade'+ '</b><br />' + 'População: ' + pop 
+							'<b>' + Nome + '</b><br />' + conf + ' Casos confirmados' + '</b><br />' + mortes + ' Óbito(s)' + '</b><br />' + taxa + ' para cada 100mil/h'+ '</b><br />' + let + '% Letalidade'+ '</b><br />'+
+							'<i style="margin-left:25%; width:'+let+'px; background:black"></i>'+ '<i id="casos" style="width:'+(100-let)+'px; background:'+cor+'"></i>' 
 							: 'Passe o mouse sobre seu Estado ou click');};
 			legend.onAdd = function (map) {
 				var brewerColors = getColors(Escala);
@@ -325,7 +338,7 @@
 				opacity: 1,
 				color: '#AAA',
 				dashArray: '3',
-				fillOpacity: 0.6,
+				fillOpacity: 1,
 				fillColor: quantize(ind)
 			};}
 		function highlightFeature(e) {
