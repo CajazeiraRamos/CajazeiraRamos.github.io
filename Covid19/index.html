@@ -86,6 +86,9 @@
 	<div id="chart"></div>
 	
     <script>
+
+
+
     	var escalaCores = ["#fee8c8","#fdbb84","#e34a33", "black"];
 
     	// var dataTable = dc.dataTable("#dc-table-graph");
@@ -173,7 +176,7 @@
 
 		function zoomToFeature(e) {
 			mymap.fitBounds(e.target.getBounds());
-			info.update(e);
+			info.update(e.target.feature);
 		}
 
 		function onEachFeature(feature, layer) {
