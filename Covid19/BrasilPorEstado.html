@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+  	<meta charset="utf-8">
+    <title>Coronavirus no Piauí</title>
+
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+
+
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"  integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+
+    <script type="text/javascript" src="data/UF.js"></script>
+	<link rel="stylesheet" href="css/dc.css">
+	<script src="js/crossfilter.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/dc.js" charset="utf-8"></script>
+    <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
+
+	
+	
+    <style type="text/css">
+      	#mapid { width: 80%; height: 1000px;}
+      	/*#chart { width: 40%; }*/
+		.info {
+			padding: 6px 8px;
+			font: 16px/18px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255,255,255,0.8);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+		}
+		.info h3 {
+			margin: 0 0 5px;
+			color: #777;
+		}
+
+		.legend {
+			text-align: left;
+			line-height: 25px;
+			color: #555;
+		}
+		.legend i {
+			width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 8px;
+			opacity: 0.7;
+		}
+    </style>
+    <link rel="stylesheet" href="https://cajazeiraramos.github.io/css/style.css">
+    <link rel="stylesheet" href="https://cajazeiraramos.github.io/assets/site1.css">
+
+  </head>
+
+  <body style="margin-left: 50px;">
+	
+	<nav class="nav"> 
+		<ul class="list"> 
+			<li class="item"> 
+				<a class="link" href="https://cajazeiraramos.github.io/Covid19">Covid19 - PI</a> 
+			</li>
+			<li class="item"> 
+				<a class="link" href="https://cajazeiraramos.github.io/">Home</a> 
+			</li> 
+			<li class="item"> <a class="link" href="https://cajazeiraramos.github.io/about">About</a> 
+			</li> 
+		</ul>
+	 </nav>
+  
+
+
+
+	<h1> Coronavírus no Brasil: taxa de casos para cada 100 mil habitantes </h1>
+	<div id="mapid"></div>
+	<p>*Fonte: <a href="https://covid.saude.gov.br/">Ministério da Saúde</a> e <a href="https://www.ibge.gov.br/apps/populacao/projecao/index.html?utm_source=portal&utm_medium=popclock&utm_campaign=novo_popclock">IBGE</a></p>
+	<!-- https://covid.saude.gov.br/ -->
+		
+    <script>
+    
+    	var Centro = [-13.360272, -51.805698];
+      	var mymap = L.map('mapid').setView(Centro, 5);
+
+      	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {maxZoom: 18, attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>`}).addTo(mymap);
+
+      	let brewerColors = colorbrewer.Reds[6];
+
+      	let quantize = d3.scale.linear()
+	    .domain([0,3,6,9,12,15])
+	    .range(brewerColors);
+
+     	// 0 a 4
+	    // 4 a 8
+	    // 8 a 12
+	    // 12 a 16
+	           	
+	    function style(feature) {
+		 return {
+					weight: 1,
+					opacity: 1,
+					color: 'white',
+					dashArray: '3',
+					fillOpacity: 0.6,
+					fillColor: quantize(TaxaByUF.get(feature.properties.UF))
+				};
+		}
+		function highlightFeature(e) {
+			let layer = e.target;
+
+			layer.setStyle({
+						weight: 2,
+						color: '#AAA',
+						dashArray: '',
+						fillOpacity: 0.7
+			});
+
+			if (!L.Browser.ie && !L.Browser.opera) {
+				layer.bringToFront();
+			}
+
+			info.update(layer.feature);
+		}
+		
+		let geojson;
+
+		function resetHighlight(e) {
+			geojson.resetStyle(e.target);
+			info.update();
+		}
+
+		function zoomToFeature(e) {
+			mymap.fitBounds(e.target.getBounds());
+		}
+
+		function onEachFeature(feature, layer) {
+			layer.on({
+						mouseover: highlightFeature,
+						mouseout: resetHighlight,
+						click: zoomToFeature
+					});
+		}
+
+		let ConfByUF = d3.map(),
+		MortesByUF = d3.map(),
+		PopByUF = d3.map(),
+		NomeByUF = d3.map(),
+		TaxaByUF = d3.map();
+
+		let TotalCasos = 0, TotalMortes = 0;
+
+		let info = L.control();
+
+			info.onAdd = function (map) {
+				this._div = L.DomUtil.create('div', 'info');
+				this.update();
+				return this._div;
+			};
+
+			info.update = function (e) {
+				// console.log("teste");
+				if(e){
+					var UF = e.properties;
+					var id = UF.UF, 
+					Nome = NomeByUF.get(id),
+					conf = ConfByUF.get(id),
+					mortes = MortesByUF.get(id),
+					taxa = TaxaByUF.get(id),
+					pop = PopByUF.get(id);
+
+				}
+						            //console.log(feat);
+					this._div.innerHTML = '<h3>Dados por estado* </h3>' +  (e ?
+						'<b>' + Nome + '</b><br />' + conf + ' Casos confirmados' + '</b><br />' + mortes + ' Óbito(s)'+ '</b><br />' + taxa + ' taxa por 100mil/h'+ '</b><br />' + 'População: ' + pop
+						: 'Passe o mouse sobre seu Estado ou click');
+			};
+
+			// Nome,UF,Pop,Confirmados,Mortes
+
+		d3.csv("data/covid19Br.csv", function(data){
+	        
+	        data.forEach(function(d) {
+	           	
+	           	d.nome = d.Nome;
+	           	d.id = d.UF;
+	           	d.pop = +d.Pop;
+	           	d.conf = +d.Confirmados;
+	           	d.mortes = +d.Mortes;
+	           	d.taxa = (d.conf*100000)/d.pop; // Taxa de casos por 100 mil habitantes; 
+	           	d.t = d3.round(d.taxa, 2);  
+	           	
+	           	TotalCasos+=d.conf;
+	           	TotalMortes+=d.mortes;
+	           	
+	           	NomeByUF.set(d.id, d.Nome);
+	           	ConfByUF.set(d.id,d.conf);
+	           	MortesByUF.set(d.id,d.mortes); 
+	           	PopByUF.set(d.id,d.pop);
+	           	TaxaByUF.set(d.id, d.t); 
+
+
+	        });
+			
+			geojson = L.geoJson(Estados, {
+				style: style,
+				onEachFeature: onEachFeature
+			}).addTo(mymap);
+
+
+			let legend = L.control({position: 'bottomright'});
+
+			legend.onAdd = function (map) {
+
+				let div = L.DomUtil.create('div', 'info legend'),
+					labels = [],
+		            n = brewerColors.length,
+					from, to;
+					labels.push("<b>Taxa por 100mil/h </b> ");
+				for (let i = 0; i < n; i++) {
+					let c = brewerColors[i];
+		            let fromto = quantize.domain();//.invertExtent(c);
+					labels.push(
+						'<i style="background:' + brewerColors[i] + '"></i> ' +
+						d3.round(fromto[i]) + (d3.round(fromto[i+1]) ? '&ndash;' + d3.round(fromto[i+1]) : '+'));
+				}
+
+				div.innerHTML = labels.join('<br>');
+				return div;
+			};
+
+
+		   	let legend2 = L.control({position: 'topright'});
+			var escalaCores2 = ["#e34a33", "black"];
+			var Legendas2 = ["Total de casos confirmados: <b>"+TotalCasos+"</b>", "Total de óbitos: <b>"+TotalMortes+"</b>"];
+
+
+			legend2.onAdd = function (mymap) {
+
+				let div = L.DomUtil.create('div', 'info legend'),
+					labels = [],
+		            n = escalaCores2.length;
+		            labels.push("<b>Brasil - 04 de Abril de 2020: </b> ");
+				for (let i = 0; i < n; i++) {
+					let c = escalaCores2[i];
+					labels.push(
+						'<i style="background:' + escalaCores2[i] + '"></i> '+Legendas2[i]
+					);
+				}
+
+				div.innerHTML = labels.join('<br>');
+				return div;
+			};
+
+			legend.addTo(mymap);
+		   	legend2.addTo(mymap);
+		   	info.addTo(mymap);
+
+		});		
+	
+
+
+
+		
+
+          
+            
+		function dateFormat(d){  //Retorna Dia/Mês
+            var data = "",
+            month = '' + (d.getMonth() + 1),
+        	day = '' + d.getDate(),
+        	year = d.getFullYear();
+
+       		if (month.length < 2) 
+		        month = '0' + month;
+		    if (day.length < 2) 
+		        day = '0' + day;
+       		data = (day+"/"+month);
+           	return data;}
+
+    </script>
+
+
+  </body>
+</html>

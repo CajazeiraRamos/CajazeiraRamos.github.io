@@ -61,6 +61,9 @@
 	<nav class="nav"> 
 		<ul class="list"> 
 			<li class="item"> 
+				<a class="link" href="https://cajazeiraramos.github.io/Covid19/BrasilPorEstado.html">Covid19 - BR</a> 
+			</li>
+			<li class="item"> 
 				<a class="link" href="https://cajazeiraramos.github.io/">Home</a> 
 			</li> 
 			<li class="item"> <a class="link" href="https://cajazeiraramos.github.io/about">About</a> 
@@ -83,6 +86,7 @@
 	<div id="chart"></div>
 	
     <script>
+    	var escalaCores = ["#fee8c8","#fdbb84","#e34a33", "black"];
 
     	// var dataTable = dc.dataTable("#dc-table-graph");
       	var Centro = [-6.65, -42.75];
@@ -115,7 +119,7 @@
 			info.update = function (e) {
 				// console.log("teste");
 				if(e){
-					var cidade = e.layer.feature.properties; 
+					var cidade = e.properties; 
 					var Nome = cidade.name;
 					var id = cidade.id.substr(0, 6);
 					var sus = susByID.get(id);
@@ -131,7 +135,53 @@
 			
 
 
+		function style(feature) {
+			var ID = feature.properties.id.substr(0, 6);
+			var classe = ClasseByID.get(ID);
+		 return {
+					weight: 1,
+					opacity: 1,
+					color: '#AAA',
+					dashArray: '3',
+					fillOpacity: 0.6,
+					fillColor: escalaCores[classe]
+				};
+		}
+		function highlightFeature(e) {
+			let layer = e.target;
+
+			layer.setStyle({
+						weight: 2,
+						color: 'black',
+						dashArray: '',
+						fillOpacity: 0.7
+			});
+
+			if (!L.Browser.ie && !L.Browser.opera) {
+				layer.bringToFront();
+			}
+
+			info.update(layer.feature);
+		}
 		
+		let geojson;
+
+		function resetHighlight(e) {
+			geojson.resetStyle(e.target);
+			info.update();
+		}
+
+		function zoomToFeature(e) {
+			mymap.fitBounds(e.target.getBounds());
+		}
+
+		function onEachFeature(feature, layer) {
+			layer.on({
+						mouseover: highlightFeature,
+						mouseout: resetHighlight,
+						click: zoomToFeature
+					});
+		}
 
 
 		d3.csv("covid19PIv2.csv", function(data){
@@ -173,73 +223,66 @@
 	            ClasseByID.set(d.id, +d.Classe);
 
 	        });
-	        // var facts = crossfilter(data);
-	        // var CityDimention = facts.dimension(function(d){
-	        //     return d.nome;
-
-	        // });
-
-		
-			var escalaCores = ["#fee8c8","#fdbb84","#e34a33", "black"];
-
-
-			// var Mapas = L.geoJSON(Cidades).addTo(mymap);
-
-
-			var Mapas = L.geoJSON(Cidades, {
-
-			    style: function(feature) {
-
-			    	var ID = feature.properties.id.substr(0, 6);
-			    	var classe = ClasseByID.get(ID);
-			    	
-			    	cor = escalaCores[classe];
-
-			       	return {
-			       		color: "black",
-				        weight: 0.1,
-				        fillColor: cor,
-				        fillOpacity: 1,
-
-
-			        }
-			      }
+	        
+			geojson = L.geoJson(Cidades, {
+				style: style,
+				onEachFeature: onEachFeature
 			}).addTo(mymap);
 
+			// var Mapas = L.geoJSON(Cidades, {
 
-			Mapas.on('mouseover', function(e) { 
+			//     style: function(feature) {
 
-				// e.layer.options.fillColor = "#c7c6bf";
-				info.update(e);
+			//     	var ID = feature.properties.id.substr(0, 6);
+			//     	var classe = ClasseByID.get(ID);
+			    	
+			//     	cor = escalaCores[classe];
 
-				// var cidade = e.layer.feature.properties; 
-				// var Nome = cidade.name;
-				// var id = cidade.id.substr(0, 6);
-				// var sus = susByID.get(id);
-				// var conf = confByID.get(id);
+			//        	return {
+			//        		color: "black",
+			// 	        weight: 0.1,
+			// 	        fillColor: cor,
+			// 	        fillOpacity: 1,
 
-				// var classe = ClasseByID.get(id);
-				// e.layer.bindPopup(Nome+": Suspeitos: "+sus+
-				// 	"; Confirmados: "+conf);
 
-				});
+			//         }
+			//       }
+			// }).addTo(mymap);
 
-			Mapas.on('clic', function(e) { 
 
-				// e.layer.options.fillColor = "#c7c6bf";
-				info.update(e);
+			// Mapas.on('mouseover', function(e) { 
 
-				// var cidade = e.layer.feature.properties; 
-				// var Nome = cidade.name;
-				// var id = cidade.id.substr(0, 6);
-				// var sus = susByID.get(id);
-				// var conf = confByID.get(id);
+			// 	// e.layer.options.fillColor = "#c7c6bf";
+			// 	info.update(e);
 
-				// var classe = ClasseByID.get(id);
-				// e.layer.bindPopup(Nome+": Suspeitos: "+sus+
-				// 	"; Confirmados: "+conf);
+			// 	// var cidade = e.layer.feature.properties; 
+			// 	// var Nome = cidade.name;
+			// 	// var id = cidade.id.substr(0, 6);
+			// 	// var sus = susByID.get(id);
+			// 	// var conf = confByID.get(id);
 
-				});
+			// 	// var classe = ClasseByID.get(id);
+			// 	// e.layer.bindPopup(Nome+": Suspeitos: "+sus+
+			// 	// 	"; Confirmados: "+conf);
+
+			// 	});
+
+			// Mapas.on('click', function(e) { 
+			// 	console.log("teste");
+			// 	// e.layer.options.fillColor = "#c7c6bf";
+			// 	info.update(e);
+
+			// 	// var cidade = e.layer.feature.properties; 
+			// 	// var Nome = cidade.name;
+			// 	// var id = cidade.id.substr(0, 6);
+			// 	// var sus = susByID.get(id);
+			// 	// var conf = confByID.get(id);
+
+			// 	// var classe = ClasseByID.get(id);
+			// 	// e.layer.bindPopup(Nome+": Suspeitos: "+sus+
+			// 	// 	"; Confirmados: "+conf);
+
+			// 	});
 
 
 			let legend = L.control({position: 'bottomright'});
@@ -251,7 +294,6 @@
 				let div = L.DomUtil.create('div', 'info legend'),
 					labels = [],
 		            n = escalaCores.length;
-
 				for (let i = 0; i < n; i++) {
 					let c = escalaCores[i];
 					labels.push(
@@ -269,7 +311,7 @@
 
 		   	let legend2 = L.control({position: 'topright'});
 			var escalaCores2 = ["#e34a33", "black"];
-			var Legendas2 = ["Total de casos confirmados: <b>"+TotalCasos+"</b>", "Total de óbitos: <b>"+TotalMortes+"</b>"];
+			var Legendas2 = ["Total de casos confirmados: <b>"+(TotalCasos+2)+"</b>", "Total de óbitos: <b>"+TotalMortes+"</b>"];
 
 
 			legend2.onAdd = function (mymap) {
@@ -277,7 +319,7 @@
 				let div = L.DomUtil.create('div', 'info legend'),
 					labels = [],
 		            n = escalaCores2.length;
-		            labels.push("<b>Piauí - 03 de Abril de 2020: </b> ");
+		            labels.push("<b>Piauí - 04 de Abril de 2020: </b> ");
 				for (let i = 0; i < n; i++) {
 					let c = escalaCores[i];
 					labels.push(
@@ -353,9 +395,9 @@
             // console.log(SuspeitosByDay);
  			
             var dia0 = new Date(2020, 2, 16);
-            var dia1 = new Date(2020, 3, 03);
+            var dia1 = new Date(2020, 3, 05);
 
- 		  compositeChart.width(800)
+ 		  compositeChart.width(1000)
                      .height(400)
                      .margins({top: 50, right: 50, bottom: 25, left: 50})
                      .dimension(dateDim)
