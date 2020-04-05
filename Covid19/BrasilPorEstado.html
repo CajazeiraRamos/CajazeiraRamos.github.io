@@ -127,12 +127,12 @@
 
 		function resetHighlight(e) {
 			geojson.resetStyle(e.target);
-			// info.update();
+			info.update();
 		}
 
 		function zoomToFeature(e) {
 			mymap.fitBounds(e.target.getBounds());
-			resetHighlight(e);
+			info.update(e);
 		}
 
 		function onEachFeature(feature, layer) {

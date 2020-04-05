@@ -173,7 +173,7 @@
 
 		function zoomToFeature(e) {
 			mymap.fitBounds(e.target.getBounds());
-			info.update();
+			info.update(e);
 		}
 
 		function onEachFeature(feature, layer) {
