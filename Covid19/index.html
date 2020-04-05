@@ -229,62 +229,6 @@
 				onEachFeature: onEachFeature
 			}).addTo(mymap);
 
-			// var Mapas = L.geoJSON(Cidades, {
-
-			//     style: function(feature) {
-
-			//     	var ID = feature.properties.id.substr(0, 6);
-			//     	var classe = ClasseByID.get(ID);
-			    	
-			//     	cor = escalaCores[classe];
-
-			//        	return {
-			//        		color: "black",
-			// 	        weight: 0.1,
-			// 	        fillColor: cor,
-			// 	        fillOpacity: 1,
-
-
-			//         }
-			//       }
-			// }).addTo(mymap);
-
-
-			// Mapas.on('mouseover', function(e) { 
-
-			// 	// e.layer.options.fillColor = "#c7c6bf";
-			// 	info.update(e);
-
-			// 	// var cidade = e.layer.feature.properties; 
-			// 	// var Nome = cidade.name;
-			// 	// var id = cidade.id.substr(0, 6);
-			// 	// var sus = susByID.get(id);
-			// 	// var conf = confByID.get(id);
-
-			// 	// var classe = ClasseByID.get(id);
-			// 	// e.layer.bindPopup(Nome+": Suspeitos: "+sus+
-			// 	// 	"; Confirmados: "+conf);
-
-			// 	});
-
-			// Mapas.on('click', function(e) { 
-			// 	console.log("teste");
-			// 	// e.layer.options.fillColor = "#c7c6bf";
-			// 	info.update(e);
-
-			// 	// var cidade = e.layer.feature.properties; 
-			// 	// var Nome = cidade.name;
-			// 	// var id = cidade.id.substr(0, 6);
-			// 	// var sus = susByID.get(id);
-			// 	// var conf = confByID.get(id);
-
-			// 	// var classe = ClasseByID.get(id);
-			// 	// e.layer.bindPopup(Nome+": Suspeitos: "+sus+
-			// 	// 	"; Confirmados: "+conf);
-
-			// 	});
-
-
 			let legend = L.control({position: 'bottomright'});
 			var Legendas = ["Cidades sem registro ("+(224-(TotalSus+TotalConf))+")","Com suspeitos (Não Informado)" ,"Com casos confirmados ("+TotalConf+")", "Com óbitos ("+TotalObt+")"]
 			

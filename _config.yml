@@ -29,14 +29,15 @@ analytics-google: 'UA-107602706-1'
 # if you don't want comments in your posts, set to false
 disqus: mydisqus
 
-facebook: Alexandre.Cajamos
-twitter: CajazeiraRamos
-instagram: Alexandre.Cajazeira
+# facebook: Alexandre.Cajamos
+# twitter: CajazeiraRamos
 linkedin: alexandrecajazeira
+instagram: Alexandre.Cajazeira
 github: CajazeiraRamos
 gitlab: AlexandreCajazeira
 lattes: "0238517471078564"
 email: alexandre.cajamos@gmail.com
+email: alexandreramos@ifpi.edu.br
 
 
 authors:

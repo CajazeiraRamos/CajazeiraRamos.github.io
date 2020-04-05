@@ -132,6 +132,7 @@
 
 		function zoomToFeature(e) {
 			mymap.fitBounds(e.target.getBounds());
+			resetHighlight(e);
 		}
 
 		function onEachFeature(feature, layer) {
