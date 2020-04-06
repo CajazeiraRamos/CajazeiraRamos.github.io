@@ -539,7 +539,7 @@
 				info.update();}
 			function zoomToFeature(e){
 				if(currentUF == e.target.feature.properties.UF && !MapaCentralizado()){
-					ResetMap();
+					Mapa.flyTo(Centro, 4);
 					info.update();
 				}else{
 					currentUF = e.target.feature.properties.UF;
