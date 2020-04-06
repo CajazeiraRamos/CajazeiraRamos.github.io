@@ -35,10 +35,19 @@
 	      	#mapaFonte{
 	      		margin-left: 5%;
 	      	}
-
-	      	.info {
+	      	/*#chart { width: 40%; }*/
+			.info {
 				padding: 6px 8px;
 				font: 22px/24px Arial, Helvetica, sans-serif;
+				background: white;
+				background: rgba(255,255,255,0.8);
+				box-shadow: 0 0 15px rgba(0,0,0,0.2);
+				border-radius: 5px;
+			}
+
+			.Row {
+				padding: 6px 8px;
+				font: 10px/16px Arial, Helvetica, sans-serif;
 				background: white;
 				background: rgba(255,255,255,0.8);
 				box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -56,134 +65,6 @@
 				opacity: 1;
 			}
 
-			/* The switch - the box around the slider */
-			.switch {
-			  position: relative;
-			  display: inline-block;
-			  width: 60px;
-			  height: 28px;
-			}
-
-			/* Hide default HTML checkbox */
-			.switch input {
-			  opacity: 0;
-			  width: 0;
-			  height: 0;
-			}
-
-			/* The slider */
-			.slider {
-			  position: absolute;
-			  cursor: pointer;
-			  top: 0;
-			  left: 0;
-			  right: 0;
-			  bottom: 0;
-			  background-color: #e34a33;
-			  opacity: 0.5;
-			  -webkit-transition: .4s;
-			  transition: .4s;
-			}
-
-			.slider:before {
-			  position: absolute;
-			  content: "";
-			  height: 20px;
-			  width: 20px;
-			  left: 4px;
-			  bottom: 4px;
-			  background-color: white;
-			  -webkit-transition: .4s;
-			  transition: .4s;
-			}
-
-			input:checked + .slider {
-			  background-color: #000000;
-			}
-
-			input:focus + .slider {
-			  box-shadow: 0 0 1px #2196F3;
-			}
-
-			input:checked + .slider:before {
-			  -webkit-transform: translateX(26px);
-			  -ms-transform: translateX(26px);
-			  transform: translateX(26px);
-			}
-
-			/* Rounded sliders */
-			.slider.round {
-			  border-radius: 34px;
-			}
-
-			.slider.round:before {
-			  border-radius: 50%;
-			}
-
-			/* The switch - the box around the slider */
-			.switch {
-			  position: relative;
-			  display: inline-block;
-			  width: 60px;
-			  height: 28px;
-			}
-
-			/* Hide default HTML checkbox */
-			.switch input {
-			  opacity: 0;
-			  width: 0;
-			  height: 0;
-			}
-
-			/* The slider */
-			.slider {
-			  position: absolute;
-			  cursor: pointer;
-			  top: 0;
-			  left: 0;
-			  right: 0;
-			  bottom: 0;
-			  background-color: #e34a33;
-			  opacity: 0.5;
-			  -webkit-transition: .4s;
-			  transition: .4s;
-			}
-
-			.slider:before {
-			  position: absolute;
-			  content: "";
-			  height: 20px;
-			  width: 20px;
-			  left: 4px;
-			  bottom: 4px;
-			  background-color: white;
-			  -webkit-transition: .4s;
-			  transition: .4s;
-			}
-
-			input:checked + .slider {
-			  background-color: #000000;
-			}
-
-			input:focus + .slider {
-			  box-shadow: 0 0 1px #2196F3;
-			}
-
-			input:checked + .slider:before {
-			  -webkit-transform: translateX(26px);
-			  -ms-transform: translateX(26px);
-			  transform: translateX(26px);
-			}
-
-			/* Rounded sliders */
-			.slider.round {
-			  border-radius: 34px;
-			}
-
-			.slider.round:before {
-			  border-radius: 50%;
-			}
-
 			.legend {
 				text-align: left;
 				line-height: 25px;
@@ -196,14 +77,71 @@
 				margin-right: 8px;
 				opacity: 0.7;
 			}
-			.Row {
-				padding: 6px 8px;
-				font: 10px/16px Arial, Helvetica, sans-serif;
-				background: white;
-				background: rgba(255,255,255,0.8);
-				box-shadow: 0 0 15px rgba(0,0,0,0.2);
-				border-radius: 5px;
+
+					/* The switch - the box around the slider */
+			.switch {
+			  position: relative;
+			  display: inline-block;
+			  width: 60px;
+			  height: 28px;
 			}
+
+			/* Hide default HTML checkbox */
+			.switch input {
+			  opacity: 0;
+			  width: 0;
+			  height: 0;
+			}
+
+			/* The slider */
+			.slider {
+			  position: absolute;
+			  cursor: pointer;
+			  top: 0;
+			  left: 0;
+			  right: 0;
+			  bottom: 0;
+			  background-color: #e34a33;
+			  opacity: 0.5;
+			  -webkit-transition: .4s;
+			  transition: .4s;
+			}
+
+			.slider:before {
+			  position: absolute;
+			  content: "";
+			  height: 20px;
+			  width: 20px;
+			  left: 4px;
+			  bottom: 4px;
+			  background-color: white;
+			  -webkit-transition: .4s;
+			  transition: .4s;
+			}
+
+			input:checked + .slider {
+			  background-color: #000000;
+			}
+
+			input:focus + .slider {
+			  box-shadow: 0 0 1px #2196F3;
+			}
+
+			input:checked + .slider:before {
+			  -webkit-transform: translateX(26px);
+			  -ms-transform: translateX(26px);
+			  transform: translateX(26px);
+			}
+
+			/* Rounded sliders */
+			.slider.round {
+			  border-radius: 34px;
+			}
+
+			.slider.round:before {
+			  border-radius: 50%;
+			}
+
 			.dc-chart g.row text {
 		      fill: black;
 		      padding: 6px 8px;
@@ -214,7 +152,6 @@
 		    .dc-chart g.row {
 		      height: 30px;
 		    }
-
 	    </style>
 	    <link rel="stylesheet" href="https://cajazeiraramos.github.io/css/style.css">
 	    <link rel="stylesheet" href="https://cajazeiraramos.github.io/assets/site1.css">
@@ -238,23 +175,65 @@
 		 </nav>
   		
 
-
+		<!-- <h1> Coronavírus no Brasil</h1> -->
 		<div id="mapid"></div>
 		<p id="mapaFonte">*Fonte: <a href="https://covid.saude.gov.br/">Ministério da Saúde</a> e <a href="https://www.ibge.gov.br/apps/populacao/projecao/index.html?utm_source=portal&utm_medium=popclock&utm_campaign=novo_popclock">IBGE</a></p>
 
 		<!-- https://covid.saude.gov.br/ -->
 			
 	    <script>
-	    	
-	 	   	// Mapa: 
-	 	   	var currentUF = "";
-	 	   	let chart, UF_DIM, taxaGroup, letGroup;
+	    	var currentUF = "";
+	 	   	var chart;
 
+			// Mapa: 
 
 			var Escala = 0; //0 para Taxa, 1 para letatidade.
-			var TotalCasos = 0, TotalMortes = 0;
-			let geojson;
-			
+			let geojson; 
+
+			let TotalCasos = 0,
+			TotalMortes = 0,
+			ConfByUF = d3.map(),
+			MortesByUF = d3.map(),
+			PopByUF = d3.map(),
+			NomeByUF = d3.map(),
+			TaxaByUF = d3.map(),
+			LetByUF = d3.map();
+
+			let quantize = getQuantize(Escala),
+			info = L.control(),  							//Dados por estado
+			legend = L.control({position: 'bottomright'}),  //Legenda de Cores
+			title = L.control({position: 'topright'}),      //Geral; 
+			RowChart = L.control({position: 'bottomleft'});
+
+	    	// Funções auxiliares para alternar mapas e escalas(ESC);
+	    	
+	    	function getColors(Esc){
+	    		if(Esc == 0){
+					return colorbrewer.Reds[6];
+	    		}
+	    		// return colorbrewer.Reds[7];
+	    		return ['#f7f7f7','#d9d9d9','#bdbdbd','#969696','#737373','#525252','#252525'];}
+	    	function getQuantize(Esc){
+	    		if(Esc == 0){
+	    			return (d3.scale.linear()
+					    .domain([0,3,6,9,12,15])
+					    .range(getColors(Escala)));
+	    		}
+	    		return (d3.scale.linear()
+		    		.domain([0,1,3,5,7,10,15])
+		    		.range(getColors(Escala)));}
+	    	function getIndicador(Esc, id){
+	    		if(Esc == 0){
+	    			return TaxaByUF.get(id);
+	    		}
+	    			return LetByUF.get(id);}
+	    	function getLabelsTitle(Esc){
+	    		if(Esc == 0){
+	    			return ("<b>Taxa por 100 mil/h </b> ");
+	    		}
+	    			return ("<b>Letalidade (%)</b> ");}
+
+
 	    	var Centro = [-13.360272, -51.805698];
 	      	var Mapa = L.map('mapid').setView(Centro, 4);
 
@@ -262,73 +241,47 @@
 
 
 	      	// Lendo CSV com D3: 
-	      	let ConfByUF = d3.map(),
-			MortesByUF = d3.map(),
-			PopByUF = d3.map(),
-			NomeByUF = d3.map(),
-			TaxaByUF = d3.map(),
-			LetByUF = d3.map();
 
-			let quantize = getQuantize(Escala);
-
-			let info = L.control(),
-			title = L.control({position: 'topright'}),
-			legend = L.control({position: 'bottomright'}),
-			RowChart = L.control({position: 'bottomleft'});
-
-	      	d3.csv("data/covid19Br.csv", function(data){
-	      		data.forEach(function(d) {
-	      			d.id = d.UF;
-	      			d.pop = d.Pop;
-
-	      			PopByUF.set(d.id, +d.pop);
-	      			NomeByUF.set(d.id, d.Nome);
-
-	      		});
-	      	});
-			
-			d3.csv("data/minSaude.csv", function(data){
+			d3.csv("data/covid19Br.csv", function(data){
 			        
 			    data.forEach(function(d) {
-			    // regiao;estadi;date;casosNovos;casosAcumulados;obitosNovos;obitosAcumulados
-			        d.regiao = d.regiao;
-			        d.uf = d.estado;
-			        d.date = d.date;
-			        d.casosNovos = +d.casosNovos;
-			        d.casosAcumulados = +d.casosAcumulados;
-			        d.obitosNovos = +d.obitosNovos;
-			        d.obitosAcumulados = +d.obitosAcumulados;
-			        d.populacao = PopByUF.get(d.uf);
-			        d.taxa = d3.round((d.casosAcumulados*100000)/d.populacao,2);
-			        d.let = d3.round(((d.obitosAcumulados*100)/d.casosAcumulados),2);
+			           	
+			    	d.nome = d.Nome;
+			        d.id = d.UF;
+			        d.pop = +d.Pop;
+			        d.conf = +d.Confirmados;
+			        d.mortes = +d.Mortes;
+			        d.taxa = (d.conf*100000)/d.pop; // Taxa de casos por 100 mil habitantes; 
+			        d.t = d3.round(d.taxa, 2);  
+			        d.let = d3.round(((d.mortes*100)/d.conf),2); //Letalidade
 
-			       	TotalCasos+=d.casosNovos;
-			        TotalMortes+=d.obitosNovos;
-			      	
-			        ConfByUF.set(d.uf,d.casosAcumulados);
-			        MortesByUF.set(d.uf,d.obitosAcumulados); 
-			        TaxaByUF.set(d.uf, +d.taxa); 
-			        LetByUF.set(d.uf, +d.let);
-
-
+			        TotalCasos+=d.conf;
+			        TotalMortes+=d.mortes;
+			           	
+			        NomeByUF.set(d.id, d.Nome);
+			        ConfByUF.set(d.id,d.conf);
+			        MortesByUF.set(d.id,d.mortes); 
+			        PopByUF.set(d.id,d.pop);
+			        TaxaByUF.set(d.id, d.t); 
+			        LetByUF.set(d.id, d.let);
 			    });
 
-				var facts = crossfilter(data);
-				
+			    var facts = crossfilter(data),
 				UF_DIM = facts.dimension(function(d){
-				    return d.uf;
+				    return d.id;
+				}),
+				confGroup = UF_DIM.group().reduceSum(function(d){
+					return d.conf;
 				});
-				
+
 				taxaGroup = UF_DIM.group().reduceSum(function(d){
 					return d.taxa;
 				});
 
 				letGroup = UF_DIM.group().reduceSum(function(d){
-					if(d.let)
-						return d.let;
-					return 0;
+					return d.let;
 				});
-			  
+				   
 
 				geojson = L.geoJson(Estados, {
 					style: style,
@@ -340,7 +293,7 @@
 					let div = L.DomUtil.create('div', 'info legend'),
 						labels = [];
 
-					    labels.push("<b>Brasil - 06 de Abril de 2020: </b> ");
+					    labels.push("<b>Brasil - 05 de Abril de 2020: </b> ");
 						labels.push('<i style=" background:#e34a33"></i> '+"Total de casos confirmados: <b>"+TotalCasos+"</b>");
 						labels.push('<i style=" background:black"></i> '+"Total de óbitos: <b>"+TotalMortes+"</b>");
 					
@@ -351,20 +304,20 @@
 						labels.push('Letalidade: '+letBr+'%');
 						
 						var seletor = '<b>Mapa (Taxa de Casos / Letalidade):</b> <br> Escolha:   <label class="switch">' + 
-							'<input type="checkbox" id="DefMap" onchange="TrocaEscala()">' + 
+							'<input type="checkbox" id="DefMap" onchange="Att()">' + 
 							'<span class="slider round"></span>' + 
 							'</label>';
 
 						labels.push(seletor);				
 						div.innerHTML = labels.join('<br>');
 						return div;};
-
 				info.onAdd = function (map) {
 					this._div = L.DomUtil.create('div', 'info');
 					this.update();
 					return this._div;};
 				info.update = function (e) {
 					if(e){
+						// console.log(e);
 						var UF = e.properties;
 						var id = UF.UF, 
 						Nome = NomeByUF.get(id),
@@ -390,11 +343,12 @@
 					n = brewerColors.length,
 					from, to;
 					labels.push(getLabelsTitle(Escala));
+					
 					for (let i = 0; i < n; i++) {
 						let c = brewerColors[i];
 					    let fromto = quantize.domain();//.invertExtent(c);
 						labels.push(
-							'<i style="background:' + brewerColors[i] + '"></i> ' +
+							'<i class = "legend" style="background:' + brewerColors[i] + '" transform></i>' +
 							d3.round(fromto[i],1) + (d3.round(fromto[i+1],1) ? ' &ndash; ' + d3.round(fromto[i+1],1) : '+'));
 					}
 
@@ -407,10 +361,30 @@
 					div.innerHTML = labels.join('<br>');
 					return div;
 				}
+
 				title.addTo(Mapa);
 				info.addTo(Mapa);
 				legend.addTo(Mapa);
 				RowChart.addTo(Mapa);
+
+				// d3.selectAll('i.legend')
+				// 	.append("svg")
+				// 	.attr("class", "svg-cx")
+				//     .attr("width", 18)
+				//     .attr("height", 18)
+				//   	.append("g")
+				//   	.attr("class", "cx")
+				//   	.append("rect")
+				//     .attr("width", 18)
+				//     .attr("height", 18)
+				//     .style("opacity", 0);
+				//     ;
+
+				
+				// d3.selectAll('g.cx')
+				// 	.on('mouseover', function(d){
+				// 		console.log(d);						
+				// 	});
 
 
 				chart = new dc.rowChart("#Row")
@@ -434,16 +408,21 @@
 
 
 					})
-
+					// .addFilterHandler(function (filters, filter) {
+					//     filters.length = 0; // empty the array
+					//     filters.push(filter);
+					//     return filters;
+					// })
 					.render();
 
-				MouseEventsRowChart();
 
+				AttMouseEventsBarChart();
+				
 			});	
 
-			function TrocaEscala(){
+			function Att(){
 
-	    			    		if(document.getElementById("DefMap").checked === true)
+	    		if(document.getElementById("DefMap").checked === true)
 					Escala = 1;
 				else
 				  	Escala = 0;	  
@@ -471,30 +450,48 @@
 			    		return quantize(ind);
 					}).render();
 
+				 AttMouseEventsBarChart();
 
-			
-				 MouseEventsRowChart();};
+				}  //Alterar Mapas;
+			function AttMouseEventsBarChart(){
 
-			// Mouse Events: 
-			function MouseEventsRowChart(){
-
+				// d3.selectAll('g.row').on('click', function(d){
+				// 	if(currentUF == d.key && !MapaCentralizado()){
+				// 		ResetMap();
+				// 		info.update();
+				// 	}else{
+				// 		var layer = getLayerByUF(d.key);
+				// 		zoomToFeaturev2(layer);
+				// 		currentUF = d.key;	
+				// 	}
+					
+				// });
 				d3.selectAll('g.row').on('click', function(d){
-					info.update(geojson._layers[d.key].feature)						
+					
+					var layer = getLayerByUF(d.key);
+					info.update(layer.feature)
+					// highlightFeaturev2(layer);
+						
 				});
 
 				d3.selectAll('g.row').on('mouseover', function(d){
-					highlightFeaturev2(geojson._layers[d.key]);						
+					
+					var layer = getLayerByUF(d.key);
+					highlightFeaturev2(layer);
+						
 				});
 
 				d3.selectAll('g.row').on('mouseout', function(d){
-					geojson.resetStyle(geojson._layers[d.key]);
+					var layer = getLayerByUF(d.key);
+					geojson.resetStyle(layer);
 					info.update();
-				});}
+				});
+			}
+				
+			// Funções auxiliares para manipular features no leaflet; 
+			
 
-
-			// Funções para tratar mapas: 
-
-		 	function style(feature) {
+		    function style(feature) {
 		    	var quantize = getQuantize(Escala);
 		    	var ind = getIndicador(Escala, feature.properties.UF);
 		    	return {
@@ -554,43 +551,21 @@
 							mouseout: resetHighlight,
 							click: zoomToFeature
 						});}
+			function zoomToFeaturev2(layer){
+			
+				Mapa.fitBounds(layer.getBounds());
+				info.update(layer.feature);}
 			function getLayerByUF(UF){
 
 				return(geojson._layers[UF]);}
+			function ResetMap(){
 
-	    	// Funções auxiliares para alternar mapas e escalas(ESC);
-	    	
-	    	function getColors(Esc){
-	    		if(Esc == 0){
-					return colorbrewer.Reds[6];
-	    		}
-	    		// return colorbrewer.Reds[7];
-	    		return ['#f7f7f7','#d9d9d9','#bdbdbd','#969696','#737373','#525252','#252525'];}
-	    	function getQuantize(Esc){
-	    		if(Esc == 0){
-	    			return (d3.scale.linear()
-					    .domain([0,3,6,9,12,15])
-					    .range(getColors(Escala)));
-	    		}
-	    		return (d3.scale.linear()
-		    		.domain([0,1,3,5,7,10,15])
-		    		.range(getColors(Escala)));}
-	    	function getIndicador(Esc, id){
-	    		if(Esc == 0){
-	    			return TaxaByUF.get(id);
-	    		}
-	    			return LetByUF.get(id);}
-	    	function getLabelsTitle(Esc){
-	    		if(Esc == 0){
-	    			return ("<b>Taxa por 100 mil/h </b> ");
-	    		}
-	    			return ("<b>Letalidade (%)</b> ");}
+				Mapa.flyTo(Centro, 4);}
 			function MapaCentralizado(){
 				var att = Mapa.getCenter();
 				if(att.lat == Centro[0] && att.lng == Centro[1])
 					return true;
 				return false;}
-
 
 
 	    </script>
