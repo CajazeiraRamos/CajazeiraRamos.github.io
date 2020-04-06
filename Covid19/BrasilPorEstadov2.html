@@ -168,8 +168,8 @@
 		<p>*Fonte: <a href="https://covid.saude.gov.br/">Ministério da Saúde</a> e <a href="https://www.ibge.gov.br/apps/populacao/projecao/index.html?utm_source=portal&utm_medium=popclock&utm_campaign=novo_popclock">IBGE</a></p>
 
 		<div id="DashBoard">
-			<h3>Valores Absolutos: Casos confirmados por estado.</h3> 
-			<div id="Row2"></div>
+			<!-- <h3>Valores Absolutos: Casos confirmados por estado.</h3>  -->
+			<!-- <div id="Row2"></div> -->
 
 		</div>
 		<!-- https://covid.saude.gov.br/ -->
@@ -281,45 +281,45 @@
 				
 				// console.log(document.getElementById('mapid').style);
 
-				chart2
-					.width(1200)
-					.height(900)
-					.margins({top: 5, left: 5, right: 10, bottom: 20})
-					.renderTitleLabel(true)
-					.renderLabel(true)
-					.controlsUseVisibility(false)
-					.legend(dc.legend().x(700).y(5).itemHeight(13).gap(5))
-					.elasticX(true)
-					.dimension(UF_DIM)
-					.group(confGroup)
-					.colors(function(d){
+				// chart2
+				// 	.width(1200)
+				// 	.height(900)
+				// 	.margins({top: 5, left: 5, right: 10, bottom: 20})
+				// 	.renderTitleLabel(true)
+				// 	.renderLabel(true)
+				// 	.controlsUseVisibility(false)
+				// 	.legend(dc.legend().x(700).y(5).itemHeight(13).gap(5))
+				// 	.elasticX(true)
+				// 	.dimension(UF_DIM)
+				// 	.group(confGroup)
+				// 	.colors(function(d){
 
-					    	let quantize = getQuantize(Escala),
-					    	ind = getIndicador(Escala, d),
-			    			cor = quantize(ind);
-			    			return quantize(ind);
+				// 	    	let quantize = getQuantize(Escala),
+				// 	    	ind = getIndicador(Escala, d),
+			 //    			cor = quantize(ind);
+			 //    			return quantize(ind);
 
 
-					    })
-					    .addFilterHandler(function (filters, filter) {
-					        filters.length = 0; // empty the array
-					        filters.push(filter);
-					        return filters;
-					    })
-					    .render();	
+				// 	    })
+				// 	    .addFilterHandler(function (filters, filter) {
+				// 	        filters.length = 0; // empty the array
+				// 	        filters.push(filter);
+				// 	        return filters;
+				// 	    })
+				// 	    .render();	
 
-				d3.selectAll('g.row').on('click', function(d){
-					if(currentUF == d.key && !MapaCentralizado()){
-						ResetMap();
-						info.update();
-					}else{
-						var layer = getLayerByUF(d.key);
-						zoomToFeaturev2(layer);
-						currentUF = d.key;	
+				// d3.selectAll('g.row').on('click', function(d){
+				// 	if(currentUF == d.key && !MapaCentralizado()){
+				// 		ResetMap();
+				// 		info.update();
+				// 	}else{
+				// 		var layer = getLayerByUF(d.key);
+				// 		zoomToFeaturev2(layer);
+				// 		currentUF = d.key;	
 	
-					}
+				// 	}
 					
-				});
+				// });
 				
 
 				   
@@ -435,6 +435,19 @@
 					})
 					.render();
 
+				d3.selectAll('g.row').on('click', function(d){
+					if(currentUF == d.key && !MapaCentralizado()){
+						ResetMap();
+						info.update();
+					}else{
+						var layer = getLayerByUF(d.key);
+						zoomToFeaturev2(layer);
+						currentUF = d.key;	
+	
+					}
+					
+				});
+				
 			});
 					
 			function Att(){
