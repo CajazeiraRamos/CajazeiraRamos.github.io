@@ -317,6 +317,7 @@
 					return this._div;};
 				info.update = function (e) {
 					if(e){
+						// console.log(e);
 						var UF = e.properties;
 						var id = UF.UF, 
 						Nome = NomeByUF.get(id),
@@ -468,7 +469,8 @@
 				d3.selectAll('g.row').on('click', function(d){
 					
 					var layer = getLayerByUF(d.key);
-					highlightFeaturev2(layer);
+					info.update(layer.feature)
+					// highlightFeaturev2(layer);
 						
 				});
 
