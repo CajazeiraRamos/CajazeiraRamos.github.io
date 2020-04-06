@@ -180,7 +180,7 @@
 
 	    	var chart;
 
-	    	var chart2 = new dc.rowChart("#Row2");
+	    	// var chart2 = new dc.rowChart("#Row2");
 
 			// Mapa: 
 
@@ -435,21 +435,10 @@
 					})
 					.render();
 
-				d3.selectAll('g.row').on('click', function(d){
-					if(currentUF == d.key && !MapaCentralizado()){
-						ResetMap();
-						info.update();
-					}else{
-						var layer = getLayerByUF(d.key);
-						zoomToFeaturev2(layer);
-						currentUF = d.key;	
-	
-					}
-					
-				});
+
 				
-			});
-					
+				
+			});	
 			function Att(){
 
 	    		if(document.getElementById("DefMap").checked === true)
@@ -480,13 +469,14 @@
 			    		return quantize(ind);
 					}).render();
 
-				chart2
-				 	.colors(function(d){
-					   	let ind = getIndicador(Escala, d),
-			    		cor = quantize(ind);
-			    		return quantize(ind);
-					})
-					.render();
+				// chart2
+				//  	.colors(function(d){
+				// 	   	let ind = getIndicador(Escala, d),
+			 //    		cor = quantize(ind);
+			 //    		return quantize(ind);
+				// 	})
+				// 	.render();
+				
 				d3.selectAll('g.row').on('click', function(d){
 					if(currentUF == d.key && !MapaCentralizado()){
 						ResetMap();
@@ -496,8 +486,23 @@
 						zoomToFeaturev2(layer);
 						currentUF = d.key;	
 	
-					}					
+					}
+					
 				});
+
+
+				d3.selectAll('g.row').on('mouseover', function(d){
+					
+					var layer = getLayerByUF(d.key);
+					highlightFeaturev2(layer);
+						
+				});
+
+				d3.selectAll('g.row').on('mouseout', function(d){
+					var layer = getLayerByUF(d.key);
+					geojson.resetStyle(layer);
+					info.update();
+				})
 
 				}  //Alterar Mapas;
 
@@ -529,6 +534,22 @@
 				}
 
 				info.update(layer.feature);}
+			function highlightFeaturev2(layer) {
+				
+				layer.setStyle({
+							weight: 3,
+							color: 'black',
+							dashArray: '',
+							fillOpacity: 0.7
+				});
+
+				if (!L.Browser.ie && !L.Browser.opera) {
+					layer.bringToFront();
+				}
+
+				info.update(layer.feature);}
+
+
 			function resetHighlight(e) {
 				geojson.resetStyle(e.target);
 				info.update();}
