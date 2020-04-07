@@ -197,8 +197,8 @@
 				opacity: 0.7;
 			}
 			.Row {
-				padding: 6px 8px;
-				font: 10px/16px Arial, Helvetica, sans-serif;
+				/*padding: 6px 8px;*/
+				/*font: 10px/16px Arial, Helvetica, sans-serif;*/
 				background: white;
 				background: rgba(255,255,255,0.8);
 				box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -206,10 +206,10 @@
 			}
 			.dc-chart g.row text {
 		      fill: black;
-		      padding: 6px 8px;
-				font: 14px/16px Arial, Helvetica, sans-serif;
-				background: white;
-				background: rgba(255,255,255,0.8);
+		      font: 14px/14px Arial, Helvetica, sans-serif;
+		      font-weight: bold;
+		      
+				
 		    }
 		    .dc-chart g.row {
 		      height: 30px;
@@ -255,8 +255,11 @@
 			var TotalCasos = 0, TotalMortes = 0;
 			let geojson;
 			
-	    	var Centro = [-13.360272, -51.805698];
-	      	var Mapa = L.map('mapid').setView(Centro, 4);
+	    	var Centro = [-14, -50],
+	    	MapaZoom = 4;
+
+	    	// var Centro = [-13.360272, -51.805698];
+	      	var Mapa = L.map('mapid').setView(Centro, MapaZoom);
 
 	      	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {maxZoom: 18, attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>`}).addTo(Mapa);
 
@@ -291,7 +294,6 @@
 			d3.csv("data/minSaude.csv", function(data){
 			        
 			    data.forEach(function(d) {
-			    	
 			    	// regiao;estadi;date;casosNovos;casosAcumulados;obitosNovos;obitosAcumulados
 			        d.regiao = d.regiao;
 			        d.uf = d.estado;
@@ -441,36 +443,27 @@
 				chart
 					.width(250)
 					.height(500)
-					.margins({top: 5, left: 5, right: 10, bottom: 20})
-					// .renderTitleLabel(true)
+					.margins({ top: 20, right: 20, bottom: 40, left: 30 })
 					.renderLabel(true)
-					// .controlsUseVisibility(false)
-					.legend(dc.legend().x(700).y(5).itemHeight(13).gap(5))
-					// .elasticX(true)
 					.dimension(UF_DIM)
 					.group(taxaGroup)
+					// .renderTitleLabel(true)
+					.labelOffsetX(-25)
 					.colors(function(d){
 						let quantize = getQuantize(Escala),
 					    ind = getIndicador(Escala, d),
 			    		cor = quantize(ind);
 			    		return quantize(ind);
 					})
-					// .order(d3.ascending)
 
 					.render();
 
-				// chart
-				// .title(function(d){
-				// 		d.value = getIndicador(Escala, d.key);
-				// }).render();
-
-				// MouseEventsRowChart();
+				MouseEventsRowChart();
 
 			});	
 
 			function TrocaEscala(){
-
-	    			    		if(document.getElementById("DefMap").checked === true)
+				if(document.getElementById("DefMap").checked === true)
 					Escala = 1;
 				else
 				  	Escala = 0;	  
@@ -500,7 +493,7 @@
 
 
 			
-				 // MouseEventsRowChart();
+				 MouseEventsRowChart();
 				};
 
 			// Mouse Events: 
@@ -567,7 +560,7 @@
 				info.update();}
 			function zoomToFeature(e){
 				if(currentUF == e.target.feature.properties.UF && !MapaCentralizado()){
-					Mapa.flyTo(Centro, 4);
+					Mapa.flyTo(Centro, MapaZoom);
 					info.update();
 				}else{
 					currentUF = e.target.feature.properties.UF;
