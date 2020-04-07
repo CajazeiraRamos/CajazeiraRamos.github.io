@@ -335,12 +335,13 @@
 	      	});
 			
 			d3.csv("data/minSaude.csv", function(data){
-				var dtgFormat = d3.time.format("%Y/%m/%d");	        
+				var dtgFormat = d3.time.format("%d/%m/%Y");	        
 			    data.forEach(function(d) {
 			    	// regiao;estadi;date;casosNovos;casosAcumulados;obitosNovos;obitosAcumulados
 			        d.regiao = d.regiao;
 			        d.uf = d.estado;
-			        d.date = d.date;
+			        d.date = dtgFormat.parse(d.data);
+			        // console.log(d.date);
 			        // d.date = ExcelDateToJSDate(d.data);
 			        d.casosNovos = +d.casosNovos;
 			        d.casosAcumulados = +d.casosAcumulados;
@@ -497,11 +498,11 @@
 			    		return quantize(ind);
 					});
 
-				var dia0 = new Date(2019, 12, 30);
-            	var dia1 = new Date(2020, 4, 10);
+				// var dia0 = new Date(2019, 12, 30);
+    //         	var dia1 = new Date(2020, 4, 7);
 
             	var dateDim = facts.dimension(function(d){
-					// console.log();
+					// console.log(d.date);
 					return d.date;
 
 				});
@@ -514,8 +515,9 @@
 				});
 
 				var dia0 = new Date(2020, 2, 1),
-            	dia1 = new Date(2020, 3, 6);
-
+            	dia1 = new Date(2020, 3, 7);
+            	// console.log(dia0);
+            	// console.log(dia1);
             	var PMorte = new Date(2020, 2, 15);
 
             	var x = (window.innerWidth);
