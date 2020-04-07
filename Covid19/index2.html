@@ -450,6 +450,7 @@
 				RowChart.onAdd = function(mymap){
 					let div = L.DomUtil.create('div', 'Row'),
 					labels = [];
+					// labels.push('<a class="reset"             href="javascript:chart.filterAll();dc.redrawAll();"            style="display: none;">reset</a>');
 					div.id = "Row";
 					div.innerHTML = labels.join('<br>');
 					return div;

@@ -196,9 +196,23 @@
 				margin-right: 8px;
 				opacity: 0.7;
 			}
+/*
+			#PieChart {
+				stroke: black;
+				padding: 10px 12px;
+				background: rgba(255,255,255,0.1);
+				box-shadow: 0 0 15px rgba(0,0,0,0.2);
+				border-radius: 20px;
+			}
+			#PieChart text{
+				stroke-opacity: 0.1;
+			  fill: black;
+		      font: 14px/14px Arial, Helvetica, sans-serif;
+		      font-weight: bold;
+			}*/
 			.Row {
-				padding: 6px 8px;
-				font: 10px/16px Arial, Helvetica, sans-serif;
+				/*padding: 6px 8px;*/
+				/*font: 10px/16px Arial, Helvetica, sans-serif;*/
 				background: white;
 				background: rgba(255,255,255,0.8);
 				box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -206,10 +220,10 @@
 			}
 			.dc-chart g.row text {
 		      fill: black;
-		      padding: 6px 8px;
-				font: 14px/16px Arial, Helvetica, sans-serif;
-				background: white;
-				background: rgba(255,255,255,0.8);
+		      font: 14px/14px Arial, Helvetica, sans-serif;
+		      font-weight: bold;
+		      
+				
 		    }
 		    .dc-chart g.row {
 		      height: 30px;
@@ -237,26 +251,51 @@
 			</ul>
 		 </nav>
   		
-
+		<div id="cab" class="info" style="margin-top: 100px; margin-left: 5%; width: 90%; height: 250px;"></div>
+		
 
 		<div id="mapid"></div>
 		<p id="mapaFonte">*Fonte: <a href="https://covid.saude.gov.br/">Ministério da Saúde</a> e <a href="https://www.ibge.gov.br/apps/populacao/projecao/index.html?utm_source=portal&utm_medium=popclock&utm_campaign=novo_popclock">IBGE</a></p>
 
-		<!-- https://covid.saude.gov.br/ -->
+		<!-- <div id= "PieChart"></div> -->
+		<div id="LineChart" class="info" style="margin-left: 7.5%;">
+			<h2 style="margin-left: 15%;">Novos casos confirmados por dia</h2>
+		</div>
+		<div id="LineChart2"class="info" style="margin-left: 2.5%;">
+			<h2 style="margin-left: 15%;">Novos óbitos por dia</h2>
+		</div>
+
+		<div id="BarChartUF" class="info" style="margin-left: 7.5%; margin-top: 50px;">
+			<h2 style="margin-left: 30%;" id = "titleBarChart">Valores Absolutos: Casos confirmados por Estado</h2>
+
+		</div>
+
 			
 	    <script>
 	    	
 	 	   	// Mapa: 
 	 	   	var currentUF = "";
-	 	   	let chart, UF_DIM, taxaGroup, letGroup;
+	 	   	let chart, UF_DIM, taxaGroup, letGroup, RegiaoDim, casosNovosGroup,obitosPorRegiaoGroup;
+
+	 	   	let ConfGroup, MortesGroup;
+
+	 	   	let UFChart;
+	 	   	// , GeralTable = new dc.dataTable("#dc-table-graph");
+
+	 	   	var lineChart = new dc.lineChart('#LineChart');
+	 	   	var lineChart2 = new dc.lineChart('#LineChart2');
+	 	   	var pieChart;
 
 
 			var Escala = 0; //0 para Taxa, 1 para letatidade.
 			var TotalCasos = 0, TotalMortes = 0;
 			let geojson;
 			
-	    	var Centro = [-13.360272, -51.805698];
-	      	var Mapa = L.map('mapid').setView(Centro, 4);
+	    	var Centro = [-13, -65],
+	    	MapaZoom = 4;
+
+	    	// var Centro = [-13.360272, -51.805698];
+	      	var Mapa = L.map('mapid').setView(Centro, MapaZoom);
 
 	      	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {maxZoom: 18, attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>`}).addTo(Mapa);
 
@@ -269,17 +308,25 @@
 			TaxaByUF = d3.map(),
 			LetByUF = d3.map();
 
-			let quantize = getQuantize(Escala);
+			let casosPorRegiao = d3.map(),
+			mortesPorRegiao = d3.map();
+
+			// var casosPorRegiao = [0,0,0,0,0];
+			
+
+			let quantize = getQuantize();
 
 			let info = L.control(),
 			title = L.control({position: 'topright'}),
 			legend = L.control({position: 'bottomright'}),
+			PieChart = L.control({position: 'bottomleft'}),
 			RowChart = L.control({position: 'bottomleft'});
 
 	      	d3.csv("data/covid19Br.csv", function(data){
 	      		data.forEach(function(d) {
 	      			d.id = d.UF;
 	      			d.pop = d.Pop;
+	      			d.Nome = d.Nome;
 
 	      			PopByUF.set(d.id, +d.pop);
 	      			NomeByUF.set(d.id, d.Nome);
@@ -288,19 +335,23 @@
 	      	});
 			
 			d3.csv("data/minSaude.csv", function(data){
-			        
+				var dtgFormat = d3.time.format("%Y/%m/%d");	        
 			    data.forEach(function(d) {
-			    // regiao;estadi;date;casosNovos;casosAcumulados;obitosNovos;obitosAcumulados
+			    	// regiao;estadi;date;casosNovos;casosAcumulados;obitosNovos;obitosAcumulados
 			        d.regiao = d.regiao;
 			        d.uf = d.estado;
 			        d.date = d.date;
+			        // d.date = ExcelDateToJSDate(d.data);
 			        d.casosNovos = +d.casosNovos;
 			        d.casosAcumulados = +d.casosAcumulados;
 			        d.obitosNovos = +d.obitosNovos;
 			        d.obitosAcumulados = +d.obitosAcumulados;
 			        d.populacao = PopByUF.get(d.uf);
-			        d.taxa = d3.round((d.casosAcumulados*100000)/d.populacao,2);
-			        d.let = d3.round(((d.obitosAcumulados*100)/d.casosAcumulados),2);
+			        d.t = (d.casosAcumulados*100000)/d.populacao;
+			        d.l = (d.obitosAcumulados*100)/d.casosAcumulados;
+
+			        d.taxa = d3.round(d.t, 2);
+			        d.let = d3.round(d.l, 2);
 
 			       	TotalCasos+=d.casosNovos;
 			        TotalMortes+=d.obitosNovos;
@@ -310,17 +361,19 @@
 			        TaxaByUF.set(d.uf, +d.taxa); 
 			        LetByUF.set(d.uf, +d.let);
 
-
 			    });
 
 				var facts = crossfilter(data);
-				
+			
 				UF_DIM = facts.dimension(function(d){
 				    return d.uf;
 				});
 				
 				taxaGroup = UF_DIM.group().reduceSum(function(d){
-					return d.taxa;
+					if(d.taxa)
+						return d.taxa;
+					else
+						return 0;
 				});
 
 				letGroup = UF_DIM.group().reduceSum(function(d){
@@ -328,36 +381,33 @@
 						return d.let;
 					return 0;
 				});
-			  
+
+			  	let labels = [];
+
+					labels.push('<div id ="cont"; style="margin-left:40%;" ><h1>Brasil - 06 de Abril de 2020: </h1> ');
+					labels.push('<i style=" background:#e34a33"></i> '+"Total de casos confirmados: <b>"+TotalCasos+"</b>");
+						labels.push('<i style=" background:black"></i> '+"Total de óbitos: <b>"+TotalMortes+"</b>");
+					
+					let taxaBR = d3.round((TotalCasos*100000)/210147125,2),
+					letBr = d3.round(((TotalMortes*100)/TotalCasos),2);
+
+					labels.push(taxaBR+' casos por 100 mil / h');
+					labels.push('Letalidade: '+letBr+'%');
+						
+					var seletor = '<b>Mapa (Taxa de Casos / Letalidade):</b> <br> Escolha:   <label class="switch">' + 
+						'<input type="checkbox" id="DefMap" onchange="TrocaEscala()">' + 
+						'<span class="slider round"></span>' + 
+						'</label>'+'<div>';
+
+					labels.push(seletor);				
+						
+				document.getElementById("cab").innerHTML = labels.join('<br>');
 
 				geojson = L.geoJson(Estados, {
 					style: style,
 					onEachFeature: onEachFeature
 				}).addTo(Mapa);	
 
-				title.onAdd = function (mymap) {
-					
-					let div = L.DomUtil.create('div', 'info legend'),
-						labels = [];
-
-					    labels.push("<b>Brasil - 05 de Abril de 2020: </b> ");
-						labels.push('<i style=" background:#e34a33"></i> '+"Total de casos confirmados: <b>"+TotalCasos+"</b>");
-						labels.push('<i style=" background:black"></i> '+"Total de óbitos: <b>"+TotalMortes+"</b>");
-					
-						let taxaBR = d3.round((TotalCasos*100000)/210147125,2),
-						letBr = d3.round(((TotalMortes*100)/TotalCasos),2);
-
-						labels.push(taxaBR+' casos por 100 mil / h');
-						labels.push('Letalidade: '+letBr+'%');
-						
-						var seletor = '<b>Mapa (Taxa de Casos / Letalidade):</b> <br> Escolha:   <label class="switch">' + 
-							'<input type="checkbox" id="DefMap" onchange="TrocaEscala()">' + 
-							'<span class="slider round"></span>' + 
-							'</label>';
-
-						labels.push(seletor);				
-						div.innerHTML = labels.join('<br>');
-						return div;};
 
 				info.onAdd = function (map) {
 					this._div = L.DomUtil.create('div', 'info');
@@ -370,17 +420,17 @@
 						Nome = NomeByUF.get(id),
 						conf = ConfByUF.get(id),
 						mortes = MortesByUF.get(id),
-						taxa = TaxaByUF.get(id),
+						tx = TaxaByUF.get(id),
 						pop = PopByUF.get(id),
 						let = LetByUF.get(id);
 
-						var quantize = getQuantize(Escala),
-		    			ind = getIndicador(Escala, id),
+						var quantize = getQuantize(),
+		    			ind = getIndicador(id),
 		    			cor = quantize(ind);
 					//  + 'População: ' + pop + '<br /><br />' 
 					}
 					this._div.innerHTML = '<h3>Dados por estado* </h3>' +  (e ?
-								'<b>' + Nome + '</b><br />' + conf + ' Casos confirmados' + '</b><br />' + mortes + ' Óbito(s)' + '</b><br />' + taxa + ' para cada 100mil/h'+ '</b><br />' + let + '% Letalidade'+ '</b><br />'+
+								'<b>' + Nome + '</b><br />' + conf + ' Casos confirmados' + '</b><br />' + mortes + ' Óbito(s)' + '</b><br />' + tx + ' para cada 100mil/h'+ '</b><br />' + let + '% Letalidade'+ '</b><br />'+
 								'<i style="margin-left:25%; width:'+let+'px; background:black"></i>'+ '<i id="casos" style="width:'+(100-let)+'px; background:'+cor+'"></i>' 
 								: 'Passe o mouse sobre seu Estado ou click');};
 				legend.onAdd = function (map) {
@@ -389,7 +439,7 @@
 					labels = [],
 					n = brewerColors.length,
 					from, to;
-					labels.push(getLabelsTitle(Escala));
+					labels.push(getLabelsTitle());
 					for (let i = 0; i < n; i++) {
 						let c = brewerColors[i];
 					    let fromto = quantize.domain();//.invertExtent(c);
@@ -403,54 +453,194 @@
 				RowChart.onAdd = function(mymap){
 					let div = L.DomUtil.create('div', 'Row'),
 					labels = [];
+					// labels.push('<a class="reset"             href="javascript:chart.filterAll();dc.redrawAll();"            style="display: none;">reset</a>');
 					div.id = "Row";
 					div.innerHTML = labels.join('<br>');
 					return div;
 				}
-				title.addTo(Mapa);
+				PieChart.onAdd = function(mymap){
+					let div = L.DomUtil.create('div', 'Row'),
+					labels = [];
+					div.id = "PieChart";
+					div.innerHTML = labels.join('<br>');
+					return div;
+				}
+
 				info.addTo(Mapa);
 				legend.addTo(Mapa);
 				RowChart.addTo(Mapa);
+				PieChart.addTo(Mapa);			
 
+				// Gambiarra: (Não sei pq os dados estão sendo povoados errado no gruop)
+			    taxaGroup.top(Infinity).forEach(function (x) {
+			        x.value = TaxaByUF.get(x.key);
+			    });
+			    letGroup.top(Infinity).forEach(function (x) {
+			        x.value = LetByUF.get(x.key);
+			    });
+				// Fim da Gambiarra; 
 
-				chart = new dc.rowChart("#Row")
+				chart = new dc.rowChart("#Row");
+
 				chart
-					.width(300)
+					.width(250)
 					.height(500)
-					.margins({top: 5, left: 5, right: 10, bottom: 20})
-					.renderTitleLabel(false)
+					.margins({ top: 20, right: 20, bottom: 40, left: 30 })
 					.renderLabel(true)
-					.controlsUseVisibility(false)
-					.legend(dc.legend().x(700).y(5).itemHeight(13).gap(5))
-					.elasticX(true)
 					.dimension(UF_DIM)
 					.group(taxaGroup)
+					.labelOffsetX(-25)
 					.colors(function(d){
-
-						let quantize = getQuantize(Escala),
-					    ind = getIndicador(Escala, d),
+						let quantize = getQuantize(),
+					    ind = getIndicador(d),
 			    		cor = quantize(ind);
 			    		return quantize(ind);
+					});
+
+				var dia0 = new Date(2019, 12, 30);
+            	var dia1 = new Date(2020, 4, 10);
+
+            	var dateDim = facts.dimension(function(d){
+					// console.log();
+					return d.date;
+
+				});
+
+				var NovosCasosGroup = dateDim.group().reduceSum(function(d){
+					return d.casosNovos;
+				});
+				var NovosObitosGroup = dateDim.group().reduceSum(function(d){
+					return d.obitosNovos;
+				});
+
+				var dia0 = new Date(2020, 2, 1),
+            	dia1 = new Date(2020, 3, 6);
+
+            	var PMorte = new Date(2020, 2, 15);
+
+            	var x = (window.innerWidth);
+
+			 	lineChart 
+			 		.width(x*0.4)
+		            .height(250)
+		            .elasticY(true)
+		            // .x(d3.scale.linear().domain([43900,43927]))
+		            .x(d3.time.scale().domain([PMorte, dia1]))
+		            .margins({left: 50, top: 10, right: 10, bottom: 20})
+		            .renderArea(true)
+		            .brushOn(false)
+		            .renderDataPoints(true)
+		            .clipPadding(10)
+		            .colors(['#e34a33'])
+		            // .yAxisLabel("This is the Y Axis!")
+		            .dimension(dateDim)
+		            .group(NovosCasosGroup);
+
+		        lineChart2 
+			 		.width(x*0.4)
+		            .height(250)
+		            .elasticY(true)
+		            // .x(d3.scale.linear().domain([43900,43927]))
+		            .x(d3.time.scale().domain([PMorte, dia1]))
+		            .margins({left: 50, top: 10, right: 10, bottom: 20})
+		            .renderArea(true)
+		            .brushOn(false)
+		            .renderDataPoints(true)
+		            .clipPadding(10)
+		            .colors(['black'])
+		            // .yAxisLabel("This is the Y Axis!")
+		            .dimension(dateDim)
+		            .group(NovosObitosGroup);
+ 		  		
+
+		        RegiaoDim = facts.dimension(function(d){
+					return d.regiao;
+				});
+		        casosNovosGroup = RegiaoDim.group().reduceSum(function(d){
+		        	// return getTaxa(d.regiao);
+					return d.casosNovos;
+				});
+		        obitosPorRegiaoGroup = RegiaoDim.group().reduceSum(function(d){
+					return d.obitosNovos;
+				});
+				// Para atualizar o d3Map CasosPorRegiao
+
+				casosNovosGroup.top(Infinity).forEach(function (x) {
+			        casosPorRegiao.set(x.key, x.value);
+			        x.value = getTaxa(x.key);
+		        	// return getTaxa(d.regiao);
+			    });	
+
+			    obitosPorRegiaoGroup.top(Infinity).forEach(function (x) {
+			        mortesPorRegiao.set(x.key, x.value);
+			        Escala = 1;
+			        x.value = getTaxa(x.key);
+			        Escala = 0;
+			    });	
 
 
+				pieChart = new dc.rowChart('#PieChart');
+
+		      	pieChart
+			      	.width(250)
+				    .height(250)
+				    .dimension(RegiaoDim)
+				    .group(casosNovosGroup)
+				    .colors(function(d){
+				    	var quantize = getQuantize();
+				    	return quantize(getTaxa(d));
+				    })				    
+				    ;
+
+
+	            ConfGroup = UF_DIM.group().reduceSum(function(d){
+					return +d.casosNovos;
+				})
+	            MortesGroup = UF_DIM.group().reduceSum(function(d){
+					return +d.obitosNovos;
+				})
+	   
+				UFChart = new dc.barChart('#BarChartUF');
+
+				UFChart
+					.width(x*0.83)
+	                .height(400)
+	                .margins({left: 50, top: 50, right: 10, bottom: 20})
+					.x(d3.scale.ordinal().domain(UF_DIM))
+					.dimension(UF_DIM)
+					.group(ConfGroup, 'Casos confirmados')
+					.xUnits(dc.units.ordinal)
+					.renderHorizontalGridLines(true)
+                    .renderVerticalGridLines(true)
+					// .stack(MortesGroup, 'Óbitos', sel_stack('Mortes'))
+					.title(function(d){
+						return(d.key +':'+d.value);
+					})
+					.legend(dc.legend().x(100).y(20).itemHeight(20).gap(10))
+					.colors(function(d){
+						if(d == "Óbitos")
+							return "black";
+						else
+							return '#fb6a4a';
 					})
 
-					.render();
+					;
+
+				dc.renderAll();
 
 				MouseEventsRowChart();
 
 			});	
 
 			function TrocaEscala(){
-
-	    			    		if(document.getElementById("DefMap").checked === true)
+				if(document.getElementById("DefMap").checked === true)
 					Escala = 1;
 				else
 				  	Escala = 0;	  
 				  
 				if(geojson)Mapa.removeLayer(geojson);
 
-				quantize = getQuantize(Escala);
+				quantize = getQuantize();
 				geojson = L.geoJson(Estados, {
 					style: style,
 					onEachFeature: onEachFeature
@@ -458,45 +648,89 @@
 
 				legend.addTo(Mapa);
 
+// "titleBarChart">Valores Absolutos: Casos confirmados por Estado</h2>
+
+
 				if(Escala == 0){
 					chart.group(taxaGroup);
+					pieChart.group(casosNovosGroup);
+					console.log(document.getElementById("titleBarChart"));
+					UFChart.group(ConfGroup, 'Casos confirmados');
+						
 				}else{
 					chart.group(letGroup);
+					pieChart.group(obitosPorRegiaoGroup);
+					UFChart.group(MortesGroup, 'Óbitos');
 				}
 
 				chart
 				 	.colors(function(d){
-					   	let ind = getIndicador(Escala, d),
+					   	let ind = getIndicador(d),
 			    		cor = quantize(ind);
 			    		return quantize(ind);
-					}).render();
+					});
 
-
+				pieChart
+					.colors(function(d){
+						// console.log("teste");
+				    	var quantize = getQuantize();
+				    	return quantize(getTaxa(d));
+				    });
 			
-				 MouseEventsRowChart();};
+				dc.renderAll();
+				MouseEventsRowChart();
+				};
 
 			// Mouse Events: 
 			function MouseEventsRowChart(){
-
-				d3.selectAll('g.row').on('click', function(d){
-					info.update(geojson._layers[d.key].feature)						
-				});
-
-				d3.selectAll('g.row').on('mouseover', function(d){
+				
+				var UFChart = d3.selectAll("g.row")
+					.filter(function(d) { 
+						if(geojson._layers[d.key])
+							return true;
+						return false;
+					})
+					.on('mouseover', function(d){
 					highlightFeaturev2(geojson._layers[d.key]);						
-				});
+					})
+					.on('mouseout', function(d){
+						geojson.resetStyle(geojson._layers[d.key]);
+						info.update();
+					})
+					.on('click', function(d){
+						info.update(geojson._layers[d.key].feature)						
+					})
 
-				d3.selectAll('g.row').on('mouseout', function(d){
-					geojson.resetStyle(geojson._layers[d.key]);
-					info.update();
-				});}
+				;}
 
+			// Funções para Regiões:
+
+			var colorScale = d3.scale.ordinal().domain(["Sudeste", "Nordeste", "Sul", "Centro-Oeste", "Norte"]).range(['#b3e2cd','#fdcdac','#cbd5e8','#f4cae4','#e6f5c9']); 
+
+			var siglaScale = d3.scale.ordinal().domain(["Sudeste", "Nordeste", "Sul", "Centro-Oeste", "Norte"]).range(['SE','NE','S','CO','N']); 
+
+			var popScale = d3.scale.ordinal().domain(["Sudeste", "Nordeste", "Sul", "Centro-Oeste", "Norte"]).range(['88371433','57071654','29975984','16297074','18430980']); 
+
+// d.t = (d.casosAcumulados*100000)/d.populacao;
+			        // d.l = (d.obitosAcumulados*100)/d.casosAcumulados;
+			function getTaxa(Nome){
+				// d.l = (d.obitosAcumulados*100)/d.casosAcumulados;
+				var casos = casosPorRegiao.get(Nome),
+				mortes = mortesPorRegiao.get(Nome),
+				pop = popScale(Nome);
+
+				if(Escala == 0){
+					return d3.round((casos*100000)/pop,2);
+				}else{
+					return d3.round((mortes*100)/casos,2);
+				}
+			}
 
 			// Funções para tratar mapas: 
 
 		 	function style(feature) {
-		    	var quantize = getQuantize(Escala);
-		    	var ind = getIndicador(Escala, feature.properties.UF);
+		    	var quantize = getQuantize();
+		    	var ind = getIndicador(feature.properties.UF);
 		    	return {
 					weight: 2,
 					opacity: 1,
@@ -539,7 +773,7 @@
 				info.update();}
 			function zoomToFeature(e){
 				if(currentUF == e.target.feature.properties.UF && !MapaCentralizado()){
-					ResetMap();
+					Mapa.flyTo(Centro, MapaZoom);
 					info.update();
 				}else{
 					currentUF = e.target.feature.properties.UF;
@@ -566,8 +800,8 @@
 	    		}
 	    		// return colorbrewer.Reds[7];
 	    		return ['#f7f7f7','#d9d9d9','#bdbdbd','#969696','#737373','#525252','#252525'];}
-	    	function getQuantize(Esc){
-	    		if(Esc == 0){
+	    	function getQuantize(){
+	    		if(Escala == 0){
 	    			return (d3.scale.linear()
 					    .domain([0,3,6,9,12,15])
 					    .range(getColors(Escala)));
@@ -575,13 +809,13 @@
 	    		return (d3.scale.linear()
 		    		.domain([0,1,3,5,7,10,15])
 		    		.range(getColors(Escala)));}
-	    	function getIndicador(Esc, id){
-	    		if(Esc == 0){
+	    	function getIndicador(id){
+	    		if(Escala == 0){
 	    			return TaxaByUF.get(id);
 	    		}
 	    			return LetByUF.get(id);}
-	    	function getLabelsTitle(Esc){
-	    		if(Esc == 0){
+	    	function getLabelsTitle(){
+	    		if(Escala == 0){
 	    			return ("<b>Taxa por 100 mil/h </b> ");
 	    		}
 	    			return ("<b>Letalidade (%)</b> ");}
@@ -591,7 +825,24 @@
 					return true;
 				return false;}
 
+			function ExcelDateToJSDate(serial) {
+			   var utc_days  = Math.floor(serial - 25569);
+			   var utc_value = utc_days * 86400;                                        
+			   var date_info = new Date(utc_value * 1000);
 
+			   var fractional_day = serial - Math.floor(serial) + 0.0000001;
+
+			   var total_seconds = Math.floor(86400 * fractional_day);
+
+			   var seconds = total_seconds % 60;
+
+			   total_seconds -= seconds;
+
+			   var hours = Math.floor(total_seconds / (60 * 60));
+			   var minutes = Math.floor(total_seconds / 60) % 60;
+
+			   return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds);
+			}
 
 	    </script>
 
