@@ -265,7 +265,8 @@
 	    	
 	 	   	// Mapa: 
 	 	   	var currentUF = "";
-	 	   	let chart, UF_DIM, taxaGroup, letGroup;
+	 	   	let chart, UF_DIM, taxaGroup, letGroup, RegiaoDim, casosNovosGroup,obitosPorRegiaoGroup;
+
 	 	   	var lineChart = new dc.lineChart('#LineChart');
 	 	   	var lineChart2 = new dc.lineChart('#LineChart2');
 	 	   	var pieChart;
@@ -547,13 +548,14 @@
 		            .dimension(dateDim)
 		            .group(NovosObitosGroup);
  		  		
-		        var RegiaoDim = facts.dimension(function(d){
+
+		        RegiaoDim = facts.dimension(function(d){
 					return d.regiao;
 				});
-		        var casosNovosGroup = RegiaoDim.group().reduceSum(function(d){
+		        casosNovosGroup = RegiaoDim.group().reduceSum(function(d){
 					return d.casosNovos;
 				});
-		        var obitosPorRegiaoGroup = RegiaoDim.group().reduceSum(function(d){
+		        obitosPorRegiaoGroup = RegiaoDim.group().reduceSum(function(d){
 					return d.obitosNovos;
 				});
 				// Para atualizar o d3Map CasosPorRegiao
@@ -616,8 +618,10 @@
 
 				if(Escala == 0){
 					chart.group(taxaGroup);
+					pieChart.group(casosNovosGroup);	
 				}else{
 					chart.group(letGroup);
+					pieChart.group(obitosPorRegiaoGroup);
 				}
 
 				chart
