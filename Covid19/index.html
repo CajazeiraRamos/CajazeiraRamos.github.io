@@ -280,6 +280,7 @@
 	      		data.forEach(function(d) {
 	      			d.id = d.UF;
 	      			d.pop = d.Pop;
+	      			d.Nome = d.Nome;
 
 	      			PopByUF.set(d.id, +d.pop);
 	      			NomeByUF.set(d.id, d.Nome);
@@ -290,7 +291,8 @@
 			d3.csv("data/minSaude.csv", function(data){
 			        
 			    data.forEach(function(d) {
-			    // regiao;estadi;date;casosNovos;casosAcumulados;obitosNovos;obitosAcumulados
+			    	
+			    	// regiao;estadi;date;casosNovos;casosAcumulados;obitosNovos;obitosAcumulados
 			        d.regiao = d.regiao;
 			        d.uf = d.estado;
 			        d.date = d.date;
@@ -299,8 +301,11 @@
 			        d.obitosNovos = +d.obitosNovos;
 			        d.obitosAcumulados = +d.obitosAcumulados;
 			        d.populacao = PopByUF.get(d.uf);
-			        d.taxa = d3.round((d.casosAcumulados*100000)/d.populacao,2);
-			        d.let = d3.round(((d.obitosAcumulados*100)/d.casosAcumulados),2);
+			        d.t = (d.casosAcumulados*100000)/d.populacao;
+			        d.l = (d.obitosAcumulados*100)/d.casosAcumulados;
+
+			        d.taxa = d3.round(d.t, 2);
+			        d.let = d3.round(d.l, 2);
 
 			       	TotalCasos+=d.casosNovos;
 			        TotalMortes+=d.obitosNovos;
@@ -320,7 +325,10 @@
 				});
 				
 				taxaGroup = UF_DIM.group().reduceSum(function(d){
-					return d.taxa;
+					if(d.taxa)
+						return d.taxa;
+					else
+						return 0;
 				});
 
 				letGroup = UF_DIM.group().reduceSum(function(d){
@@ -328,6 +336,10 @@
 						return d.let;
 					return 0;
 				});
+
+				let ConfGroup = UF_DIM.group().reduceSum(function(d){
+					return d.casosAcumulados;
+				})
 			  
 
 				geojson = L.geoJson(Estados, {
@@ -370,7 +382,7 @@
 						Nome = NomeByUF.get(id),
 						conf = ConfByUF.get(id),
 						mortes = MortesByUF.get(id),
-						taxa = TaxaByUF.get(id),
+						tx = TaxaByUF.get(id),
 						pop = PopByUF.get(id),
 						let = LetByUF.get(id);
 
@@ -380,7 +392,7 @@
 					//  + 'População: ' + pop + '<br /><br />' 
 					}
 					this._div.innerHTML = '<h3>Dados por estado* </h3>' +  (e ?
-								'<b>' + Nome + '</b><br />' + conf + ' Casos confirmados' + '</b><br />' + mortes + ' Óbito(s)' + '</b><br />' + taxa + ' para cada 100mil/h'+ '</b><br />' + let + '% Letalidade'+ '</b><br />'+
+								'<b>' + Nome + '</b><br />' + conf + ' Casos confirmados' + '</b><br />' + mortes + ' Óbito(s)' + '</b><br />' + tx + ' para cada 100mil/h'+ '</b><br />' + let + '% Letalidade'+ '</b><br />'+
 								'<i style="margin-left:25%; width:'+let+'px; background:black"></i>'+ '<i id="casos" style="width:'+(100-let)+'px; background:'+cor+'"></i>' 
 								: 'Passe o mouse sobre seu Estado ou click');};
 				legend.onAdd = function (map) {
@@ -407,37 +419,52 @@
 					div.innerHTML = labels.join('<br>');
 					return div;
 				}
+
 				title.addTo(Mapa);
 				info.addTo(Mapa);
 				legend.addTo(Mapa);
 				RowChart.addTo(Mapa);
 
+				// console.log(taxaGroup.top(2));
 
-				chart = new dc.rowChart("#Row")
+				// Gambiarra: (Não sei pq os dados estão sendo povoados errado no gruop)
+			    taxaGroup.top(Infinity).forEach(function (x) {
+			        x.value = TaxaByUF.get(x.key);
+			    });
+			    letGroup.top(Infinity).forEach(function (x) {
+			        x.value = LetByUF.get(x.key);
+			    });
+				// Fim da Gambiarra; 
+
+				chart = new dc.rowChart("#Row");
+
 				chart
-					.width(300)
+					.width(250)
 					.height(500)
 					.margins({top: 5, left: 5, right: 10, bottom: 20})
-					.renderTitleLabel(false)
+					// .renderTitleLabel(true)
 					.renderLabel(true)
-					.controlsUseVisibility(false)
+					// .controlsUseVisibility(false)
 					.legend(dc.legend().x(700).y(5).itemHeight(13).gap(5))
-					.elasticX(true)
+					// .elasticX(true)
 					.dimension(UF_DIM)
 					.group(taxaGroup)
 					.colors(function(d){
-
 						let quantize = getQuantize(Escala),
 					    ind = getIndicador(Escala, d),
 			    		cor = quantize(ind);
 			    		return quantize(ind);
-
-
 					})
+					// .order(d3.ascending)
 
 					.render();
 
-				MouseEventsRowChart();
+				// chart
+				// .title(function(d){
+				// 		d.value = getIndicador(Escala, d.key);
+				// }).render();
+
+				// MouseEventsRowChart();
 
 			});	
 
@@ -473,7 +500,8 @@
 
 
 			
-				 MouseEventsRowChart();};
+				 // MouseEventsRowChart();
+				};
 
 			// Mouse Events: 
 			function MouseEventsRowChart(){
