@@ -14,6 +14,7 @@
 
 	    <script type="text/javascript" src="data/UF.js"></script>
 		<link rel="stylesheet" href="css/dc.css">
+
 		<script src="js/crossfilter.js" charset="utf-8"></script>
 	    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	    <script src="js/dc.js" charset="utf-8"></script>
@@ -27,9 +28,10 @@
 	      	}
 	      	#mapid { 
 	      		width: 90%;
-	      		height: 1000px;
+	      		height: 900px;
 	      		margin-left: 5%;
 	      		margin-top: 60px;
+	      		border-radius: 15px;
 
 	      	}
 	      	#mapaFonte{
@@ -42,7 +44,7 @@
 				background: white;
 				background: rgba(255,255,255,0.8);
 				box-shadow: 0 0 15px rgba(0,0,0,0.2);
-				border-radius: 5px;
+				border-radius: 15px;
 			}
 			.info h3 {
 				margin: 0 0 5px;
@@ -196,20 +198,13 @@
 				margin-right: 8px;
 				opacity: 0.7;
 			}
-/*
-			#PieChart {
-				stroke: black;
-				padding: 10px 12px;
-				background: rgba(255,255,255,0.1);
-				box-shadow: 0 0 15px rgba(0,0,0,0.2);
-				border-radius: 20px;
-			}
-			#PieChart text{
-				stroke-opacity: 0.1;
+
+			#PieChartRg text{
+			  stroke-opacity: 0.1;
 			  fill: black;
 		      font: 14px/14px Arial, Helvetica, sans-serif;
 		      font-weight: bold;
-			}*/
+			}
 			.Row {
 				/*padding: 6px 8px;*/
 				/*font: 10px/16px Arial, Helvetica, sans-serif;*/
@@ -219,6 +214,17 @@
 				border-radius: 5px;
 			}
 			.dc-chart g.row text {
+		      fill: black;
+		      font: 14px/14px Arial, Helvetica, sans-serif;
+		      font-weight: bold;
+		      
+				
+		    }
+		    .dc-chart g.row {
+		      height: 30px;
+		    }
+
+		    #BarChartUF text {
 		      fill: black;
 		      font: 14px/14px Arial, Helvetica, sans-serif;
 		      font-weight: bold;
@@ -251,33 +257,49 @@
 			</ul>
 		 </nav>
   		
-		<div id="cab" class="info" style="margin-top: 100px; margin-left: 5%; width: 90%; height: 250px;"></div>
-		
+		<!-- <div id="cab" class="info" style="margin-top: 100px; margin-left: 5%; width: 90%; height: 250px;"></div>
+		 -->
 
-		<div id="mapid">
+		<div id ="All">
+
+			<div id="mapid"></div>
+			
+			<p id="txtControl" style="margin-left:8%;">			
+			|| Mapa (Taxa de Casos / Letalidade):
+			<label class="switch"> 
+				<input type="checkbox" id="DefMap" onchange="TrocaEscala()">  
+				<span class="slider round"></span> 
+			</label>
+
+			|| Mapa por Estado / Região: ( - )
+			|| Fundo do Mapa ( - )
+			|| Aqui a linha do tempo para animar mapa e gráficos;
+			</p>
+
+			
+			<div class="info" id="DashBoard" style="margin-left: 5%; margin-top: 20px; width: 89%; height: 750px;">
+				
+				<h2 style="margin-left: 20%;" id = "titleBarChart">Valores Absolutos: Casos confirmados e mortes por Região e Estado</h2>
+
+				<div id="PieChartRg"></div>
+				<div id="BarChartUF"></div>
+
+				<div id="LineChart">
+					<h2 style="margin-left: 10%; margin-top: 10%">Novos casos confirmados por dia</h2>
+				</div>
+				<div id="LineChart2">
+					<h2 style="margin-left: 10%; margin-top: 10%;">Novos óbitos por dia</h2>
+				</div>
+
+			</div>
+
 		</div>
-		<p id="mapaFonte">*Fonte: <a href="https://covid.saude.gov.br/">Ministério da Saúde</a> e <a href="https://www.ibge.gov.br/apps/populacao/projecao/index.html?utm_source=portal&utm_medium=popclock&utm_campaign=novo_popclock">IBGE</a></p>
 
-		<!-- <div id= "PieChart"></div> -->
-
-		<div id="BarChartUF" class="info" style="margin-left: 5%; margin-top: 20px;">
-			<h2 style="margin-left: 20%;" id = "titleBarChart">Valores Absolutos: Casos confirmados por Estado</h2>
-
+		<div id="mapaFonte" style="margin-left: 5%; margin-top: 5%;">
+			<p>
+				*Fonte: <a href="https://covid.saude.gov.br/">Ministério da Saúde</a> e <a href="https://www.ibge.gov.br/apps/populacao/projecao/index.html?utm_source=portal&utm_medium=popclock&utm_campaign=novo_popclock">IBGE</a>
+			</p>
 		</div>
-
-		<div id="PieChartRg" class="info" style="margin-left: 5%; margin-top: 20px;">
-
-
-		</div>
-
-		<div id="LineChart" class="info" style="margin-left: 5%;margin-top: 20px;">
-			<h2 style="margin-left: 10%;">Novos casos confirmados por dia</h2>
-		</div>
-		<div id="LineChart2"class="info" style="margin-left: 1%;margin-top: 20px">
-			<h2 style="margin-left: 10%; ;">Novos óbitos por dia</h2>
-		</div>
-
-
 	    <script>
 	    	
 	 	   	// Mapa: 
@@ -400,7 +422,7 @@
 
 					// labels.push(seletor);				
 						
-				document.getElementById("cab").innerHTML = labels.join('<br>');
+				// document.getElementById("cab").innerHTML = labels.join('<br>');
 
 				geojson = L.geoJson(Estados, {
 					style: style,
@@ -427,7 +449,7 @@
 							'<span class="slider round"></span>' + 
 							'</label>';
 
-						labels.push(seletor);				
+						// labels.push(seletor);				
 						div.innerHTML = labels.join('<br>');
 						return div;};
 				info.onAdd = function (map) {
@@ -474,15 +496,16 @@
 				RowChart.onAdd = function(mymap){
 					let div = L.DomUtil.create('div', 'Row'),
 					labels = [];
-					// labels.push('<a class="reset"             href="javascript:chart.filterAll();dc.redrawAll();"            style="display: none;">reset</a>');
-					div.id = "Row";
+					labels.push('<h4 style="margin-left:10%;">Índice por Estado</h4> <div id = "Row" style="margin-left:5%;"></div>')
+					// div.id = "Row";
 					div.innerHTML = labels.join('<br>');
 					return div;
 				}
 				PieChart.onAdd = function(mymap){
 					let div = L.DomUtil.create('div', 'Row'),
 					labels = [];
-					div.id = "PieChart";
+					labels.push('<h4 style="margin-left:10%;">Índice por Região</h4> <div id = "PieChart"></div>')
+					// div.id = "PieChart";
 					div.innerHTML = labels.join('<br>');
 					return div;
 				}
@@ -506,8 +529,8 @@
 
 				chart
 					.width(250)
-					.height(500)
-					.margins({ top: 20, right: 20, bottom: 40, left: 30 })
+					.height(450)
+					.margins({ top: 20, right: 40, bottom: 40, left: 30 })
 					.renderLabel(true)
 					.dimension(UF_DIM)
 					.group(taxaGroup)
@@ -518,9 +541,6 @@
 			    		cor = quantize(ind);
 			    		return quantize(ind);
 					});
-
-				// var dia0 = new Date(2019, 12, 30);
-    //         	var dia1 = new Date(2020, 4, 7);
 
             	var dateDim = facts.dimension(function(d){
 					// console.log(d.date);
@@ -544,12 +564,12 @@
             	var x = (window.innerWidth);
 
 			 	lineChart 
-			 		.width(x*0.44)
+			 		.width(x*0.42)
 		            .height(250)
 		            .elasticY(true)
 		            // .x(d3.scale.linear().domain([43900,43927]))
 		            .x(d3.time.scale().domain([PMorte, dia1]))
-		            .margins({left: 50, top: 10, right: 10, bottom: 20})
+		            .margins({left: 100, top: 10, right: 10, bottom: 20})
 		            .renderArea(true)
 		            .brushOn(false)
 		            .renderDataPoints(true)
@@ -560,7 +580,7 @@
 		            .group(NovosCasosGroup);
 
 		        lineChart2 
-			 		.width(x*0.44)
+			 		.width(x*0.42)
 		            .height(250)
 		            .elasticY(true)
 		            // .x(d3.scale.linear().domain([43900,43927]))
@@ -600,13 +620,23 @@
 			        x.value = getTaxa(x.key);
 			        Escala = 0;
 			    });	
-
+				
+				casosNovosGroupv2 = RegiaoDim.group().reduceSum(function(d){
+		        	// return getTaxa(d.regiao);
+					return d.casosNovos;
+				});
+				obitosPorRegiaoGroupv2 = RegiaoDim.group().reduceSum(function(d){
+					return d.obitosNovos;
+				});
 
 				pieChart = new dc.rowChart('#PieChart');
 
 		      	pieChart
 			      	.width(250)
-				    .height(250)
+				    .height(200)
+				    // .label(function(d){
+					// 	return (d.key +": "+d.value);
+					// })
 				    .dimension(RegiaoDim)
 				    .group(casosNovosGroup)
 				    .colors(function(d){
@@ -615,6 +645,27 @@
 				    })				    
 				    ;
 
+				pieChart2 = new dc.pieChart('#PieChartRg')
+
+				pieChart2
+			      	.width(x*0.2)
+				    .height(300)
+				    .slicesCap(5)
+				    .innerRadius(50)
+				    // .margins({left: 100, top: 50, right: 10, bottom: 20})
+				    .dimension(RegiaoDim)
+				    .group(casosNovosGroupv2)
+				    .colors(function(d){
+				    	return colorScale(d);
+				    	var quantize = getQuantize();
+				    	return quantize(getTaxa(d));
+				    })
+				    .on('pretransition', function(chart) {
+        				chart.selectAll('text.pie-slice').text(function(d) {
+            		return siglaScale(d.data.key) + ' ' + dc.utils.printSingleValue(d3.round((d.endAngle - d.startAngle) / (2*Math.PI) * 100)) + '%';
+				        })
+				    })
+				    .render();
 
 	            ConfGroup = UF_DIM.group().reduceSum(function(d){
 					return +d.casosNovos;
@@ -626,9 +677,9 @@
 				UFChart = new dc.barChart('#BarChartUF');
 
 				UFChart
-					.width(x*0.50)
+					.width(x*0.65)
 	                .height(300)
-	                .margins({left: 50, top: 50, right: 10, bottom: 20})
+	                .margins({left: 100, top: 50, right: 10, bottom: 20})
 					.x(d3.scale.ordinal().domain(UF_DIM))
 					.dimension(UF_DIM)
 					.group(ConfGroup, 'Casos confirmados')
@@ -640,7 +691,7 @@
 					.title(function(d){
 						return(d.key +':'+d.value);
 					})
-					.legend(dc.legend().x(100).y(20).itemHeight(20).gap(10))
+					.legend(dc.legend().x(120).y(10).itemHeight(20).gap(10))
 					.colors(function(d){
 						if(d == "Óbitos")
 							return "black";
@@ -672,18 +723,19 @@
 
 				legend.addTo(Mapa);
 
-// "titleBarChart">Valores Absolutos: Casos confirmados por Estado</h2>
+			// "titleBarChart">Valores Absolutos: Casos confirmados por Estado</h2>
 
 
 				if(Escala == 0){
 					chart.group(taxaGroup);
 					pieChart.group(casosNovosGroup);
-					console.log(document.getElementById("titleBarChart"));
+					pieChart2.group(casosNovosGroupv2);
 					UFChart.group(ConfGroup, 'Casos confirmados');
 						
 				}else{
 					chart.group(letGroup);
 					pieChart.group(obitosPorRegiaoGroup);
+					pieChart2.group(obitosPorRegiaoGroupv2);
 					UFChart.group(MortesGroup, 'Óbitos');
 				}
 
@@ -735,7 +787,7 @@
 
 			var popScale = d3.scale.ordinal().domain(["Sudeste", "Nordeste", "Sul", "Centro-Oeste", "Norte"]).range(['88371433','57071654','29975984','16297074','18430980']); 
 
-// d.t = (d.casosAcumulados*100000)/d.populacao;
+			// d.t = (d.casosAcumulados*100000)/d.populacao;
 			        // d.l = (d.obitosAcumulados*100)/d.casosAcumulados;
 			function getTaxa(Nome){
 				// d.l = (d.obitosAcumulados*100)/d.casosAcumulados;
@@ -870,6 +922,13 @@
 
 	    </script>
 
+	   	
+	   
+	    
+	    <footer class="footer-main" style="margin-top: 10px; font: 14px/14px Arial, Helvetica, sans-serif; font-weight: bold;"> Alexandre R Cajazeira Ramos © 2020 
+	      </footer> 
+	  	
+	   
 
   	</body>
 </html>
