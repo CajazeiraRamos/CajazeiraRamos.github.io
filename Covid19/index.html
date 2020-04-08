@@ -286,7 +286,7 @@
 			d3.csv("data/minSaude.csv", function(data){
 			        
 			    data.forEach(function(d) {
-			    	
+			    	// console.log(d);
 			        d.regiao = d.regiao;
 			        d.uf = d.estado;
 			        d.date = d.date;
@@ -347,7 +347,7 @@
 					let div = L.DomUtil.create('div', 'info legend'),
 						labels = [];
 
-					    labels.push("<b>Brasil - 07 de Abril de 2020: </b> ");
+					    labels.push("<b>Brasil - 08 de Abril de 2020: </b> ");
 						labels.push('<i style=" background:#e34a33"></i> '+"Total de casos confirmados: <b>"+TotalCasos+"</b>");
 						labels.push('<i style=" background:black"></i> '+"Total de óbitos: <b>"+TotalMortes+"</b>");
 					

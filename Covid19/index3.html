@@ -359,7 +359,7 @@
 			    	// regiao;estadi;date;casosNovos;casosAcumulados;obitosNovos;obitosAcumulados
 			        d.regiao = d.regiao;
 			        d.uf = d.estado;
-			        d.date = dtgFormat.parse(d.data);
+			        d.date = dtgFormat.parse(d.date);
 			        // console.log(d.date);
 			        // d.date = ExcelDateToJSDate(d.data);
 			        d.casosNovos = +d.casosNovos;
@@ -405,7 +405,7 @@
 
 			  	let labels = [];
 
-					labels.push('<div id ="cont"; style="margin-left:40%;" ><h1>Brasil - 06 de Abril de 2020: </h1> ');
+					labels.push('<div id ="cont"; style="margin-left:40%;" ><h1>Brasil - 08 de Abril de 2020: </h1> ');
 					labels.push('<i style=" background:#e34a33"></i> '+"Total de casos confirmados: <b>"+TotalCasos+"</b>");
 						labels.push('<i style=" background:black"></i> '+"Total de óbitos: <b>"+TotalMortes+"</b>");
 					
@@ -434,7 +434,7 @@
 					let div = L.DomUtil.create('div', 'info legend'),
 						labels = [];
 
-					    labels.push("<b>Brasil - 07 de Abril de 2020: </b> ");
+					    labels.push("<b>Brasil - 08 de Abril de 2020: </b> ");
 						labels.push('<i style=" background:#e34a33"></i> '+"Total de casos confirmados: <b>"+TotalCasos+"</b>");
 						labels.push('<i style=" background:black"></i> '+"Total de óbitos: <b>"+TotalMortes+"</b>");
 					
@@ -557,8 +557,8 @@
 
 				var dia0 = new Date(2020, 2, 1),
             	dia1 = new Date(2020, 3, 7);
-            	// console.log(dia0);
-            	// console.log(dia1);
+            	// console.log(dateDim.top(1)[0].date);
+            	dia1 = dateDim.top(1)[0].date;
             	var PMorte = new Date(2020, 2, 15);
 
             	var x = (window.innerWidth);
