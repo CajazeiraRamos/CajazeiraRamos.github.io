@@ -303,13 +303,13 @@
 			</div>
 				 
 
-			<div id="PieChartRg" style="margin-top: 5%;margin-left:5%;"></div>
 			
 			<div id="BarChartUF" style="margin-top: 5%;margin-left:5%;">
 				<!-- <h2>Casos confirmados por UF</h2> -->
 				
 			</div>
 			
+			<div id="PieChartRg" style="margin-top: 5%;margin-left:5%;"></div>
 			
 
 		</div>
@@ -733,7 +733,7 @@
 				UFChart = new dc.barChart('#BarChartUF');
 
 				UFChart
-					.width(x*0.55)
+					.width(x*0.8)
 	                .height(400)
 	                .margins({left: 50, top: 50, right: 50, bottom: 50})
 					.x(d3.scale.ordinal().domain(UF_DIM))
@@ -758,7 +758,7 @@
 
 					pieChart2
 			      	.width(x*0.2)
-				    .height(350)
+				    .height(250)
 				    .slicesCap(5)
 				    .innerRadius(50)
 				    // .margins({left: 100, top: 50, right: 10, bottom: 20})
@@ -787,6 +787,15 @@
 				// ;
 
 				MouseEventsRowChart();
+
+				console.log(x*0.7);
+
+				d3.select("#PieChartRg")
+				 // .style("position","absolute")
+				 // .style("top","0px")
+				 // .transition()
+				.style('transition-duration', '.1s')
+ 				.style('transform', 'translate('+(x*0.55)+'px, -480px)');
 
 			});	
 
