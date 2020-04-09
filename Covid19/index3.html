@@ -380,12 +380,16 @@
 	      	
 	      	d3.csv("data/minSaude.csv", function(data){
 				var dtgFormat = d3.time.format("%d/%m/%Y");	        
+			    console.log(data);
 			    data.forEach(function(d) {
+			    	console.log(d);
+
 			    	// regiao;estadi;date;casosNovos;casosAcumulados;obitosNovos;obitosAcumulados
 			        d.regiao = d.regiao;
 			        d.uf = d.estado;
-			        d.date = dtgFormat.parse(d.date);
+			        d.date = dtgFormat.parse(d.data);
 			        d.nome = UFNome(d.uf);
+
 			        // console.log(d.date);
 			        // d.date = ExcelDateToJSDate(d.data);
 			        d.casosNovos = +d.casosNovos;
@@ -396,6 +400,7 @@
 			        d.t = (d.casosAcumulados*100000)/d.populacao;
 			        d.l = (d.obitosAcumulados*100)/d.casosAcumulados;
 			        
+
 			        d.taxa = d3.round(d.t, 2);
 			        d.let = d3.round(d.l, 2);
 
@@ -411,6 +416,7 @@
 			        TaxaByUF.set(d.uf, +d.taxa); 
 			        LetByUF.set(d.uf, +d.let);
 			        RegByUF.set(d.uf, d.regiao);
+
 
 			    });
 
