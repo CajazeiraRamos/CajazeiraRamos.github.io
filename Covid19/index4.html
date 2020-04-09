@@ -264,7 +264,7 @@
 		<!-- <div id="cab" class="info" style="margin-top: 100px; margin-left: 5%; width: 90%; height: 250px;"></div>
 		 -->
 
-		<div id ="All" class="info" style="width: 90%; margin-left: 5%; margin-top: 5%; height: 2000px;" >
+		<div id ="All" class="info" style="width: 90%; margin-left: 5%; margin-top: 5%; height: 1900px;" >
 			
 
 			<h1 style="margin-left: 2%;">Coronavírus no Brasil - 08 de Abril de 2020 </h1>
@@ -788,14 +788,21 @@
 
 				MouseEventsRowChart();
 
-				console.log(x*0.7);
+				console.log(x);
+				var t = -350;
+				if(x>800)
+					t = -450;
+				if(x>1500)
+					t = -500;
+				if(x>2000)
+					t = -500;
 
 				d3.select("#PieChartRg")
 				 // .style("position","absolute")
 				 // .style("top","0px")
 				 // .transition()
 				.style('transition-duration', '.1s')
- 				.style('transform', 'translate('+(x*0.55)+'px, -500px)');
+ 				.style('transform', 'translate('+(x*0.55)+'px, '+t+'px)');
 
 			});	
 
