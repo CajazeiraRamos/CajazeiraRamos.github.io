@@ -520,20 +520,20 @@
 					div.innerHTML = labels.join('<br>');
 					return div;
 				}
-				PieChart.onAdd = function(mymap){
-					let div = L.DomUtil.create('div', 'Row'),
-					labels = [];
-					labels.push('<h4 style="margin-left:10%;">Índice por Região</h4> <div id = "PieChart"></div>')
-					// div.id = "PieChart";
-					div.innerHTML = labels.join('<br>');
-					return div;
-				}
+				// PieChart.onAdd = function(mymap){
+				// 	let div = L.DomUtil.create('div', 'Row'),
+				// 	labels = [];
+				// 	labels.push('<h4 style="margin-left:10%;">Índice por Região</h4> <div id = "PieChart"></div>')
+				// 	// div.id = "PieChart";
+				// 	div.innerHTML = labels.join('<br>');
+				// 	return div;
+				// }
 
 				// title.addTo(Mapa);
 				info.addTo(Mapa);
 				legend.addTo(Mapa);
 				RowChart.addTo(Mapa);
-				PieChart.addTo(Mapa);			
+				// PieChart.addTo(Mapa);			
 
 				// Gambiarra: (Não sei pq os dados estão sendo povoados errado no gruop)
 			    taxaGroup.top(Infinity).forEach(function (x) {
@@ -549,7 +549,7 @@
 
 				chart
 					.width(250)
-					.height(450)
+					.height(700)
 					.margins({ top: 20, right: 40, bottom: 40, left: 30 })
 					.renderLabel(true)
 					.dimension(UF_DIM)
@@ -699,24 +699,24 @@
 					return d.obitosNovos;
 				});
 
-				pieChart = new dc.rowChart('#PieChart');
+				// pieChart = new dc.rowChart('#PieChart');
 
-		      	pieChart
-			      	.width(250)
-				    .height(200)
-				    // .label(function(d){
-					// 	return (d.key +": "+d.value);
-					// })
-					.legend(dc.legend().x(400).y(10).itemHeight(13).gap(5))
-					// .legend(dc.legend().x(10).y(10).itemHeight(30).gap(20))
-					.renderLabel(true)
-					.dimension(RegiaoDim)
-				    .group(casosNovosGroup)
-				    .colors(function(d){
-				    	var quantize = getQuantize();
-				    	return quantize(getTaxa(d));
-				    })				    
-				    ;
+		   //    	pieChart
+			  //     	.width(250)
+				 //    .height(200)
+				 //    // .label(function(d){
+					// // 	return (d.key +": "+d.value);
+					// // })
+					// .legend(dc.legend().x(400).y(10).itemHeight(13).gap(5))
+					// // .legend(dc.legend().x(10).y(10).itemHeight(30).gap(20))
+					// .renderLabel(true)
+					// .dimension(RegiaoDim)
+				 //    .group(casosNovosGroup)
+				 //    .colors(function(d){
+				 //    	var quantize = getQuantize();
+				 //    	return quantize(getTaxa(d));
+				 //    })				    
+				 //    ;
 
 				pieChart2 = new dc.pieChart('#PieChartRg')
 
@@ -810,8 +810,23 @@
 
 
 				if(Escala == 0){
-					chart.group(taxaGroup);
-					pieChart.group(casosNovosGroup);
+
+					// chart.group(taxaGroup);
+
+					chart
+					.dimension(RegiaoDim)
+				    .group(casosNovosGroup)
+				    .colors(function(d){
+				    	var quantize = getQuantize();
+				    	var cor = quantize(getTaxa(d));
+				    	return cor;
+				    	return quantize(getTaxa(d));
+				    })
+				    .render();
+				    ;	
+
+
+					// pieChart.group(casosNovosGroup);
 					pieChart2.group(casosNovosGroupv2);
 					UFChart.group(ConfGroup, 'Casos confirmados');
 					lineChart.group(NovosCasosGroup).colors(['#e34a33']);
@@ -820,7 +835,7 @@
 						
 				}else{
 					chart.group(letGroup);
-					pieChart.group(obitosPorRegiaoGroup);
+					// pieChart.group(obitosPorRegiaoGroup);
 					pieChart2.group(obitosPorRegiaoGroupv2);
 					UFChart.group(MortesGroup, 'Óbitos');
 					lineChart.group(NovosObitosGroup).colors(['black']);
@@ -834,12 +849,12 @@
 			    		return quantize(ind);
 					});
 
-				pieChart
-					.colors(function(d){
-						// console.log("teste");
-				    	var quantize = getQuantize();
-				    	return quantize(getTaxa(d));
-				    });
+				// pieChart
+				// 	.colors(function(d){
+				// 		// console.log("teste");
+				//     	var quantize = getQuantize();
+				//     	return quantize(getTaxa(d));
+				//     });
 			
 				dc.renderAll();
 				MouseEventsRowChart();

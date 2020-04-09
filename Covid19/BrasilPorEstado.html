@@ -264,7 +264,7 @@
 
 
 	      	// Lendo CSV com D3: 
-
+	      	var imp = "";
 			d3.csv("data/covid19Br.csv", function(data){
 			        
 			    data.forEach(function(d) {
@@ -287,9 +287,11 @@
 			        PopByUF.set(d.id,d.pop);
 			        TaxaByUF.set(d.id, d.t); 
 			        LetByUF.set(d.id, d.let);
+			        imp = imp + "'"+d.nome+"',";
 
 			    });
 				
+				console.log(imp);
 				geojson = L.geoJson(Estados, {
 					style: style,
 					onEachFeature: onEachFeature
