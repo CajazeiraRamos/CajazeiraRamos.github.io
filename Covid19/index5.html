@@ -58,7 +58,7 @@
 			<div class="slidecontainer">
 				<h2>
 					<label id = "dataLabel">Data: 10/04/2020</label>
-					<input type="range" min="1" max="100" value="100" class="slider2" id="dataRange" onchange="trocaDia()">
+					<input type="range" min="1" max="100" value="100" class="slider2" id="dataRange" onchange="alteraDia()">
 
 					<button id= "ant" onclick="diaAnt()"><</button>
 					<button id= "prox" onclick="proxDia()">></button>
@@ -68,25 +68,23 @@
 							var min = +document.getElementById("dataRange").min,
 							max = +document.getElementById("dataRange").max,
 							val = +document.getElementById("dataRange").value;
-							// trocaDia(min);
 							if(val == max){
 								document.getElementById("dataRange").value = min;
-								trocaDia();
+								alteraDia();
 							}else{
 								document.getElementById("dataRange").value++;
-								trocaDia();
+								alteraDia();
 							}}
 						function diaAnt(){
 							var min = +document.getElementById("dataRange").min,
 							max = +document.getElementById("dataRange").max,
 							val = +document.getElementById("dataRange").value;
-							// trocaDia(min);
 							if(val == min){
 								document.getElementById("dataRange").value = max;
-								trocaDia();
+								alteraDia();
 							}else{
 								document.getElementById("dataRange").value--;
-								trocaDia();
+								alteraDia();
 							}
 						}
 					</script>
@@ -111,7 +109,7 @@
 			<div id="divDashBoard"></div>		
 		</div>
 		
-		<script type="text/javascript">
+		<!-- <script type="text/javascript"> -->
 
   				var estados, regioes;
 
