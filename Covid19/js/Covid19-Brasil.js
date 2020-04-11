@@ -26,15 +26,15 @@ L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x
 
 let dataAtual, escala=0, controleUF_RG=0; 
 
-console.log("teste");
-console.log(regioes);
+// console.log("teste");
+// console.log(regioes);
 
-console.log(estados);
-L.geoJson(estados, {
+// console.log(estados);
+// L.geoJson(estados, {
 
-		style: {fill:'blue'}
+// 		style: {fill:'blue'}
 
-				}).addTo(Mapa);	
+// 				}).addTo(Mapa);	
 
 function trocaEscala(){
 	escala = !escala;
