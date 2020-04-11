@@ -126,7 +126,7 @@ input:checked + .slider:before {
   width: 25px;
   height: 25px;
   border-radius: 50%; 
-  background: #4CAF50;
+  background: #e34a33;
   cursor: pointer;}
 .slider2::-moz-range-thumb {
   width: 25px;

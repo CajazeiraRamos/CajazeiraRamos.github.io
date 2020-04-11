@@ -56,8 +56,41 @@
 			
 			
 			<div class="slidecontainer">
-				<h2>Data: 09/04/2020
-				<input type="range" min="1" max="100" value="100" class="slider2" id="myRange"></h2>
+				<h2>
+					<label id = "dataLabel">Data: 10/04/2020</label>
+					<input type="range" min="1" max="100" value="100" class="slider2" id="dataRange" onchange="trocaDia()">
+
+					<button id= "ant" onclick="diaAnt()"><</button>
+					<button id= "prox" onclick="proxDia()">></button>
+					
+					<script type="text/javascript">
+						function proxDia(){
+							var min = +document.getElementById("dataRange").min,
+							max = +document.getElementById("dataRange").max,
+							val = +document.getElementById("dataRange").value;
+							// trocaDia(min);
+							if(val == max){
+								document.getElementById("dataRange").value = min;
+								trocaDia();
+							}else{
+								document.getElementById("dataRange").value++;
+								trocaDia();
+							}}
+						function diaAnt(){
+							var min = +document.getElementById("dataRange").min,
+							max = +document.getElementById("dataRange").max,
+							val = +document.getElementById("dataRange").value;
+							// trocaDia(min);
+							if(val == min){
+								document.getElementById("dataRange").value = max;
+								trocaDia();
+							}else{
+								document.getElementById("dataRange").value--;
+								trocaDia();
+							}
+						}
+					</script>
+				</h2>
 			</div>
 
 			<div id="divControles">
@@ -69,10 +102,10 @@
 					</label>
 					Estado / Região
 					<label class="switch"> 
-						<input type="checkbox" id="trocaEscala" onchange="trocaEscala()">  
+						<input type="checkbox" id="trocaEscala" onchange="trocaControleUF_RG()">  
 						<span class="slider round"></span> 
 					</label> 
-					<button id= "limparFiltros" onchange="trocaEscala()">Limpar Filtros</button>
+					<button id= "limparFiltros" onclick="limparFiltros()">Limpar Filtros</button>
 				</h2>
 			</div>
 			<div id="divDashBoard"></div>		

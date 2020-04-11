@@ -24,8 +24,93 @@ L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x
 .addTo(Mapa);
 
 
-let dataAtual, escala=0, controleUF_RG=0; 
+let dataAtual, dataInicial, dataFinal, escala=false, controleUF_RG=false,
+ dtgFormat = d3.time.format("%d/%m/%Y");	
 
+dataInicial = dtgFormat.parse("30/01/2020");
+dataFinal = dtgFormat.parse("10/04/2020");
+dataAtual = dataFinal;
+
+var xMin = dataToNum(dataInicial),
+xMax = dataToNum(dataFinal);
+
+console.log(NumToData(xMin));
+
+document.getElementById("dataRange").min = xMin;
+document.getElementById("dataRange").max = xMax;
+document.getElementById("dataRange").value = xMax;
+
+function trocaEscala(){
+	escala = !escala;
+	render();
+}
+function trocaControleUF_RG(){
+	controleUF_RG = !controleUF_RG;
+	render();
+}
+
+
+function trocaDia(){
+	
+	var formatDay = d3.time.format("%d"),
+	formatMonth = d3.time.format("%m"),
+	formatYear = d3.time.format("%Y");
+
+	var dataLabel = document.getElementById("dataLabel");
+	
+
+	var novaData = NumToData(document.getElementById("dataRange").value);
+	var dia  = formatDay(novaData),
+	mes = formatMonth(novaData),
+	ano = formatYear(novaData);
+
+	dataLabel.innerHTML = '<label id = "dataLabel"> Data: '+dia+"/"+mes+"/"+ano+'</label>';
+
+	dataAtual = novaData;
+	render();}
+
+
+function limparFiltros(){
+	console.log("teste");
+}
+
+var dim_UF_Data, uf_Data_Casos; 
+
+d3.csv("data/minSaude.csv", function(data){
+	data.forEach(function(d) {
+		
+		d.regiao = d.regiao;
+		d.uf = d.estado;
+		d.date = dtgFormat.parse(d.data);
+		d.nome = nomeUF(d.uf);
+		d.casosNovos = +d.casosNovos;
+		d.casosAcumulados = +d.casosAcumulados;
+		d.obitosNovos = +d.obitosNovos;
+		d.obitosAcumulados = +d.obitosAcumulados;
+		d.populacao = populacaoUF(d.uf);
+		});
+	var facts = crossfilter(data);
+			
+	dim_UF_Data = facts.dimension(function(d){
+		return 'data='+d.date+'UF='+d.uf;
+	});
+
+	
+});
+
+function render(){
+	console.log("Renderizando");
+	console.log(dataAtual);
+	console.log(escala);
+	console.log(controleUF_RG);
+	console.log(dim_UF_Data);
+	
+	uf_Data_Casos = dim_UF_Data.group().reduceSum(function(d){
+		return d.casosAcumulados;
+	});
+	console.log(uf_Data_Casos.top(Infinity));
+
+}
 // console.log("teste");
 // console.log(regioes);
 
@@ -36,6 +121,14 @@ let dataAtual, escala=0, controleUF_RG=0;
 
 // 				}).addTo(Mapa);	
 
-function trocaEscala(){
-	escala = !escala;
-}
+function dataToNum(inDate) {
+    var returnDateTime = 25569.0 + ((inDate.getTime() - (inDate.getTimezoneOffset() * 60 * 1000)) / (1000 * 60 * 60 * 24));
+    return returnDateTime.toString().substr(0,5);}
+function NumToData(serial) {
+   var utc_days  = Math.floor(serial - 25569);
+   var utc_value = utc_days * 86400;                                        
+   var date_info = new Date(utc_value * 1000);
+   var ano = date_info.getFullYear(),
+   mes = date_info.getMonth()+1,
+   dia =  date_info.getDate()+1;
+   return dtgFormat.parse(dia+"/"+mes+"/"+ano);}
