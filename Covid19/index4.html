@@ -318,7 +318,7 @@
 	      	var RegByUF = d3.map();
 	      	var dtgFormat = d3.time.format("%d/%m/%Y");	        
 			
-			dataAtual = dtgFormat.parse("03/04/2020");
+			dataAtual = dtgFormat.parse("01/04/2020");
 
 	      	d3.csv("data/minSaude.csv", function(data){
 				data.forEach(function(d) {
@@ -809,7 +809,7 @@
 
 				MouseEventsRowChart();
 
-				console.log(x);
+				// console.log(x);
 				var t = -350;
 				if(x>800)
 					t = -450;
@@ -824,8 +824,21 @@
 				 // .transition()
 				.style('transition-duration', '.1s')
  				.style('transform', 'translate('+(x*0.55)+'px, '+t+'px)');
-
+ 				teste();
 			});	
+	
+			function teste(){
+
+			console.log(UF_Data);
+			taxaGroup = UF_Data.group().reduceSum(function(d){
+					return d3.round((d.casosAcumulados*100000)/PopByUF.get(d.uf),2);
+			});
+
+			console.log(taxaGroup.top(1));
+
+			}
+			
+
 			function CasosPorUF(data, UF){
 				var k = 'data='+data+'UF='+UF;
 				var valor = UF_Data_Casos.all()
@@ -840,7 +853,8 @@
 					.filter(function(item) {
 						return item.key == k;
 					})[0].value;
-				
+				// console.log(casos + " - " + UF);
+				console.log(UF + " - "+(casos*100000)/PopByUF.get(UF));
 				return (casos*100000)/PopByUF.get(UF);
 			       
 			}
@@ -929,6 +943,9 @@
 			
 				dc.renderAll();
 				MouseEventsRowChart();
+
+				
+
 				};
 
 			// Mouse Events: 
@@ -1061,7 +1078,7 @@
 		    		.domain([0,1,3,5,7,10,15])
 		    		.range(getColors(Escala)));}
 	    	function getIndicador(id){
-	    		console.log(id);
+	    		// console.log(id);
 	    		if(Escala == 0){
 	    			return TaxaPorUF(dataAtual, id);
 	    		}

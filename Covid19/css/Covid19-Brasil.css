@@ -36,20 +36,19 @@ body{
 	width: 50%;
 	margin-top: 1%;
 	margin-left: 25%;
+	text-align: center;
 }
 
 #divControles{
-	/*background-color: #e3e3e3;*/
 	width: 50%;
-	height: 60px;
 	margin-left: 25%;
 	margin-top: 1%;
 	border-radius: 15px;
+	text-align:center;
 }
 
 
 #divControles h2{
-	margin-left: 10%;
 	padding: 12px;
 }
 
@@ -65,14 +64,13 @@ body{
 
 
 #limparFiltros{
-	position: relative;
-	/*background-color: #e3e3e3;*/
+	height: 30%;
+	width: 200px;
     color: black;
-	margin-left: 2%;
-	padding: 10px;
+    padding: 10px;
+	margin-left: 1%;
+	margin-top:0.5%;
     text-align: center;
-  	text-decoration: none;
-  	display: inline-block;
   	border-radius: 15px;
   	font-size: 16px;
 }
@@ -83,6 +81,7 @@ body{
 	display: inline-block;
 	width: 80px;
 	height: 30px;
+	margin-top: 1%;
 }
 
 /* Hide default HTML checkbox */
