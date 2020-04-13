@@ -8,24 +8,16 @@ body{
 	width: 90%;
 	margin-left: 5%;
 	margin-top: 5%;
-	height: 2150px;}
+	height: 2500px;}
 #divGeral h1{
-	padding: 30px;
+	padding: 20px;
 	margin-left: 1%;}
-#divCabeçalho{
-	/*background-color: #e3e3e3;*/
-	width: 98%;
-	height: 100px;
-	/*margin-top: 1%;*/
-	margin-left: 1%;
-	border-radius: 15px;}
-
 
 #divMapa{
 	width: 98%;
 	height: 1000px;
 	margin-left: 1%;
-	margin-top: 2%;
+	/*margin-top: 2%;*/
 	border-radius: 15px;}
 #divControles{
 	width: 80%;
@@ -46,10 +38,18 @@ body{
     text-align: center;
   	border-radius: 15px;
   	font-size: 16px;}
+#ant{
+	padding: 15px;
+	margin-top: 1%;
+}
+#prox{
+	padding: 15px;
+	margin-top: 1%;
+}
 #divDashBoard{
 	background-color: #e3e3e3;
 	width: 98%;
-	height: 700px;
+	height: 1000px;
 	margin-left: 1%;
 	margin-top: 1%;
 	border-radius: 15px;}
@@ -169,3 +169,20 @@ input:checked + .slider:before {
 	margin-right: 8px;
 	opacity: 0.7;
 }
+.Row{
+	background: white;
+	background: rgba(255,255,255,0.8);
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 5px;
+}
+.dc-chart g.row text {
+	fill: black;
+	font: 14px/14px Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+.dc-chart g.row {
+	height: 30px;
+}
+/*#graficoMapa{
+	width: 200px;
+}*/

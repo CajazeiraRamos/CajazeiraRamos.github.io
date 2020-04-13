@@ -14,7 +14,12 @@ populacaoRG = d3.scale.ordinal()
 	.domain(["Sudeste", "Nordeste", "Sul", "Centro-Oeste", "Norte"])
 	.range(['88371433','57071654','29975984','16297074','18430980']); 
 
-
+let indUF = d3.scale.ordinal()
+	.domain(["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"])
+	.range(['','','','','','','','','','','','','','','','','','','','','','','','','','','']),
+indRG = d3.scale.ordinal()
+	.domain(["Sudeste", "Nordeste", "Sul", "Centro-Oeste", "Norte"])
+	.range(['','','','','']);
 
 // 14.2350° S, 51.9253° W
 let centroMapa = [-14.2350, -55],zoomMapa = 5;
@@ -23,17 +28,9 @@ var popBR = 210147125;
 // 	zoomMapa = 4;
 
 
-let Mapa = L.map('divMapa').setView(centroMapa, zoomMapa);
-// L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {maxZoom: 18, attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>`})
-// .addTo(Mapa);
-
-let info = L.control(), 
-legenda = L.control({position: 'bottomright'}),
-grafico = L.control({position: 'bottomleft'}); 
-
 let dimData, dimUF, dimRG; 
-let groupCasos_dimUF, groupObitos_dimUF,
-groupCasos_dimRG, groupObitos_dimRG;
+let groupCasos_dimUF, groupObitos_dimUF, groupTaxa_dimUF, groupLet_dimUF,
+groupCasos_dimRG, groupObitos_dimRG, groupTaxa_dimRG, groupLet_dimRG;
 
 let groupCasos_dimData, groupObitos_dimData;  
 
@@ -47,15 +44,28 @@ let casosPorData = d3.map(), obitosPorData = d3.map(),
 	taxaPorData = d3.map(), letPorData = d3.map();
 
 let dataAtual, dataInicial, dataFinal, escala=false, controleUF_RG=false,
- dtgFormat = d3.time.format("%d/%m/%Y");	
+ dtgFormat = d3.time.format("%d/%m/%Y"), formatDay = d3.time.format("%d"),
+	formatMonth = d3.time.format("%m"),
+	formatYear = d3.time.format("%Y");
+	
 
 dataInicial = dtgFormat.parse("15/03/2020");
+
+let graficoMapa;
+
 
 var layerGroup_UF = new L.LayerGroup();
 var layerGroup_RG = new L.LayerGroup();
 let geojsonUFs, geojsonRGs;
 
 
+let Mapa = L.map('divMapa').setView(centroMapa, zoomMapa);
+// L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {maxZoom: 18, attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>`})
+// .addTo(Mapa);
+
+let info = L.control(), 
+legenda = L.control({position: 'bottomright'}),
+grafico = L.control({position: 'bottomleft'}); 
 
 legenda.onAdd = function (map) {
 	
@@ -80,12 +90,10 @@ legenda.onAdd = function (map) {
 
 	div.innerHTML = labels.join('<br>');
 	return div;}
-
 info.onAdd = function(map){
 	this._div = L.DomUtil.create('div', 'info');
 	this.update();
 return this._div;};
-
 info.update = function (e) {
 	var formatDay = d3.time.format("%d"),
 	formatMonth = d3.time.format("%m"),
@@ -123,7 +131,7 @@ info.update = function (e) {
 		cor = quantize(ind);
 
 	}
-	this._div.innerHTML = '<h3>Dados por '+title+'* </h3>' +  (e ?
+	this._div.innerHTML = '<h3>Dados por '+title+' </h3>' +  (e ?
 		'<b>' + nome + ' ('+dia+'/'+mes+')</b><br />'
 		+ casos + ' Casos confirmados' + '</b><br />'
 		+ mortes + ' Óbito(s)' + '</b><br />'
@@ -132,6 +140,15 @@ info.update = function (e) {
 		'<i style="float: left; margin-top: 5px; height: 20px; margin-left:25%; width:'+let+'px; background-color:black"></i>'
 		+'<i style="float: left; margin-top: 5px; height: 20px; width:'+(100-let)+'px; background-color:'+cor+';"></i>' 
 		: 'Passe o mouse sobre seu '+title+' ou click');};
+grafico.onAdd = function(mymap){
+	let div = L.DomUtil.create('div', 'Row'),
+	labels = [];
+	labels.push('<h3 id = "graficoMapaTitle" style="padding: 10px;">-</h3> <div id = "divGraficoMapa"> </div>')
+	// div.id = "Row";
+	div.innerHTML = labels.join('<br>');
+	return div;}
+
+
 
 
 function trocaEscala(){
@@ -144,20 +161,9 @@ function trocaControleUF_RG(){
 }
 function alteraDia(){
 	
-	var formatDay = d3.time.format("%d"),
-	formatMonth = d3.time.format("%m"),
-	formatYear = d3.time.format("%Y");
-
-	var dataLabel = document.getElementById("dataLabel");
-	var title = document.getElementById("title");
+	// var title = document.getElementById("title");
 
 	var novaData = NumToData(document.getElementById("dataRange").value);
-	var dia  = formatDay(novaData),
-	mes = formatMonth(novaData),
-	ano = formatYear(novaData);
-
-	dataLabel.innerHTML = '<label id = "dataLabel"> Data: '+dia+"/"+mes+"/"+ano+'</label>';
-	title.innerHTML = 'Coronavírus no Brasil - '+dia+"/"+mes+"/"+ano+'';	
 
 	dataAtual = novaData;
 	render();
@@ -198,16 +204,29 @@ d3.csv("data/minSaude.csv", function(data){
 	groupCasos_dimUF = dimUF.group()
 		.reduceSum(function(d){
 			return d.casosNovos;});
-	groupCasos_dimRG = dimRG.group()
+	groupTaxa_dimUF = dimUF.group()
 		.reduceSum(function(d){
 			return d.casosNovos;});
 	groupObitos_dimUF = dimUF.group()
 		.reduceSum(function(d){
 			return d.obitosNovos;});
+	groupLet_dimUF = dimUF.group()
+		.reduceSum(function(d){
+			return d.obitosNovos;});		
+	
+	groupCasos_dimRG = dimRG.group()
+		.reduceSum(function(d){
+			return d.casosNovos;});
+	groupTaxa_dimRG = dimRG.group()
+		.reduceSum(function(d){
+			return d.casosNovos;});
 	groupObitos_dimRG = dimRG.group()
 		.reduceSum(function(d){
 			return d.obitosNovos;});
-
+	groupLet_dimRG = dimRG.group()
+		.reduceSum(function(d){
+			return d.obitosNovos;});
+	
 	groupCasos_dimData = dimData.group()
 		.reduceSum(function(d){
 			return d.casosAcumulados;});
@@ -216,7 +235,9 @@ d3.csv("data/minSaude.csv", function(data){
 		.reduceSum(function(d){
 			return d.obitosAcumulados;});
 
-	groupCasos_dimData.all()
+
+	
+ 	groupCasos_dimData.all()
 	.forEach(function(d){
 		casosPorData.set(d.key, +d.value);
 		var taxa = d3.round(((d.value*100000)/popBR),2);
@@ -232,6 +253,9 @@ d3.csv("data/minSaude.csv", function(data){
 	// Atualizando datas:
 
 
+	atualiza_mapsUFs();
+	atualiza_mapsRGs();
+
 
 	dataFinal = dimData.top(1)[0].data;;
 	dataAtual = dataFinal;
@@ -240,42 +264,46 @@ d3.csv("data/minSaude.csv", function(data){
 	document.getElementById("dataRange").max = dataToNum(dataFinal);
 	document.getElementById("dataRange").value = dataToNum(dataFinal);
 	
-	
-	atualiza_mapsUFs();
-	atualiza_mapsRGs();
-
 	geojsonUFs = L.geoJson(Estados, {
 		style: style,
-		onEachFeature: onEachFeature
+		onEachFeature: onEachFeatureUF
 	});
 
 	layerGroup_UF.addLayer(geojsonUFs);
 
 	geojsonRGs = L.geoJson(Regioes, {
 		style: style,
-		onEachFeature: onEachFeature
+		onEachFeature: onEachFeatureRG
 	});
 	layerGroup_RG.addLayer(geojsonRGs);
 
 	info.addTo(Mapa);
+	grafico.addTo(Mapa);
+
 	
 
-
+	graficoMapa = new dc.rowChart("#divGraficoMapa");
+	
+	graficoMapa
+		.width(250)
+		.height(700)
+		.margins({ top: 20, right: 40, bottom: 40, left: 30 })
+		.renderLabel(true)
+		.elasticX(true);
 
 	alteraDia();
-	
+
+
 });
 
 
 function render(){
 
+
 	Mapa.removeLayer(layerGroup_UF);
 	Mapa.removeLayer(layerGroup_RG);
 
 	legenda.addTo(Mapa);
-	// info.update(geojsonUFs._layers["SP"].feature);
-
-	console.log("Renderizando - "+ dataAtual);
 
 	dimData.filter(function(d){
 		if(d<=dataAtual)
@@ -288,33 +316,105 @@ function render(){
 	atualiza_mapsUFs();
 	atualiza_mapsRGs();
 
-	if(!controleUF_RG){
-		console.log("Mapa por Estado");
-		layerGroup_UF.addTo(Mapa);
-		AtualizaCoresUF();
-	}else{
-		console.log("Mapa por regiao");
+	// Renderizando mapas: 
+
+	var graficoMapaTitle = document.getElementById("graficoMapaTitle");
+
+	if(controleUF_RG){
+		
+		// console.log("Mapa por regiao");
 		layerGroup_RG.addTo(Mapa);
 		AtualizaCoresRG();
+
+		graficoMapa
+			.dimension(dimRG)
+			.labelOffsetX(5);
+
+		graficoMapaTitle.innerHTML = 'Índice por Região';
+
+		if(escala){
+			groupLet_dimRG.top(Infinity).forEach(function (d){
+				d.value = letPorRG.get(d.key);
+			});
+			graficoMapa
+				.group(groupLet_dimRG);
+		}else{
+			groupTaxa_dimRG.top(Infinity).forEach(function (d){
+				d.value = taxaPorRG.get(d.key);
+			});
+			graficoMapa
+				.group(groupTaxa_dimRG);
+		}
+
+	}else{
+		// console.log("Mapa por Estado");
+		layerGroup_UF.addTo(Mapa);
+		AtualizaCoresUF();
+
+		graficoMapa
+			.dimension(dimUF)
+			.labelOffsetX(-25);
+
+		graficoMapaTitle.innerHTML = 'Índice por Estado';
+		// console.log(graficoMapa);
+		if(escala){
+			groupLet_dimUF.top(Infinity).forEach(function (d){
+				d.value = letPorUF.get(d.key);
+			});
+			graficoMapa
+				.group(groupLet_dimUF);
+		}else{
+			groupTaxa_dimUF.top(Infinity).forEach(function (d){
+				d.value = taxaPorUF.get(d.key);
+			});
+			graficoMapa
+				.group(groupTaxa_dimUF);
+		}
+		
 	}
 
-	var infoBrasil = document.getElementById("dadosBrasil");
-	console.log(infoBrasil);
-	infoBrasil.innerHTML = 
+	
+	graficoMapa
+		.colors(function(d){
+			var quantize = getQuantize();
+			return quantize(IndCor(getFeature(d).properties));
+		});
+	
+	
+	// console.log("teste");
+	dc.renderAll();
+
+
+	 d3.selectAll("g.row")
+	 	.on('mouseover', function(d){
+	 		highlightFeature(getLayer(d.key));
+	 	})
+	 	.on('mouseout', function(d){
+	 		if(controleUF_RG)
+	 			geojsonRGs.resetStyle(geojsonRGs[d.key]);
+	 		else
+	 			geojsonUFs.resetStyle(geojsonUFs[d.key]);
+	 		
+	 		info.update();
+	 	})
+	 	;
+
+
+	// console.log(groupTaxa_dimUF.top(1)[0].value+'-'+groupTaxa_dimUF.top(1)[0].key);
+
+	var title = document.getElementById("title"),
+	dia  = formatDay(dataAtual),
+	mes = formatMonth(dataAtual),
+	ano = formatYear(dataAtual),
+	dataLabel = document.getElementById("dataLabel");
+
+	dataLabel.innerHTML = '<label id = "dataLabel"> Data: '+dia+"/"+mes+"/"+ano+'</label>';
+
+	title.innerHTML = 'Coronavírus no Brasil ('+dia+"/"+mes+"/"+ano+')<h1>'+
 		'<span class="label label-info">'+casosPorData.get(dataAtual)+' Casos</span>\n'+
+		'<span class="label label-warning">'+d3.round(taxaPorData.get(dataAtual),1)+' p/ 100mil/h</span>\n'+
 		'<span class="label label-danger">'+obitosPorData.get(dataAtual)+' Óbitos</span>\n'+
-		'<span class="label label-warning">'+taxaPorData.get(dataAtual)+' p/ 100mil/h</span>\n'+
-		'<span class="label label-default">'+letPorData.get(dataAtual)+'% Letalidade</span>	';
-
-
-	console.log(obitosPorData.get(dataAtual));
-	console.log(taxaPorData.get(dataAtual));
-	console.log(letPorData.get(dataAtual));
-	// console.log(groupCasos_dimData.top(1)[0].value);
-	// console.log(casosPorUF.get("SP"));
-	// console.log(taxaPorUF.get("SP"));
-	// console.log(obitosPorUF.get("SP"));
-	// console.log(letPorUF.get("SP"));
+		'<span class="label label-default">'+d3.round(letPorData.get(dataAtual),1)+'% Let.</span>	</h1>';
 
 }
 
@@ -350,11 +450,16 @@ function atualiza_mapsRGs(){
 		letPorRG.set(d.key, +letalidade);
 	});}
 
-function onEachFeature(feature, layer) {
-	if(controleUF_RG)
-		layer._leaflet_id = feature.properties.nome;
-	else
-		layer._leaflet_id = feature.properties.UF;
+function onEachFeatureUF(feature, layer) {
+	layer._leaflet_id = feature.properties.UF;
+	// console.log(layer._leaflet_id);
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
+			click: highlightFeature
+	});}
+function onEachFeatureRG(feature, layer) {
+	layer._leaflet_id = feature.properties.nome;
 	// console.log(layer._leaflet_id);
 		layer.on({
 			mouseover: highlightFeature,
@@ -371,7 +476,8 @@ function AtualizaCoresUF(){
 
 function style(feature) {
 	var quantize = getQuantize();
-	var ind = IndCor(feature.properties);
+	var ind = IndCor(feature.properties),
+	cor = quantize(ind);
 	return {
 		weight: 2,
 		opacity: 1,
@@ -380,20 +486,27 @@ function style(feature) {
 		fillOpacity: 1,
 		fillColor: quantize(ind)};}
 
-function onEachFeatureRG(feature, layer) {
-
-	layer._leaflet_id = feature.properties.nome;
-		layer.on({
-			mouseover: highlightFeature,
-			mouseout: resetHighlight,
-			// click: zoomToFeature
-	});
+function getFeature(id){
+	if(controleUF_RG)
+		return geojsonRGs._layers[id].feature;
+	else
+		return geojsonUFs._layers[id].feature;
 }
+function getLayer(id){
+	if(controleUF_RG)
+		return geojsonRGs._layers[id];
+	else
+		return geojsonUFs._layers[id];
+}
+
 
 function IndCor(id){
 	if(controleUF_RG){
-		if(escala)
+		if(escala){
+			// var let = 
+			// indRG[] letPorRG.get(id.nome));
 			return letPorRG.get(id.nome);
+		}
 		return taxaPorRG.get(id.nome);
 	}
 	if(escala)
@@ -405,14 +518,18 @@ function IndCor(id){
 
 
 function AtualizaCoresRG(){
-	// console.log(Pop)
+	
 	var RGs = groupCasos_dimRG.top(Infinity);
 	RGs.forEach(function (d){
-		geojsonRGs.resetStyle(geojsonUFs._layers[d.key]);});
+		geojsonRGs.resetStyle(geojsonRGs._layers[d.key]);});
 }
 
 function highlightFeature(e) {
-	let layer = e.target;
+	let layer;
+	if(e.target)
+		layer = e.target;
+	else
+		layer = e;
 
 	layer.setStyle({
 				weight: 3,
