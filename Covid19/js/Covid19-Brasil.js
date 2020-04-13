@@ -32,7 +32,7 @@ let dimData, dimUF, dimRG;
 let groupCasos_dimUF, groupObitos_dimUF, groupTaxa_dimUF, groupLet_dimUF,
 groupCasos_dimRG, groupObitos_dimRG, groupTaxa_dimRG, groupLet_dimRG;
 
-let groupCasos_dimData, groupObitos_dimData;  
+let groupCasos_dimData, groupObitos_dimData, groupNovosCasos_dimData, groupNovosObitos_dimData;  
 
 let casosPorUF = d3.map(), obitosPorUF = d3.map(), 
 	taxaPorUF = d3.map(), letPorUF = d3.map();
@@ -51,7 +51,7 @@ let dataAtual, dataInicial, dataFinal, escala=false, controleUF_RG=false,
 
 dataInicial = dtgFormat.parse("15/03/2020");
 
-let graficoMapa;
+let graficoMapa, graficoNovos, graficoAcumulados;
 
 
 var layerGroup_UF = new L.LayerGroup();
@@ -148,9 +148,6 @@ grafico.onAdd = function(mymap){
 	div.innerHTML = labels.join('<br>');
 	return div;}
 
-
-
-
 function trocaEscala(){
 	escala = !escala;
 	render();
@@ -230,11 +227,15 @@ d3.csv("data/minSaude.csv", function(data){
 	groupCasos_dimData = dimData.group()
 		.reduceSum(function(d){
 			return d.casosAcumulados;});
-
+	groupNovosCasos_dimData = dimData.group()
+		.reduceSum(function(d){
+			return d.casosNovos;});
 	groupObitos_dimData = dimData.group()
 		.reduceSum(function(d){
 			return d.obitosAcumulados;});
-
+	groupNovosObitos_dimData = dimData.group()
+		.reduceSum(function(d){
+			return d.obitosNovos;});
 
 	
  	groupCasos_dimData.all()
@@ -280,8 +281,6 @@ d3.csv("data/minSaude.csv", function(data){
 	info.addTo(Mapa);
 	grafico.addTo(Mapa);
 
-	
-
 	graficoMapa = new dc.rowChart("#divGraficoMapa");
 	
 	graficoMapa
@@ -290,6 +289,42 @@ d3.csv("data/minSaude.csv", function(data){
 		.margins({ top: 20, right: 40, bottom: 40, left: 30 })
 		.renderLabel(true)
 		.elasticX(true);
+
+
+	graficoNovos = new dc.lineChart("#divNovosCasos");
+	graficoAcumulados = new dc.lineChart("#divAcumulados");
+	
+    var x = (window.innerWidth);
+            	
+	graficoNovos
+		.width(x*0.38)
+		.height(250)
+		.elasticY(true)
+		.x(d3.time.scale().domain([dataInicial, dataFinal]))
+		.margins({left: 60, top: 10, right: 10, bottom: 20})
+		.renderArea(true)
+		.brushOn(false)
+		.renderDataPoints(true)
+		.clipPadding(10)
+		.colors(['#e34a33'])
+		          // .yAxisLabel("Novos Casos por Dia")
+		.dimension(dimData)
+		.group(groupNovosCasos_dimData);
+
+	graficoAcumulados
+		.width(x*0.38)
+		.height(250)
+		.elasticY(true)
+		.x(d3.time.scale().domain([dataInicial, dataAtual]))
+		.margins({left: 60, top: 10, right: 10, bottom: 20})
+		.renderArea(true)
+		.brushOn(false)
+		.renderDataPoints(true)
+		.clipPadding(10)
+		.colors(['#e34a33'])
+		          // .yAxisLabel("Novos Casos por Dia")
+		.dimension(dimData)
+		.group(groupCasos_dimData);
 
 	alteraDia();
 
@@ -310,13 +345,39 @@ function render(){
 		return d;
 	});
 
-	// Mapa.
+	var graficoNovosTitle = document.getElementById("NovosCasosTitle");
+	var graficoAcumuladosTitle = document.getElementById("AcumuladosTitle");
+	if(escala){
+		graficoNovosTitle.innerHTML = 'Novos óbitos';
+		graficoAcumuladosTitle.innerHTML = 'Óbitos acumulados';
+
+		graficoNovos
+			.group(groupNovosObitos_dimData)
+			.x(d3.time.scale().domain([dataInicial, dataAtual]))
+			.colors("black");
+		graficoAcumulados
+			.group(groupObitos_dimData)
+			.x(d3.time.scale().domain([dataInicial, dataAtual]))
+			.colors("black");
+
+	}else{
+		graficoNovosTitle.innerHTML = 'Novos casos';
+		graficoAcumuladosTitle.innerHTML = 'Casos acumulados';
+
+		graficoNovos
+			.group(groupNovosCasos_dimData)
+			.x(d3.time.scale().domain([dataInicial, dataAtual]))
+			.colors("#e34a33");
+		graficoAcumulados
+			.group(groupCasos_dimData)
+			.x(d3.time.scale().domain([dataInicial, dataAtual]))
+			.colors("#e34a33");
+	}
 
 
 	atualiza_mapsUFs();
 	atualiza_mapsRGs();
 
-	// Renderizando mapas: 
 
 	var graficoMapaTitle = document.getElementById("graficoMapaTitle");
 
@@ -456,7 +517,7 @@ function onEachFeatureUF(feature, layer) {
 		layer.on({
 			mouseover: highlightFeature,
 			mouseout: resetHighlight,
-			click: highlightFeature
+			click: highlightFeaturev2
 	});}
 function onEachFeatureRG(feature, layer) {
 	layer._leaflet_id = feature.properties.nome;
@@ -464,7 +525,7 @@ function onEachFeatureRG(feature, layer) {
 		layer.on({
 			mouseover: highlightFeature,
 			mouseout: resetHighlight,
-			click: highlightFeature
+			click: highlightFeaturev2
 	});}
 function AtualizaCoresUF(){
 	// console.log(Pop)
@@ -542,6 +603,9 @@ function highlightFeature(e) {
 		layer.bringToFront();
 	}
 
+	info.update(layer.feature);}
+function highlightFeaturev2(e) {
+	let layer =  e.target;
 	info.update(layer.feature);}
 
 function resetHighlight(e) {

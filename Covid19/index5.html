@@ -69,6 +69,21 @@
 			</div> -->
 			<div id="divMapa"></div>
 			
+			<div id="divControles">
+				<h2>
+					Taxa / Letalidade
+					<label class="switch"> 
+						<input type="checkbox" id="trocaEscala" onchange="trocaEscala()">  
+						<span class="slider round"></span> 
+					</label>
+					Estado / Região
+					<label class="switch"> 
+						<input type="checkbox" id="trocaEscala" onchange="trocaControleUF_RG()">  
+						<span class="slider round"></span> 
+					</label> 
+					<!-- <button id= "limparFiltros" onclick="limparFiltros()">Limpar Filtros</button> -->
+				</h2>
+			</div>
 			
 			<div class="slidecontainer">
 				<h2>
@@ -106,22 +121,18 @@
 				</h2>
 			</div>
 
-			<div id="divControles">
-				<h2>
-					Taxa / Letalidade
-					<label class="switch"> 
-						<input type="checkbox" id="trocaEscala" onchange="trocaEscala()">  
-						<span class="slider round"></span> 
-					</label>
-					Estado / Região
-					<label class="switch"> 
-						<input type="checkbox" id="trocaEscala" onchange="trocaControleUF_RG()">  
-						<span class="slider round"></span> 
-					</label> 
-					<button id= "limparFiltros" onclick="limparFiltros()">Limpar Filtros</button>
-				</h2>
-			</div>
-			<div id="divDashBoard"></div>		
+			
+			<div id="divDashBoard">
+				<div style="margin-left: 2%;">
+					<div id="divNovosCasos">
+						<h2 id="NovosCasosTitle" style="margin-left: 5%;">Evolução Diária- </h2>
+					</div>
+					<div id="divAcumulados">
+						<h2 id="AcumuladosTitle" style="margin-left: 5%;">Casos acumulados</h2>
+					</div>
+				</div>
+
+			</div>		
 		</div>
 		
 	<!-- 	<script type="text/javascript">
