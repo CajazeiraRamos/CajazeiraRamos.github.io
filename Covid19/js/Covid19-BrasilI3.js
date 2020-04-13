@@ -51,7 +51,9 @@ let dataAtual, dataInicial, dataFinal, escala=false, controleUF_RG=false,
 
 dataInicial = dtgFormat.parse("15/03/2020");
 
-let graficoMapa, graficoNovos, graficoAcumulados;
+let graficoMapa, graficoNovosCasos,
+graficoNovosObitos, graficoCasosAcumulados,
+graficoObitosAcumulados, graficoCasosPorUF, graficoRG;
 
 
 var layerGroup_UF = new L.LayerGroup();
@@ -265,6 +267,7 @@ d3.csv("data/minSaude.csv", function(data){
 	document.getElementById("dataRange").max = dataToNum(dataFinal);
 	document.getElementById("dataRange").value = dataToNum(dataFinal);
 	
+
 	geojsonUFs = L.geoJson(Estados, {
 		style: style,
 		onEachFeature: onEachFeatureUF
@@ -293,17 +296,25 @@ d3.csv("data/minSaude.csv", function(data){
 		.elasticX(true);
 
 
-	graficoNovos = new dc.lineChart("#divNovosCasos");
-	graficoAcumulados = new dc.lineChart("#divAcumulados");
+	graficoNovosCasos = new dc.lineChart("#divNovosCasos");
+	graficoNovosObitos = new dc.lineChart("#divNovosObitos");
+	graficoCasosAcumulados = new dc.lineChart("#divCasosAcumulados");
+	graficoObitosAcumulados = new dc.lineChart("#divObitosAcumulados");
 	
-    var x = (window.innerWidth);
-            	
-	graficoNovos
-		.width(x*0.38)
-		.height(200)
+	
+    var x = (window.innerWidth),
+    widthGraficos = x*0.38,
+    heightGraficos = 350;	
+
+    var marginsGraficos = {left: 60, top: 10, right: 50, bottom: 50};
+
+
+	graficoNovosCasos
+		.width(widthGraficos)
+		.height(heightGraficos)
 		.elasticY(true)
 		.x(d3.time.scale().domain([dataInicial, dataFinal]))
-		.margins({left: 60, top: 10, right: 10, bottom: 20})
+		.margins(marginsGraficos)
 		.renderArea(true)
 		.brushOn(false)
 		.renderDataPoints(true)
@@ -318,21 +329,96 @@ d3.csv("data/minSaude.csv", function(data){
 		.colors(['#e34a33'])
 		          // .yAxisLabel("Novos Casos por Dia")
 		.dimension(dimData)
-		.group(groupNovosCasos_dimData);
-
-	graficoAcumulados
-		.width(x*0.38)
-		.height(200)
+		.group(groupNovosCasos_dimData)
+		.renderlet(function (chart) {
+		   	chart.selectAll('g.x text')
+		     	.attr('transform', 'translate(-10,10) rotate(315)')});
+	graficoNovosObitos
+		.width(widthGraficos)
+		.height(heightGraficos)
 		.elasticY(true)
-		.x(d3.time.scale().domain([dataInicial, dataAtual]))
-		.margins({left: 60, top: 10, right: 10, bottom: 20})
+		.x(d3.time.scale().domain([dataInicial, dataFinal]))
+		.margins(marginsGraficos)
 		.renderArea(true)
 		.brushOn(false)
 		.renderDataPoints(true)
 		.clipPadding(10)
 		.title(function(d){
 			var dia  = formatDay(d.key),
-			mes = formatMonth(d.key)
+			mes = formatMonth(d.key);
+			return ('('+dia+'/'+mes+'): '+d.value+'');
+		})
+		.renderHorizontalGridLines(true)
+       	.renderVerticalGridLines(true)
+		.colors(['black'])
+		.dimension(dimData)
+		.group(groupNovosObitos_dimData)
+		.renderlet(function (chart) {
+		   	var txt = chart.selectAll('g.x text');
+		   	txt.attr('transform', 'translate(-10,10) rotate(315)')
+		});
+	graficoCasosAcumulados
+		.width(widthGraficos)
+		.height(heightGraficos)
+		.elasticY(true)
+		.x(d3.time.scale().domain([dataInicial, dataFinal]))
+		.margins(marginsGraficos)
+		.renderArea(true)
+		.brushOn(false)
+		.renderDataPoints(true)
+		.clipPadding(10)
+		.title(function(d){
+			var dia  = formatDay(d.key),
+			mes = formatMonth(d.key);
+			return ('('+dia+'/'+mes+'): '+d.value+'');
+		})
+		.renderHorizontalGridLines(true)
+       	.renderVerticalGridLines(true)
+		.colors(['#e34a33'])
+		.dimension(dimData)
+		.group(groupCasos_dimData)
+		.renderlet(function (chart) {
+		   	chart.selectAll('g.x text')
+		     	.attr('transform', 'translate(-10,10) rotate(315)')});
+	graficoObitosAcumulados
+		.width(widthGraficos)
+		.height(heightGraficos)
+		.elasticY(true)
+		.x(d3.time.scale().domain([dataInicial, dataFinal]))
+		.margins(marginsGraficos)
+		.renderArea(true)
+		.brushOn(false)
+		.renderDataPoints(true)
+		.clipPadding(10)
+		.title(function(d){
+			var dia  = formatDay(d.key),
+			mes = formatMonth(d.key);
+			return ('('+dia+'/'+mes+'): '+d.value+'');
+		})
+		.renderHorizontalGridLines(true)
+       	.renderVerticalGridLines(true)
+		.colors(['black'])
+		.dimension(dimData)
+		.group(groupObitos_dimData)
+		.renderlet(function (chart) {
+		   	chart.selectAll('g.x text')
+		     	.attr('transform', 'translate(-10,10) rotate(315)')});
+
+	graficoCasosPorUF = new dc.lineChart("divCasosPorUF");
+	
+	graficoCasosPorUF
+		.width(widthGraficos)
+		.height(heightGraficos)
+		.elasticY(true)
+		.x(d3.time.scale().domain([dataInicial, dataFinal]))
+		.margins(marginsGraficos)
+		.renderArea(true)
+		.brushOn(false)
+		.renderDataPoints(true)
+		.clipPadding(10)
+		.title(function(d){
+			var dia  = formatDay(d.key),
+			mes = formatMonth(d.key);
 			return ('('+dia+'/'+mes+'): '+d.value+'');
 		})
 		.renderHorizontalGridLines(true)
@@ -340,7 +426,33 @@ d3.csv("data/minSaude.csv", function(data){
 		.colors(['#e34a33'])
 		          // .yAxisLabel("Novos Casos por Dia")
 		.dimension(dimData)
-		.group(groupCasos_dimData);
+		.group(groupNovosCasos_dimData)
+		.renderlet(function (chart) {
+		   	chart.selectAll('g.x text')
+		     	.attr('transform', 'translate(-10,10) rotate(315)')})
+		.render();
+
+	// graficoRG = new dc.pieChart("divCasosPorRG");
+	
+	// graficoRG
+	// 	.width(x*0.2)
+	// 	.height(300)
+	// 	.slicesCap(5)
+	// 	.innerRadius(50)
+	// 			    // .margins({left: 100, top: 50, right: 10, bottom: 20})
+	// 	.dimension(dimRG)
+	// 	.group(groupLet_dimRG)
+	// 	// .colors(function(d){
+	// 	// 		    	return colorScale(d);
+	// 	// 		    	var quantize = getQuantize();
+	// 	// 		    	return quantize(getTaxa(d));
+	// 	// 		    })
+	// 	.on('pretransition', function(chart) {
+ //        	chart.selectAll('text.pie-slice').text(function(d) {
+ //            return siglaRegiao(d.data.key) + ' ' + dc.utils.printSingleValue(d3.round((d.endAngle - d.startAngle) / (2*Math.PI) * 100)) + '%';
+	// 		})
+	// 	}).render();
+
 
 	alteraDia();
 
@@ -361,45 +473,19 @@ function render(){
 		return d;
 	});
 
-	var graficoNovosTitle = document.getElementById("NovosCasosTitle");
-	var graficoAcumuladosTitle = document.getElementById("AcumuladosTitle");
-	if(escala){
-		graficoNovosTitle.innerHTML = 'Novos óbitos por dia';
-		graficoAcumuladosTitle.innerHTML = 'Óbitos acumulados';
+	graficoNovosCasos.x(d3.time.scale().domain([dataInicial, dataAtual]));
+	graficoNovosObitos.x(d3.time.scale().domain([dataInicial, dataAtual]));
+	graficoCasosAcumulados.x(d3.time.scale().domain([dataInicial, dataAtual]));
+	graficoObitosAcumulados.x(d3.time.scale().domain([dataInicial, dataAtual]));
+	
 
-		graficoNovos
-			.group(groupNovosObitos_dimData)
-			.x(d3.time.scale().domain([dataInicial, dataAtual]))
-			.colors("black");
-		graficoAcumulados
-			.group(groupObitos_dimData)
-			.x(d3.time.scale().domain([dataInicial, dataAtual]))
-			.colors("black");
-
-	}else{
-		graficoNovosTitle.innerHTML = 'Novos casos por dia';
-		graficoAcumuladosTitle.innerHTML = 'Casos acumulados';
-
-		graficoNovos
-			.group(groupNovosCasos_dimData)
-			.x(d3.time.scale().domain([dataInicial, dataAtual]))
-			.colors("#e34a33");
-		graficoAcumulados
-			.group(groupCasos_dimData)
-			.x(d3.time.scale().domain([dataInicial, dataAtual]))
-			.colors("#e34a33");
-	}
-
-
-	atualiza_mapsUFs();
-	atualiza_mapsRGs();
+	
 
 
 	var graficoMapaTitle = document.getElementById("graficoMapaTitle");
 
 	if(controleUF_RG){
 		
-		// console.log("Mapa por regiao");
 		layerGroup_RG.addTo(Mapa);
 		AtualizaCoresRG();
 
@@ -456,6 +542,8 @@ function render(){
 		
 	}
 
+	atualiza_mapsUFs();
+	atualiza_mapsRGs();
 	
 	graficoMapa
 		.colors(function(d){
@@ -550,12 +638,15 @@ function onEachFeatureRG(feature, layer) {
 			click: highlightFeaturev2
 	});}
 function AtualizaCoresUF(){
-	// console.log(Pop)
+
+	var quantize = getQuantize();
+	
+
 	var UFs = groupCasos_dimUF.top(Infinity);
 	UFs.forEach(function (d){
-		geojsonUFs.resetStyle(geojsonUFs._layers[d.key]);
-		// console.log(layer)
-	});}
+		var layer = geojsonUFs._layers[d.key];
+		geojsonUFs.resetStyle(layer);
+		});}
 
 function style(feature) {
 	var quantize = getQuantize();
@@ -595,18 +686,12 @@ function IndCor(id){
 	if(escala)
 		return letPorUF.get(id.UF);
 	return taxaPorUF.get(id.UF);
-	return 0;
-}
-
-
-
+	return 0;}
 function AtualizaCoresRG(){
 	
 	var RGs = groupCasos_dimRG.top(Infinity);
 	RGs.forEach(function (d){
-		geojsonRGs.resetStyle(geojsonRGs._layers[d.key]);});
-}
-
+		geojsonRGs.resetStyle(geojsonRGs._layers[d.key]);});}
 function highlightFeature(e) {
 	let layer;
 	if(e.target)
@@ -629,30 +714,29 @@ function highlightFeature(e) {
 function highlightFeaturev2(e) {
 	let layer =  e.target;
 	info.update(layer.feature);}
-
 function resetHighlight(e) {
 	if(controleUF_RG)
 		geojsonRGs.resetStyle(e.target);
 	else
 		geojsonUFs.resetStyle(e.target);
-	info.update();
-}
-
+	info.update();}
 function getColors(){
 	if(escala == 0)
 		return colorbrewer.Reds[7];
 	return ['#f7f7f7','#d9d9d9','#bdbdbd','#969696','#737373','#525252','#252525'];}
-
 function getQuantize(){
+
 	if(escala == 0){
+		// console.log(d3.round(groupTaxa_dimUF.top(1)[0].value));
+	    // var x = d3.round(groupTaxa_dimUF.top(1)[0].value)/7;
 	    return (d3.scale.linear()
+	    	// .domain([0, x, x*2, x*3, x*4, x*5, x*6])
 			.domain([0,3,6,9,12,15,20])
 			.range(getColors()));
 	    }
 	    return (d3.scale.linear()
 		    .domain([0,1,3,5,7,10,15])
 		    .range(getColors()));}
-
 function dataToNum(inDate) {
     var returnDateTime = 25569.0 + ((inDate.getTime() - (inDate.getTimezoneOffset() * 60 * 1000)) / (1000 * 60 * 60 * 24));
     return returnDateTime.toString().substr(0,5);}
