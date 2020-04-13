@@ -288,6 +288,8 @@ d3.csv("data/minSaude.csv", function(data){
 		.height(700)
 		.margins({ top: 20, right: 40, bottom: 40, left: 30 })
 		.renderLabel(true)
+		.renderTitle(true)
+		.labelOffsetX(-25)
 		.elasticX(true);
 
 
@@ -298,7 +300,7 @@ d3.csv("data/minSaude.csv", function(data){
             	
 	graficoNovos
 		.width(x*0.38)
-		.height(250)
+		.height(200)
 		.elasticY(true)
 		.x(d3.time.scale().domain([dataInicial, dataFinal]))
 		.margins({left: 60, top: 10, right: 10, bottom: 20})
@@ -306,6 +308,13 @@ d3.csv("data/minSaude.csv", function(data){
 		.brushOn(false)
 		.renderDataPoints(true)
 		.clipPadding(10)
+		.title(function(d){
+			var dia  = formatDay(d.key),
+			mes = formatMonth(d.key);
+			return ('('+dia+'/'+mes+'): '+d.value+'');
+		})
+		.renderHorizontalGridLines(true)
+       	.renderVerticalGridLines(true)
 		.colors(['#e34a33'])
 		          // .yAxisLabel("Novos Casos por Dia")
 		.dimension(dimData)
@@ -313,7 +322,7 @@ d3.csv("data/minSaude.csv", function(data){
 
 	graficoAcumulados
 		.width(x*0.38)
-		.height(250)
+		.height(200)
 		.elasticY(true)
 		.x(d3.time.scale().domain([dataInicial, dataAtual]))
 		.margins({left: 60, top: 10, right: 10, bottom: 20})
@@ -321,6 +330,13 @@ d3.csv("data/minSaude.csv", function(data){
 		.brushOn(false)
 		.renderDataPoints(true)
 		.clipPadding(10)
+		.title(function(d){
+			var dia  = formatDay(d.key),
+			mes = formatMonth(d.key)
+			return ('('+dia+'/'+mes+'): '+d.value+'');
+		})
+		.renderHorizontalGridLines(true)
+       	.renderVerticalGridLines(true)
 		.colors(['#e34a33'])
 		          // .yAxisLabel("Novos Casos por Dia")
 		.dimension(dimData)
@@ -348,7 +364,7 @@ function render(){
 	var graficoNovosTitle = document.getElementById("NovosCasosTitle");
 	var graficoAcumuladosTitle = document.getElementById("AcumuladosTitle");
 	if(escala){
-		graficoNovosTitle.innerHTML = 'Novos óbitos';
+		graficoNovosTitle.innerHTML = 'Novos óbitos por dia';
 		graficoAcumuladosTitle.innerHTML = 'Óbitos acumulados';
 
 		graficoNovos
@@ -361,7 +377,7 @@ function render(){
 			.colors("black");
 
 	}else{
-		graficoNovosTitle.innerHTML = 'Novos casos';
+		graficoNovosTitle.innerHTML = 'Novos casos por dia';
 		graficoAcumuladosTitle.innerHTML = 'Casos acumulados';
 
 		graficoNovos
@@ -389,7 +405,10 @@ function render(){
 
 		graficoMapa
 			.dimension(dimRG)
-			.labelOffsetX(5);
+			// .labelOffsetX(5)
+			.label(function(d){
+				return siglaRegiao(d.key);
+			});
 
 		graficoMapaTitle.innerHTML = 'Índice por Região';
 
@@ -414,7 +433,7 @@ function render(){
 
 		graficoMapa
 			.dimension(dimUF)
-			.labelOffsetX(-25);
+			// .labelOffsetX(-25);
 
 		graficoMapaTitle.innerHTML = 'Índice por Estado';
 		// console.log(graficoMapa);
