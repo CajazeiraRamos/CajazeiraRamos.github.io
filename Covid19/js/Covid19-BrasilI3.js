@@ -425,8 +425,8 @@ d3.csv("data/minSaude.csv", function(data){
 	
 	graficoUF
 		.width(x*0.76)
-		.height(400)
-	    .margins({left: 100, top: 50, right: 50, bottom: 50})
+		.height(450)
+	    .margins({left: 100, top: 50, right: 50, bottom: 100})
 		.x(d3.scale.ordinal().domain(dimUF))
 		.dimension(dimUF)
 		.group(groupCasos_dimUF)
@@ -434,9 +434,10 @@ d3.csv("data/minSaude.csv", function(data){
 		.elasticY(true)
 		.renderHorizontalGridLines(true)
         .renderVerticalGridLines(true)
-        .label(function(d){
-        	return d.y;
-        })
+        // .label(function(d){
+        // 	console.log(d);
+        // 	return d.y;
+        // })
 		.title(function(d){
 			return(d.key +':'+d.value);
 		})
@@ -446,8 +447,28 @@ d3.csv("data/minSaude.csv", function(data){
 		})
 		.ordering(function(d) { return -d.value; })
 		.on('renderlet',function(d){
+			var value = d3.map();
+
+			d.selectAll('rect.bar')
+				.attr('transform', function(d, i){
+					value.set(d.x, d.y);
+				});
 			d.selectAll('g.x text')
-				.attr('transform', 'translate(-10,10) rotate(315)');
+				.append('tspan')
+              	.text(function(d) {
+              		console.log(d);
+              		return ' - ' + value.get(d); })
+
+			d.selectAll('g.x text')
+				.attr('transform', 'translate(-25,25) rotate(-45)')
+
+			// d.selectAll('.barLabel')
+			// 	.attr('transform', function(d, i){
+			// 		console.log(d);
+			// 		console.log(i);
+			// 		return "translate("+-10+","+ (0) +") rotate(-5)";
+			// 	});
+		
 		});
 
 	graficoRG = new dc.pieChart("#divCasosPorRG");
@@ -463,7 +484,7 @@ d3.csv("data/minSaude.csv", function(data){
 		.colors(function(d){
 			return colorRegiao(d);
 		})
-		.on('pretransition', function(chart) {
+		.on('renderlet', function(chart) {
 			// chart.selectAll('.dc-legend')
 			// 	.attr('transform', 'translate(0,250)');
 
@@ -522,17 +543,19 @@ function render(){
 
 
 	if(escala){
-		graficoUF.group(groupObitos_dimUF);
+		graficoUF.group(groupObitos_dimUF)
+		.ordering(function(d) { return -d.value; });
 		graficoRG.group(groupObitos_dimRG);
 		titleAbs.innerHTML = 'Óbitos por Região e Estado';
 	}else{
-		graficoUF.group(groupCasos_dimUF);
+		graficoUF.group(groupCasos_dimUF)
+		.ordering(function(d) { return -d.value; });
 		graficoRG.group(groupCasos_dimRG);
 		titleAbs.innerHTML = 'Casos confirmados por Região e Estado';
 
 	}
 
-	
+
 
 
 	var graficoMapaTitle = document.getElementById("graficoMapaTitle");

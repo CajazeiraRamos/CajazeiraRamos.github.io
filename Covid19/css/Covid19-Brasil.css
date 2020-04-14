@@ -203,6 +203,12 @@ input:checked + .slider:before {
 	font: 16px/22px Arial, Helvetica, sans-serif;
 	font-weight: bold;
 }
+#divCasosPorUF text{
+	fill: black;
+	font: 16px/22px Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+
 
 #limparFiltros{
 	height: 50px;
