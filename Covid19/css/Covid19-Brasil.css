@@ -1,6 +1,3 @@
-body{
-	
-	background-color: #e3e3e3;}
 #divGeral{
 	background: rgba(255,255,255,0.8);
 	box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -8,7 +5,7 @@ body{
 	width: 90%;
 	margin-left: 5%;
 	margin-top: 5%;
-	height: 2500px;}
+	height: 2900px;}
 #divGeral h1{
 	padding: 20px;
 	margin-left: 1%;}
@@ -28,12 +25,12 @@ body{
 #divControles h2{
 
 	padding: 12px;}
-#divControles button{
-	height: 30%;
+#divGeral button{
+	height: 50px;
 	width: 200px;
     color: black;
     padding: 10px;
-	margin-left: 1%;
+	margin-left: 45%;
 	margin-top:0.5%;
     text-align: center;
   	border-radius: 15px;
@@ -183,6 +180,28 @@ input:checked + .slider:before {
 .dc-chart g.row {
 	height: 30px;
 }
+
+.dc-chart g.pie-slice{
+	opacity: 0;
+}
+
+.dc-chart g.dc-legend-item text{
+	fill: black;
+	font: 20px/22px Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+
+/*#divCasosPorRG text {
+	fill: black;
+	font: 20px/22px Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}*/
+.barLabel{
+	fill: black;
+	font: 16px/22px Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+
 /*#graficoMapa{
 	width: 200px;
 }*/
