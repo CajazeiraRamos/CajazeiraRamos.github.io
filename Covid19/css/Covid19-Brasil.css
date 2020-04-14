@@ -5,7 +5,8 @@
 	width: 90%;
 	margin-left: 5%;
 	margin-top: 5%;
-	height: 2900px;}
+	/*height: 2900px;*/
+}
 #divGeral h1{
 	padding: 20px;
 	margin-left: 1%;}
@@ -25,13 +26,14 @@
 #divControles h2{
 
 	padding: 12px;}
-#divGeral button{
-	height: 50px;
+#divControles button{
+	height: 30%;
 	width: 200px;
     color: black;
     padding: 10px;
 	margin-left: 45%;
 	margin-top:0.5%;
+	margin-bottom: 1%;
     text-align: center;
   	border-radius: 15px;
   	font-size: 16px;}
@@ -181,9 +183,9 @@ input:checked + .slider:before {
 	height: 30px;
 }
 
-.dc-chart g.pie-slice{
+/*.dc-chart g.pie-slice{
 	opacity: 0;
-}
+}*/
 
 .dc-chart g.dc-legend-item text{
 	fill: black;
@@ -191,17 +193,27 @@ input:checked + .slider:before {
 	font-weight: bold;
 }
 
-/*#divCasosPorRG text {
+#divCasosPorRG text {
 	fill: black;
 	font: 20px/22px Arial, Helvetica, sans-serif;
 	font-weight: bold;
-}*/
+}
 .barLabel{
 	fill: black;
 	font: 16px/22px Arial, Helvetica, sans-serif;
 	font-weight: bold;
 }
 
+#limparFiltros{
+	height: 50px;
+	width: 200px;
+    color: black;
+    padding: 10px;
+	margin-left: 45%;
+	margin-top:0.5%;
+    text-align: center;
+  	border-radius: 15px;
+  	font-size: 16px;}
 /*#graficoMapa{
 	width: 200px;
 }*/

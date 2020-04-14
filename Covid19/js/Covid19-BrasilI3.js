@@ -55,7 +55,7 @@ dataInicial = dtgFormat.parse("15/03/2020");
 
 let graficoMapa, graficoNovosCasos,
 graficoNovosObitos, graficoCasosAcumulados,
-graficoObitosAcumulados, graficoUF, graficoRG;
+graficoAcumulados, graficoUF, graficoRG;
 
 
 var layerGroup_UF = new L.LayerGroup();
@@ -303,13 +303,18 @@ d3.csv("data/minSaude.csv", function(data){
 
 	graficoNovosCasos = new dc.lineChart("#divNovosCasos");
 	graficoNovosObitos = new dc.lineChart("#divNovosObitos");
-	graficoCasosAcumulados = new dc.lineChart("#divCasosAcumulados");
-	graficoObitosAcumulados = new dc.lineChart("#divObitosAcumulados");
+	// graficoCasosAcumulados = new dc.lineChart("#divCasosAcumulados");
+	graficoAcumulados = new dc.compositeChart("#divObitosAcumulados");
 	
 	
     var x = (window.innerWidth),
     widthGraficos = x*0.38,
     heightGraficos = 350;	
+    console.log(x);
+    if(x<1400){
+    	console.log("teste");
+    	widthGraficos = x*0.8;
+    }
 
     var marginsGraficos = {left: 60, top: 10, right: 50, bottom: 50};
 
@@ -363,62 +368,65 @@ d3.csv("data/minSaude.csv", function(data){
 		   	var txt = chart.selectAll('g.x text');
 		   	txt.attr('transform', 'translate(-10,10) rotate(315)')
 		});
-	graficoCasosAcumulados
+	// graficoCasosAcumulados
+	// 	.width(widthGraficos)
+	// 	.height(heightGraficos)
+	// 	.elasticY(true)
+	// 	.x(d3.time.scale().domain([dataInicial, dataFinal]))
+	// 	.margins(marginsGraficos)
+	// 	.renderArea(true)
+	// 	.brushOn(false)
+	// 	.renderDataPoints(true)
+	// 	.clipPadding(10)
+	// 	.title(function(d){
+	// 		var dia  = formatDay(d.key),
+	// 		mes = formatMonth(d.key);
+	// 		return ('('+dia+'/'+mes+'): '+d.value+'');
+	// 	})
+	// 	.renderHorizontalGridLines(true)
+ //       	.renderVerticalGridLines(true)
+	// 	.colors(['#e34a33'])
+	// 	.dimension(dimData)
+	// 	.group(groupCasos_dimData)
+	// 	.on('renderlet', function (chart) {
+	// 	   	chart.selectAll('g.x text')
+	// 	     	.attr('transform', 'translate(-10,10) rotate(315)')});
+	
+	graficoAcumulados
 		.width(widthGraficos)
 		.height(heightGraficos)
-		.elasticY(true)
 		.x(d3.time.scale().domain([dataInicial, dataFinal]))
 		.margins(marginsGraficos)
-		.renderArea(true)
 		.brushOn(false)
-		.renderDataPoints(true)
-		.clipPadding(10)
+		.elasticY(true)
 		.title(function(d){
 			var dia  = formatDay(d.key),
 			mes = formatMonth(d.key);
 			return ('('+dia+'/'+mes+'): '+d.value+'');
 		})
+		.legend(dc.legend().x(80).y(20).itemHeight(20).gap(10))
 		.renderHorizontalGridLines(true)
        	.renderVerticalGridLines(true)
-		.colors(['#e34a33'])
-		.dimension(dimData)
-		.group(groupCasos_dimData)
-		.on('renderlet', function (chart) {
-		   	chart.selectAll('g.x text')
-		     	.attr('transform', 'translate(-10,10) rotate(315)')});
-	graficoObitosAcumulados
-		.width(widthGraficos)
-		.height(heightGraficos)
-		.elasticY(true)
-		.x(d3.time.scale().domain([dataInicial, dataFinal]))
-		.margins(marginsGraficos)
-		.renderArea(true)
-		.brushOn(false)
-		.renderDataPoints(true)
-		.clipPadding(10)
-		.title(function(d){
-			var dia  = formatDay(d.key),
-			mes = formatMonth(d.key);
-			return ('('+dia+'/'+mes+'): '+d.value+'');
-		})
-		.renderHorizontalGridLines(true)
-       	.renderVerticalGridLines(true)
-		.colors(['black'])
-		.dimension(dimData)
-		.group(groupObitos_dimData)
-		.on('renderlet', function (chart) {
-		   	chart.selectAll('g.x text')
-		     	.attr('transform', 'translate(-10,10) rotate(315)')});
+       	.compose([
+       		dc.lineChart(graficoAcumulados)
+       			.group(groupCasos_dimData, "Nº Infectados")
+       			.renderArea(true)
+       			.renderDataPoints(true)
+       			.ordinalColors(['#e34a33']),
+       		dc.lineChart(graficoAcumulados)
+       			.group(groupObitos_dimData, "Óbitos")
+       			.renderArea(true)
+       			.renderDataPoints(true)
+       			.ordinalColors(['black'])
+       	])
+
 
 	graficoUF = new dc.barChart("#divCasosPorUF");
 	
-	console.log(dimUF.top(Infinity));
-	console.log(groupCasos_dimUF.top(Infinity));
-
 	graficoUF
-		.width(x*0.7)
-	    .height(400)
-	    .margins({left: 50, top: 50, right: 50, bottom: 50})
+		.width(x*0.76)
+		.height(400)
+	    .margins({left: 100, top: 50, right: 50, bottom: 50})
 		.x(d3.scale.ordinal().domain(dimUF))
 		.dimension(dimUF)
 		.group(groupCasos_dimUF)
@@ -445,13 +453,13 @@ d3.csv("data/minSaude.csv", function(data){
 	graficoRG = new dc.pieChart("#divCasosPorRG");
 	
 	graficoRG
-		.width(x*0.1)
-		.height(400)
+		.width(widthGraficos)
+		.height(heightGraficos-50)
 		.slicesCap(5)
-		.innerRadius(120)
+		.innerRadius(70)
 		.dimension(dimRG)
 		.group(groupCasos_dimRG)
-		.legend(dc.legend().x(20).y(70).itemHeight(30).gap(20))//.horizontal(true)) //
+		.legend(dc.legend().x(20).y(60).itemHeight(30).gap(20))//.horizontal(true)) //
 		.colors(function(d){
 			return colorRegiao(d);
 		})
@@ -481,6 +489,11 @@ d3.csv("data/minSaude.csv", function(data){
 			// 		return "black";
 			// 	});
 		})
+		// .filter(function(d){
+		// 	console.log("teste");
+		// 	console.log(d);
+		// 	return d;
+		// });
 
 	alteraDia();
 
@@ -502,8 +515,7 @@ function render(){
 
 	graficoNovosCasos.x(d3.time.scale().domain([dataInicial, dataAtual]));
 	graficoNovosObitos.x(d3.time.scale().domain([dataInicial, dataAtual]));
-	graficoCasosAcumulados.x(d3.time.scale().domain([dataInicial, dataAtual]));
-	graficoObitosAcumulados.x(d3.time.scale().domain([dataInicial, dataAtual]));
+	graficoAcumulados.x(d3.time.scale().domain([dataInicial, dataAtual]));
 	
 
 	var titleAbs = document.getElementById("valoresAbsolutosTitle");
@@ -512,11 +524,11 @@ function render(){
 	if(escala){
 		graficoUF.group(groupObitos_dimUF);
 		graficoRG.group(groupObitos_dimRG);
-		titleAbs.innerHTML = 'Valores Absolutos por Região e Estado: Óbitos';
+		titleAbs.innerHTML = 'Óbitos por Região e Estado';
 	}else{
 		graficoUF.group(groupCasos_dimUF);
 		graficoRG.group(groupCasos_dimRG);
-		titleAbs.innerHTML = 'Valores Absolutos por Região e Estado: Casos confirmados';
+		titleAbs.innerHTML = 'Casos confirmados por Região e Estado';
 
 	}
 
