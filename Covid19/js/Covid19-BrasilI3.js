@@ -32,7 +32,8 @@ let dimData, dimUF, dimRG;
 let groupCasos_dimUF, groupObitos_dimUF, groupTaxa_dimUF, groupLet_dimUF,
 groupCasos_dimRG, groupObitos_dimRG, groupTaxa_dimRG, groupLet_dimRG;
 
-let groupCasos_dimData, groupObitos_dimData, groupNovosCasos_dimData, groupNovosObitos_dimData;  
+let groupCasos_dimData, groupObitos_dimData,
+ groupNovosCasos_dimData, groupNovosObitos_dimData;  
 
 let casosPorUF = d3.map(), obitosPorUF = d3.map(), 
 	taxaPorUF = d3.map(), letPorUF = d3.map();
@@ -165,14 +166,15 @@ function alteraDia(){
 	// var title = document.getElementById("title");
 
 	var novaData = NumToData(document.getElementById("dataRange").value);
-
+	// console.log(novaData);
 	dataAtual = novaData;
 	render();
 }
 
 function limparFiltros(){
-	dc.filterAll(); dc.renderAll();
+	dc.filterAll(); 
 	Mapa.flyTo(centroMapa, zoomMapa);
+	// render();
 	// console.log("teste");
 }
 
@@ -286,9 +288,17 @@ d3.csv("data/minSaude.csv", function(data){
 	});
 	layerGroup_RG.addLayer(geojsonRGs);
 
+	
 	info.addTo(Mapa);
 	grafico.addTo(Mapa);
 
+	
+
+	graficoNovosCasos = new dc.lineChart("#divNovosCasos");
+	graficoNovosObitos = new dc.lineChart("#divNovosObitos");
+	graficoAcumulados = new dc.compositeChart("#divObitosAcumulados");
+	graficoUF = new dc.barChart("#divCasosPorUF");
+	graficoRG = new dc.pieChart("#divCasosPorRG");
 	graficoMapa = new dc.rowChart("#divGraficoMapa");
 	
 	graficoMapa
@@ -300,24 +310,17 @@ d3.csv("data/minSaude.csv", function(data){
 		.labelOffsetX(-25)
 		.elasticX(true);
 
-
-	graficoNovosCasos = new dc.lineChart("#divNovosCasos");
-	graficoNovosObitos = new dc.lineChart("#divNovosObitos");
-	// graficoCasosAcumulados = new dc.lineChart("#divCasosAcumulados");
-	graficoAcumulados = new dc.compositeChart("#divObitosAcumulados");
-	
 	
     var x = (window.innerWidth),
     widthGraficos = x*0.38,
     heightGraficos = 350;	
-    console.log(x);
+    // console.log(x);
     if(x<1400){
     	console.log("teste");
     	widthGraficos = x*0.8;
     }
 
     var marginsGraficos = {left: 60, top: 10, right: 50, bottom: 50};
-
 
 	graficoNovosCasos
 		.width(widthGraficos)
@@ -337,13 +340,11 @@ d3.csv("data/minSaude.csv", function(data){
 		.renderHorizontalGridLines(true)
        	.renderVerticalGridLines(true)
 		.colors(['#e34a33'])
-		          // .yAxisLabel("Novos Casos por Dia")
 		.dimension(dimData)
 		.group(groupNovosCasos_dimData)
 		.on('renderlet', function (chart) {
 		   	chart.selectAll('g.x text')
-		     	.attr('transform', 'translate(-10,10) rotate(315)')});
-	
+		     	.attr('transform', 'translate(-15,15) rotate(315)')});
 	graficoNovosObitos
 		.width(widthGraficos)
 		.height(heightGraficos)
@@ -366,32 +367,8 @@ d3.csv("data/minSaude.csv", function(data){
 		.group(groupNovosObitos_dimData)
 		.on('renderlet', function (chart) {
 		   	var txt = chart.selectAll('g.x text');
-		   	txt.attr('transform', 'translate(-10,10) rotate(315)')
+		   	txt.attr('transform', 'translate(-15,15) rotate(315)')
 		});
-	// graficoCasosAcumulados
-	// 	.width(widthGraficos)
-	// 	.height(heightGraficos)
-	// 	.elasticY(true)
-	// 	.x(d3.time.scale().domain([dataInicial, dataFinal]))
-	// 	.margins(marginsGraficos)
-	// 	.renderArea(true)
-	// 	.brushOn(false)
-	// 	.renderDataPoints(true)
-	// 	.clipPadding(10)
-	// 	.title(function(d){
-	// 		var dia  = formatDay(d.key),
-	// 		mes = formatMonth(d.key);
-	// 		return ('('+dia+'/'+mes+'): '+d.value+'');
-	// 	})
-	// 	.renderHorizontalGridLines(true)
- //       	.renderVerticalGridLines(true)
-	// 	.colors(['#e34a33'])
-	// 	.dimension(dimData)
-	// 	.group(groupCasos_dimData)
-	// 	.on('renderlet', function (chart) {
-	// 	   	chart.selectAll('g.x text')
-	// 	     	.attr('transform', 'translate(-10,10) rotate(315)')});
-	
 	graficoAcumulados
 		.width(widthGraficos)
 		.height(heightGraficos)
@@ -419,10 +396,10 @@ d3.csv("data/minSaude.csv", function(data){
        			.renderDataPoints(true)
        			.ordinalColors(['black'])
        	])
-
-
-	graficoUF = new dc.barChart("#divCasosPorUF");
-	
+       	.on('renderlet', function (chart) {
+		   	var txt = chart.selectAll('g.x text');
+		   	txt.attr('transform', 'translate(-15,15) rotate(315)')
+		});
 	graficoUF
 		.width(x*0.76)
 		.height(450)
@@ -435,7 +412,7 @@ d3.csv("data/minSaude.csv", function(data){
 		.renderHorizontalGridLines(true)
         .renderVerticalGridLines(true)
         // .label(function(d){
-        // 	console.log(d);
+        // 	// console.log(d);
         // 	return d.y;
         // })
 		.title(function(d){
@@ -448,31 +425,47 @@ d3.csv("data/minSaude.csv", function(data){
 		.ordering(function(d) { return -d.value; })
 		.on('renderlet',function(d){
 			var value = d3.map();
+			var maior = 8900;
 
 			d.selectAll('rect.bar')
 				.attr('transform', function(d, i){
+					// console.log(d);
 					value.set(d.x, d.y);
 				});
-			d.selectAll('g.x text')
-				.append('tspan')
-              	.text(function(d) {
-              		console.log(d);
-              		return ' - ' + value.get(d); })
+			// d.selectAll('g.x text')
+			// 	.append('tspan')
+		   //            	.text(function(d) {
+		   //            		console.log(d);
+		   //            		return ' - ' + value.get(d); })
 
 			d.selectAll('g.x text')
-				.attr('transform', 'translate(-25,25) rotate(-45)')
+				.attr('transform', 'translate(-15,10) rotate(-45)')
+
+			d.selectAll('.barLabel')
+				// .attr('y', function(d, i){
+				// 	console.log(d);
+				// 	// console.log(i);
+				// 	var YY = (((d.data.value*100)/8800));
+				// 	console.log(((300*YY)/100));
+				// 	return 300-((300*YY)/100);
+				// 	// return (300-((d.y*300)/8800));
+				// })
+				// .attr('transform', function(d, i){
+				// 	console.log(d);
+				// 	// return "rotate(-45)"
+				// 	// console.log(d.getAttribute('x') + (d.getAttribute('width')/2));
+				// 	return "translate("+-10+","+ (10) +") rotate(-45)";
+				// })
+				;
 
 			// d.selectAll('.barLabel')
 			// 	.attr('transform', function(d, i){
 			// 		console.log(d);
 			// 		console.log(i);
-			// 		return "translate("+-10+","+ (0) +") rotate(-5)";
+			// 		// return "translate("+-10+","+ (0) +") rotate(-5)";
 			// 	});
 		
 		});
-
-	graficoRG = new dc.pieChart("#divCasosPorRG");
-	
 	graficoRG
 		.width(widthGraficos)
 		.height(heightGraficos-50)
@@ -480,7 +473,7 @@ d3.csv("data/minSaude.csv", function(data){
 		.innerRadius(70)
 		.dimension(dimRG)
 		.group(groupCasos_dimRG)
-		.legend(dc.legend().x(20).y(60).itemHeight(30).gap(20))//.horizontal(true)) //
+		.legend(dc.legend().x(40).y(50).itemHeight(30).gap(20))//.horizontal(true)) //
 		.colors(function(d){
 			return colorRegiao(d);
 		})
@@ -523,7 +516,7 @@ d3.csv("data/minSaude.csv", function(data){
 
 function render(){
 
-
+	// limparFiltros();
 	Mapa.removeLayer(layerGroup_UF);
 	Mapa.removeLayer(layerGroup_RG);
 
@@ -546,12 +539,12 @@ function render(){
 		graficoUF.group(groupObitos_dimUF)
 		.ordering(function(d) { return -d.value; });
 		graficoRG.group(groupObitos_dimRG);
-		titleAbs.innerHTML = 'Óbitos por Região e Estado';
+		titleAbs.innerHTML = 'Óbitos por estado';
 	}else{
 		graficoUF.group(groupCasos_dimUF)
 		.ordering(function(d) { return -d.value; });
 		graficoRG.group(groupCasos_dimRG);
-		titleAbs.innerHTML = 'Casos confirmados por Região e Estado';
+		titleAbs.innerHTML = 'Casos confirmados por estado';
 
 	}
 
@@ -707,7 +700,6 @@ function onEachFeatureUF(feature, layer) {
 	});}
 function onEachFeatureRG(feature, layer) {
 	layer._leaflet_id = feature.properties.nome;
-	// console.log(layer._leaflet_id);
 		layer.on({
 			mouseover: highlightFeature,
 			mouseout: resetHighlight,
@@ -739,6 +731,7 @@ function style(feature) {
 function getFeature(id){
 	if(controleUF_RG)
 		return geojsonRGs._layers[id].feature;
+	
 	else
 		return geojsonUFs._layers[id].feature;
 }
@@ -818,7 +811,7 @@ function dataToNum(inDate) {
     return returnDateTime.toString().substr(0,5);}
 function NumToData(serial) {
    var utc_days  = Math.floor(serial - 25569);
-   var utc_value = utc_days * 86400;                                        
+   var utc_value = utc_days * 86400;                      
    var date_info = new Date(utc_value * 1000);
    var ano = date_info.getFullYear(),
    mes = date_info.getMonth()+1,
