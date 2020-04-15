@@ -519,21 +519,21 @@ d3.csv("data/minSaude.csv", function(data){
 
 
 	graficoNovosCasos.xAxis()
-	    .ticks(d3.time.days, 4)
+	    .ticks(d3.time.days, 2)
 	    .tickFormat(function(d){
 	    	var dia = formatDay(d),
 	    	mes = formatMonth(d);
 	    	return (dia+'/'+mes);
 	    });
 	graficoNovosObitos.xAxis()
-	    .ticks(d3.time.days, 4)
+	    .ticks(d3.time.days, 2)
 	    .tickFormat(function(d){
 	    	var dia = formatDay(d),
 	    	mes = formatMonth(d);
 	    	return (dia+'/'+mes);
 	    });
 	graficoAcumulados.xAxis()
-	    .ticks(d3.time.days, 4)
+	    .ticks(d3.time.days, 2)
 	    .tickFormat(function(d){
 	    	var dia = formatDay(d),
 	    	mes = formatMonth(d);
