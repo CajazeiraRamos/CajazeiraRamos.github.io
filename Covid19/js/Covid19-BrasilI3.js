@@ -392,6 +392,7 @@ d3.csv("data/minSaude.csv", function(data){
        	.compose([
        		dc.lineChart(graficoAcumulados)
        			.group(groupCasos_dimData, "Nº Infectados")
+       			// .centerBar(true)
        			.renderArea(true)
        			.renderDataPoints(true)
        			.ordinalColors(['#e34a33']),
