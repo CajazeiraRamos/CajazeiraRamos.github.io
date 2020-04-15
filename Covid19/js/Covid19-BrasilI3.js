@@ -52,7 +52,7 @@ let dataAtual, dataInicial, dataFinal, escala=false, controleUF_RG=false,
 	formatYear = d3.time.format("%Y");
 	
 
-dataInicial = dtgFormat.parse("15/03/2020");
+dataInicial = dtgFormat.parse("17/03/2020");
 
 let graficoMapa, graficoNovosCasos,
 graficoNovosObitos, graficoCasosAcumulados,
@@ -294,8 +294,8 @@ d3.csv("data/minSaude.csv", function(data){
 
 	
 
-	graficoNovosCasos = new dc.lineChart("#divNovosCasos");
-	graficoNovosObitos = new dc.lineChart("#divNovosObitos");
+	graficoNovosCasos = new dc.barChart("#divNovosCasos");
+	graficoNovosObitos = new dc.barChart("#divNovosObitos");
 	graficoAcumulados = new dc.compositeChart("#divObitosAcumulados");
 	graficoUF = new dc.barChart("#divCasosPorUF");
 	graficoRG = new dc.pieChart("#divCasosPorRG");
@@ -315,23 +315,27 @@ d3.csv("data/minSaude.csv", function(data){
     widthGraficos = x*0.38,
     heightGraficos = 350;	
     // console.log(x);
-    if(x<1400){
+    if(x<1500){
     	console.log("teste");
     	widthGraficos = x*0.8;
     }
 
-    var marginsGraficos = {left: 60, top: 10, right: 50, bottom: 50};
+    console.log(dataFinal);
+    var marginsGraficos = {left: 60, top: 10, right: 80, bottom: 60};
+
+    // var minDate = d3.time.day.offset(dataInicial, -15),
+	// dataFinal = d3.time.day.offset(dataFinal, 1);
+	// console.log(maxDate);
+	console.log(x);
 
 	graficoNovosCasos
 		.width(widthGraficos)
 		.height(heightGraficos)
 		.elasticY(true)
-		.x(d3.time.scale().domain([dataInicial, dataFinal]))
 		.margins(marginsGraficos)
-		.renderArea(true)
 		.brushOn(false)
-		.renderDataPoints(true)
-		.clipPadding(10)
+		.xUnits(d3.time.days)
+		.centerBar(true)
 		.title(function(d){
 			var dia  = formatDay(d.key),
 			mes = formatMonth(d.key);
@@ -344,17 +348,18 @@ d3.csv("data/minSaude.csv", function(data){
 		.group(groupNovosCasos_dimData)
 		.on('renderlet', function (chart) {
 		   	chart.selectAll('g.x text')
-		     	.attr('transform', 'translate(-15,15) rotate(315)')});
+		     	.attr('transform', 'translate(-20,20) rotate(-45)')
+
+		     })
+		;
 	graficoNovosObitos
 		.width(widthGraficos)
 		.height(heightGraficos)
 		.elasticY(true)
-		.x(d3.time.scale().domain([dataInicial, dataFinal]))
 		.margins(marginsGraficos)
-		.renderArea(true)
+		.centerBar(true)
 		.brushOn(false)
-		.renderDataPoints(true)
-		.clipPadding(10)
+		.xUnits(d3.time.days)
 		.title(function(d){
 			var dia  = formatDay(d.key),
 			mes = formatMonth(d.key);
@@ -372,9 +377,9 @@ d3.csv("data/minSaude.csv", function(data){
 	graficoAcumulados
 		.width(widthGraficos)
 		.height(heightGraficos)
-		.x(d3.time.scale().domain([dataInicial, dataFinal]))
 		.margins(marginsGraficos)
 		.brushOn(false)
+		.xUnits(d3.time.days)
 		.elasticY(true)
 		.title(function(d){
 			var dia  = formatDay(d.key),
@@ -390,10 +395,12 @@ d3.csv("data/minSaude.csv", function(data){
        			.renderArea(true)
        			.renderDataPoints(true)
        			.ordinalColors(['#e34a33']),
-       		dc.lineChart(graficoAcumulados)
+       		dc.barChart(graficoAcumulados)
        			.group(groupObitos_dimData, "Óbitos")
-       			.renderArea(true)
-       			.renderDataPoints(true)
+       			.centerBar(true)
+       			// .label(function(d){
+		        // 	return d.y;
+		        // })
        			.ordinalColors(['black'])
        	])
        	.on('renderlet', function (chart) {
@@ -411,10 +418,10 @@ d3.csv("data/minSaude.csv", function(data){
 		.elasticY(true)
 		.renderHorizontalGridLines(true)
         .renderVerticalGridLines(true)
-        // .label(function(d){
-        // 	// console.log(d);
-        // 	return d.y;
-        // })
+        .label(function(d){
+        	if(x>1400)
+	        	return d.y;
+        })
 		.title(function(d){
 			return(d.key +':'+d.value);
 		})
@@ -509,6 +516,30 @@ d3.csv("data/minSaude.csv", function(data){
 		// 	return d;
 		// });
 
+
+	graficoNovosCasos.xAxis()
+	    .ticks(d3.time.days, 4)
+	    .tickFormat(function(d){
+	    	var dia = formatDay(d),
+	    	mes = formatMonth(d);
+	    	return (dia+'/'+mes);
+	    });
+	graficoNovosObitos.xAxis()
+	    .ticks(d3.time.days, 4)
+	    .tickFormat(function(d){
+	    	var dia = formatDay(d),
+	    	mes = formatMonth(d);
+	    	return (dia+'/'+mes);
+	    });
+	graficoAcumulados.xAxis()
+	    .ticks(d3.time.days, 4)
+	    .tickFormat(function(d){
+	    	var dia = formatDay(d),
+	    	mes = formatMonth(d);
+	    	return (dia+'/'+mes);
+	    });
+
+
 	alteraDia();
 
 });
@@ -516,9 +547,10 @@ d3.csv("data/minSaude.csv", function(data){
 
 function render(){
 
-	// limparFiltros();
+	limparFiltros();
 	Mapa.removeLayer(layerGroup_UF);
 	Mapa.removeLayer(layerGroup_RG);
+
 
 	legenda.addTo(Mapa);
 
@@ -527,24 +559,30 @@ function render(){
 		return d;
 	});
 
-	graficoNovosCasos.x(d3.time.scale().domain([dataInicial, dataAtual]));
-	graficoNovosObitos.x(d3.time.scale().domain([dataInicial, dataAtual]));
-	graficoAcumulados.x(d3.time.scale().domain([dataInicial, dataAtual]));
+	let minDate = d3.time.month.offset(dataAtual, -1),
+	maxDate = d3.time.day.offset(dataAtual, 1)
+
+	graficoNovosCasos.x(d3.time.scale().domain([minDate, maxDate]));
+	graficoNovosObitos.x(d3.time.scale().domain([minDate, maxDate]));
+	graficoAcumulados.x(d3.time.scale().domain([minDate, maxDate]));
 	
-
+	graficoAcumulados.render();
+	
 	var titleAbs = document.getElementById("valoresAbsolutosTitle");
-
+	var titleAbsRG = document.getElementById("valoresAbsolutosRGTitle");
 
 	if(escala){
 		graficoUF.group(groupObitos_dimUF)
 		.ordering(function(d) { return -d.value; });
 		graficoRG.group(groupObitos_dimRG);
-		titleAbs.innerHTML = 'Óbitos por estado';
+		titleAbs.innerHTML = 'Total de óbitos registrados, por estado';
+		titleAbsRG.innerHTML='Total de óbitos registrados, por região';
 	}else{
 		graficoUF.group(groupCasos_dimUF)
 		.ordering(function(d) { return -d.value; });
 		graficoRG.group(groupCasos_dimRG);
-		titleAbs.innerHTML = 'Casos confirmados por estado';
+		titleAbs.innerHTML = 'Total de casos confirmados, por estado';
+		titleAbsRG.innerHTML='Total de casos confirmados, por região';
 
 	}
 
