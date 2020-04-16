@@ -290,42 +290,24 @@ d3.csv("data/minSaude.csv", function(data){
 
 	
 	info.addTo(Mapa);
-	grafico.addTo(Mapa);
 
-	
 
 	graficoNovosCasos = new dc.barChart("#divNovosCasos");
 	graficoNovosObitos = new dc.barChart("#divNovosObitos");
 	graficoAcumulados = new dc.compositeChart("#divObitosAcumulados");
-	graficoUF = new dc.barChart("#divCasosPorUF");
-	graficoRG = new dc.pieChart("#divCasosPorRG");
-	graficoMapa = new dc.rowChart("#divGraficoMapa");
-	
-	graficoMapa
-		.width(250)
-		.height(800)
-		.margins({ top: 20, right: 40, bottom: 40, left: 30 })
-		.renderLabel(true)
-		.renderTitle(true)
-		.labelOffsetX(-25)
-		.elasticX(true);
-
+	graficoUF = new dc.rowChart("#divCasosPorUF");
+	graficoRG = new dc.barChart("#divCasosPorRG");
 	
     var x = (window.innerWidth),
     widthGraficos = x*0.38,
     heightGraficos = 350;	
     // console.log(x);
     if(x<1500){
-    	console.log("teste");
     	widthGraficos = x*0.8;
     }
 
-    console.log(dataFinal);
     var marginsGraficos = {left: 60, top: 10, right: 80, bottom: 60};
 
-    // var minDate = d3.time.day.offset(dataInicial, -15),
-	// dataFinal = d3.time.day.offset(dataFinal, 1);
-	// console.log(maxDate);
 	console.log(x);
 
 	graficoNovosCasos
@@ -408,21 +390,18 @@ d3.csv("data/minSaude.csv", function(data){
 		   	var txt = chart.selectAll('g.x text');
 		   	txt.attr('transform', 'translate(-15,15) rotate(315)')
 		});
+	
 	graficoUF
-		.width(x*0.76)
-		.height(450)
-	    .margins({left: 100, top: 50, right: 50, bottom: 100})
-		.x(d3.scale.ordinal().domain(dimUF))
+		.width(widthGraficos)
+		.height((heightGraficos*2)+65)
+	    .margins(marginsGraficos)
+		.renderLabel(true)
+		// .renderTitle(true)
+		.labelOffsetX(-30)
+		.elasticX(true)
 		.dimension(dimUF)
 		.group(groupCasos_dimUF)
-		.xUnits(dc.units.ordinal)
-		.elasticY(true)
-		.renderHorizontalGridLines(true)
-        .renderVerticalGridLines(true)
-        .label(function(d){
-        	if(x>1400)
-	        	return d.y;
-        })
+        
 		.title(function(d){
 			return(d.key +':'+d.value);
 		})
@@ -430,92 +409,50 @@ d3.csv("data/minSaude.csv", function(data){
 		.colors(function(d){
 			return colorRegiao(RGPorUF.get(d));
 		})
-		.ordering(function(d) { return -d.value; })
-		.on('renderlet',function(d){
-			var value = d3.map();
-			var maior = 8900;
+		// .ordering(function(d) { return -d.value; })
+		// .on('renderlet',function(d){
+		// 	var value = d3.map();
+		// 	var maior = 8900;
 
-			d.selectAll('rect.bar')
-				.attr('transform', function(d, i){
-					// console.log(d);
-					value.set(d.x, d.y);
-				});
-			// d.selectAll('g.x text')
-			// 	.append('tspan')
-		   //            	.text(function(d) {
-		   //            		console.log(d);
-		   //            		return ' - ' + value.get(d); })
+		// 	d.selectAll('rect.bar')
+		// 		.attr('transform', function(d, i){
+		// 			value.set(d.x, d.y);
+		// 		});
+		// 	d.selectAll('g.x text')
+		// 		.attr('transform', 'translate(-15,10) rotate(-45)')
 
-			d.selectAll('g.x text')
-				.attr('transform', 'translate(-15,10) rotate(-45)')
+		// 	d.selectAll('.barLabel')
 
-			d.selectAll('.barLabel')
-				// .attr('y', function(d, i){
-				// 	console.log(d);
-				// 	// console.log(i);
-				// 	var YY = (((d.data.value*100)/8800));
-				// 	console.log(((300*YY)/100));
-				// 	return 300-((300*YY)/100);
-				// 	// return (300-((d.y*300)/8800));
-				// })
-				// .attr('transform', function(d, i){
-				// 	console.log(d);
-				// 	// return "rotate(-45)"
-				// 	// console.log(d.getAttribute('x') + (d.getAttribute('width')/2));
-				// 	return "translate("+-10+","+ (10) +") rotate(-45)";
-				// })
-				;
-
-			// d.selectAll('.barLabel')
-			// 	.attr('transform', function(d, i){
-			// 		console.log(d);
-			// 		console.log(i);
-			// 		// return "translate("+-10+","+ (0) +") rotate(-5)";
-			// 	});
 		
-		});
+		// });
 	graficoRG
 		.width(widthGraficos)
-		.height(heightGraficos-50)
-		.slicesCap(5)
-		.innerRadius(70)
+		.height(heightGraficos)
+	    .margins(marginsGraficos)
+		.x(d3.scale.ordinal().domain(dimRG))
 		.dimension(dimRG)
 		.group(groupCasos_dimRG)
-		.legend(dc.legend().x(40).y(50).itemHeight(30).gap(20))//.horizontal(true)) //
+		.xUnits(dc.units.ordinal)
+		.elasticY(true)
+		.renderHorizontalGridLines(true)
+        .renderVerticalGridLines(true)
+        .label(function(d){
+        	// if(x>1400)
+	        	return d.y;
+        })
+		.title(function(d){
+			return(d.key +':'+d.value);
+		})
+		.colorAccessor(function (d, i){return d.key;})
 		.colors(function(d){
 			return colorRegiao(d);
 		})
-		.on('renderlet', function(chart) {
-			// chart.selectAll('.dc-legend')
-			// 	.attr('transform', 'translate(0,250)');
-
-			chart.selectAll('.dc-legend-item text')
-              .text('')
-            .append('tspan')
-              .text(function(d) { return siglaRegiao(d.name) + ' - '; })
-            .append('tspan')
-              // .attr('x', 100)
-              .attr('text-anchor', 'end')
-              .text(function(d) {
-              	// console.log(d);
-               return d.data; });
-
-        	chart.selectAll('text.pie-slice').text(function(d) {
-            	// return '';
-            return dc.utils.printSingleValue(d3.round((d.endAngle - d.startAngle) / (2*Math.PI) * 100)) + '%';
-			});
-
-			// chart.selectAll('text.pie-slice')
-			// 	.attr('color', function(d){
-			// 		console.log(d);
-			// 		return "black";
-			// 	});
-		})
-		// .filter(function(d){
-		// 	console.log("teste");
-		// 	console.log(d);
-		// 	return d;
-		// });
+		.ordering(function(d) { return -d.value; })
+		.on('renderlet',function(d){
+			// d.selectAll('g.x text')
+			// 	.attr('transform', 'translate(-35,25) rotate(-30)')
+		
+		});	
 
 
 	graficoNovosCasos.xAxis()
@@ -549,6 +486,7 @@ d3.csv("data/minSaude.csv", function(data){
 function render(){
 
 	limparFiltros();
+
 	Mapa.removeLayer(layerGroup_UF);
 	Mapa.removeLayer(layerGroup_RG);
 
@@ -588,79 +526,45 @@ function render(){
 	}
 
 
-
-
-	var graficoMapaTitle = document.getElementById("graficoMapaTitle");
-
 	if(controleUF_RG){
 		
 		layerGroup_RG.addTo(Mapa);
 		AtualizaCoresRG();
 
-		graficoMapa
-			.dimension(dimRG)
-			// .labelOffsetX(5)
-			.label(function(d){
-				return siglaRegiao(d.key);
-			});
-
-		graficoMapaTitle.innerHTML = 'Índice por Região';
-
+	
 		if(escala){
 			groupLet_dimRG.top(Infinity).forEach(function (d){
 				d.value = letPorRG.get(d.key);
 			});
-			graficoMapa
-				.group(groupLet_dimRG);
+			
 		}else{
 			groupTaxa_dimRG.top(Infinity).forEach(function (d){
 				d.value = taxaPorRG.get(d.key);
 			});
-			graficoMapa
-				.group(groupTaxa_dimRG);
+			
 		}
 
 	}else{
-		// console.log("Mapa por Estado");
 		layerGroup_UF.addTo(Mapa);
 		AtualizaCoresUF();
 
-		graficoMapa
-			.dimension(dimUF)
-			.label(function(d){
-				return d.key;
-			});
-			// .labelOffsetX(-25);
-
-		graficoMapaTitle.innerHTML = 'Índice por Estado';
-		// console.log(graficoMapa);
 		if(escala){
 			groupLet_dimUF.top(Infinity).forEach(function (d){
 				d.value = letPorUF.get(d.key);
 			});
-			graficoMapa
-				.group(groupLet_dimUF);
+			
 		}else{
 			groupTaxa_dimUF.top(Infinity).forEach(function (d){
 				d.value = taxaPorUF.get(d.key);
 			});
-			graficoMapa
-				.group(groupTaxa_dimUF);
+			
 		}
 		
 	}
 
 	atualiza_mapsUFs();
 	atualiza_mapsRGs();
-	
-	graficoMapa
-		.colors(function(d){
-			var quantize = getQuantize();
-			return quantize(IndCor(getFeature(d).properties));
-		});
-	
-	
-	// console.log("teste");
+			
 	dc.renderAll();
 
 
@@ -678,8 +582,6 @@ function render(){
 	 	})
 	 	;
 
-
-	// console.log(groupTaxa_dimUF.top(1)[0].value+'-'+groupTaxa_dimUF.top(1)[0].key);
 
 	var title = document.getElementById("title"),
 	dia  = formatDay(dataAtual),
@@ -754,7 +656,6 @@ function AtualizaCoresUF(){
 		var layer = geojsonUFs._layers[d.key];
 		geojsonUFs.resetStyle(layer);
 		});}
-
 function style(feature) {
 	var quantize = getQuantize();
 	var ind = IndCor(feature.properties),
@@ -766,21 +667,17 @@ function style(feature) {
 		dashArray: '3',
 		fillOpacity: 1,
 		fillColor: quantize(ind)};}
-
 function getFeature(id){
 	if(controleUF_RG)
 		return geojsonRGs._layers[id].feature;
 	
 	else
-		return geojsonUFs._layers[id].feature;
-}
+		return geojsonUFs._layers[id].feature;}
 function getLayer(id){
 	if(controleUF_RG)
 		return geojsonRGs._layers[id];
 	else
-		return geojsonUFs._layers[id];
-}
-
+		return geojsonUFs._layers[id];}
 
 function IndCor(id){
 	if(controleUF_RG){
