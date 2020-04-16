@@ -60,16 +60,24 @@
 			
 			<div id="divControles">
 				<h2>
-					Taxa / Letalidade
+					
+					<!-- Estado / Região
+					<label class="switch"> 
+						<input type="checkbox" id="trocaEscala" onchange="trocaControleUF_RG()">  
+						<span class="slider round"></span> 
+					</label>  -->
+					Incidência
 					<label class="switch"> 
 						<input type="checkbox" id="trocaEscala" onchange="trocaEscala()">  
 						<span class="slider round"></span> 
 					</label>
-					Estado / Região
+					Óbitos <br>
+					<!-- Taxas
 					<label class="switch"> 
 						<input type="checkbox" id="trocaEscala" onchange="trocaControleUF_RG()">  
 						<span class="slider round"></span> 
 					</label> 
+					Valores Absolutos -->
 					
 				</h2>
 			</div>
@@ -108,43 +116,40 @@
 						}
 					</script>
 				</h2>
+
 			</div>
 
-			
 			<div id="divDashBoard">
+				
 				<div style="margin-left: 7%;">
-					<div id="divNovosCasos">
-						<h2 style="margin-left: 5%;">Novos casos por dia</h2>
+
+					<div id="divCasosPorUF">
+						<h2 style="margin-left: 5%;" id="valoresAbsolutosTitle"></h2>
 					</div>
-					<div id="divNovosObitos">
-						<h2 style="margin-left: 5%;">Novos óbitos por dia</h2>
-					</div>
-					<!-- <h1 style="padding: 40px;">______________</h1> -->
-					<!-- <h1 style="margin-left: 35%;padding: 40px;">Números absolutos</h1> -->
-					<div id="divObitosAcumulados">
-						<h2 style="margin-left: 5%;">Casos acumulados</h2>
-					</div>
+
 					<div id="divCasosPorRG">
 						<h2 style="margin-left: 5%;" id = "valoresAbsolutosRGTitle">Dados por Região</h2>
 					</div>
-					
-				</div>
-				
-				<div style="margin-left:5%;">
-					<!-- <h2 style="margin-left: 10%;"> Valores Absolutos </h2> -->
-					<!-- <div id="divCasosPorRG"></div>	 -->
-					
-					<div id="divCasosPorUF"><h2 style="margin-left: 5%;" id="valoresAbsolutosTitle"></h2></div>
-					
+
+					<div id="divObitosAcumulados">
+						<h2 style="margin-left: 5%;">Casos acumulados (último mês)</h2>
+					</div>	
+					<div id="divNovosCasos">
+						<h2 style="margin-left: 5%;">Novos casos por dia (último mês)</h2>
+					</div>
+					<div id="divNovosObitos">
+						<h2 style="margin-left: 5%;">Novos óbitos por dia (último mês)</h2>
+					</div>
 				</div>
 				
 			</div>
+			<label style="width: 50%;">-</label>
 
-			<button id= "limparFiltros" onclick="limparFiltros()">Limpar Filtros</button>
+			<!-- <button id= "limparFiltros" onclick="limparFiltros()">Limpar Filtros</button> -->
 
 		</div>
 
-		<script type="text/javascript" src="js/Covid19-BrasilI3.js"></script>
+		<script type="text/javascript" src="js/Covid19-Brasil.js"></script>
 		
 	    <footer class="footer-main" style="margin-top: 5%; font: 14px/14px Arial, Helvetica, sans-serif; font-weight: bold;"> <a class="link" href="https://cajazeiraramos.github.io/">Alexandre R Cajazeira Ramos © 2020 </a> 
 	    	<p>

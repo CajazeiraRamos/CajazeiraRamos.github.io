@@ -204,11 +204,11 @@ input:checked + .slider:before {
 	font: 16px/28px Arial, Helvetica, sans-serif;
 	font-weight: bold;
 }
-#divCasosPorRG text {
+/*#divCasosPorRG text {
 	fill: black;
 	font: 20px/22px Arial, Helvetica, sans-serif;
 	font-weight: bold;
-}
+}*/
 
 
 #limparFiltros{

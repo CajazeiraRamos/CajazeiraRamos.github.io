@@ -22,7 +22,7 @@ indRG = d3.scale.ordinal()
 	.range(['','','','','']);
 
 // 14.2350° S, 51.9253° W
-let centroMapa = [-14.2350, -55],zoomMapa = 5;
+let centroMapa = [-14, -54],zoomMapa = 5;
 var popBR = 210147125;
 // if(window.innerWidth<1000)
 // 	zoomMapa = 4;
@@ -161,33 +161,116 @@ defMapa.onAdd = function(mymap){
 
 function trocaEscala(){
 	escala = !escala;
-	render();
+	atualizaMapa();
+	atualizaGraficos();
+	// render();
 }
 function trocaControleUF_RG(){
 	controleUF_RG = !controleUF_RG;
-	render();
-}
-function alteraDia(){
-	
-	// var title = document.getElementById("title");
-
-	var novaData = NumToData(document.getElementById("dataRange").value);
-	// console.log(novaData);
-	dataAtual = novaData;
-	render();
-}
+	atualizaMapa();}
 
 function limparFiltros(){
 	dc.filterAll(); 
-	Mapa.flyTo(centroMapa, zoomMapa);
-	// render();
-	// console.log("teste");
-}
+	Mapa.flyTo(centroMapa, zoomMapa);}
 
 
-d3.csv("data/minSaude.csv", function(data){
+function alteraDia(){
+	
+	limparFiltros();
+
+	var novaData = NumToData(document.getElementById("dataRange").value);
+	dataAtual = novaData;
+
+	dimData.filter(function(d){
+		if(d<=dataAtual)
+		return d;
+	});
+	
+
+	atualiza_mapsUFs();
+	atualiza_mapsRGs();
+
+	atualizaMapa();
+	atualizaGraficos();
+
+	var title = document.getElementById("title"),
+	dia  = formatDay(dataAtual),
+	mes = formatMonth(dataAtual),
+	ano = formatYear(dataAtual),
+	dataLabel = document.getElementById("dataLabel");
+
+	dataLabel.innerHTML = '<label id = "dataLabel"> Data: '+dia+"/"+mes+"/"+ano+'</label>';
+
+
+	title.innerHTML = 'Coronavírus no Brasil ('+dia+"/"+mes+"/"+ano+')<h1>'+
+		'<span class="label label-info">'+casosPorData.get(dataAtual).toLocaleString('pt-BR')+' Casos</span>\n'+
+		'<span class="label label-warning">'+d3.round(taxaPorData.get(dataAtual),1)+' p/ 100mil/h</span>\n'+
+		'<span class="label label-danger">'+obitosPorData.get(dataAtual).toLocaleString('pt-BR')+' Óbitos</span>\n'+
+		'<span class="label label-default">'+d3.round(letPorData.get(dataAtual),1)+'% Let.</span>	</h1>';}
+function atualizaMapa(){
+
+	Mapa.removeLayer(layerGroup_UF);
+	Mapa.removeLayer(layerGroup_RG);
+			
+
+	legenda.addTo(Mapa);
+
+	if(controleUF_RG){
+		layerGroup_RG.addTo(Mapa);
+		AtualizaCoresRG();
+	}else{
+		layerGroup_UF.addTo(Mapa);
+		AtualizaCoresUF();
+	}}
+function atualizaGraficos(){
+
+	let minDate = d3.time.day.offset(dataAtual, -30),
+	maxDate = d3.time.day.offset(dataAtual, 1)
+
+	graficoNovosCasos.x(d3.time.scale().domain([minDate, maxDate]));
+	graficoNovosObitos.x(d3.time.scale().domain([minDate, maxDate]));
+	graficoAcumulados.x(d3.time.scale().domain([minDate, maxDate]));
+	
+	graficoAcumulados.render();
+
+	var titleAbs = document.getElementById("valoresAbsolutosTitle");
+	var titleAbsRG = document.getElementById("valoresAbsolutosRGTitle");
+
+	if(escala){
+		graficoUF.group(groupObitos_dimUF)
+		.ordering(function(d) { return -d.value; });
+		graficoRG.group(groupObitos_dimRG);
+		titleAbs.innerHTML = 'Total de óbitos registrados, por estado';
+		titleAbsRG.innerHTML='Total de óbitos registrados, por região';
+	}else{
+		graficoUF.group(groupCasos_dimUF)
+		.ordering(function(d) { return -d.value; });
+		graficoRG.group(groupCasos_dimRG);
+		titleAbs.innerHTML = 'Total de casos confirmados, por estado';
+		titleAbsRG.innerHTML='Total de casos confirmados, por região';
+
+	}
+
+	dc.renderAll();
+
+	d3.selectAll("g.row")
+		.on('mouseover', function(d){
+			highlightFeature(getLayer(d.key));
+	 	})
+	 	.on('mouseout', function(d){
+	 		if(controleUF_RG)
+	 			geojsonRGs.resetStyle(geojsonRGs[d.key]);
+	 		else
+	 			geojsonUFs.resetStyle(geojsonUFs[d.key]);
+	 		
+	 		info.update();
+	 	});}
+
+// d3.csv("data/minSaude.csv", function(data){
+d3.csv("https://adimo.clinicasodontologicas.com.br/static/minSaude.csv", function(data){
+	// console.log(data);
 	data.forEach(function(d) {
-		
+		// console.log(d);
 		d.regiao = d.regiao;
 		d.uf = d.estado;
 		d.data = dtgFormat.parse(d.data);
@@ -200,6 +283,48 @@ d3.csv("data/minSaude.csv", function(data){
 
 		RGPorUF.set(d.uf, d.regiao);
 		});
+
+
+	// Atualizando datas:
+	inicializa(data);
+
+	dataFinal = dimData.top(1)[0].data;
+	dataInicial = d3.time.day.offset(dataFinal, -15);
+	dataAtual = dataFinal;
+
+
+	document.getElementById("dataRange").min = dataToNum(dataInicial);
+	document.getElementById("dataRange").max = dataToNum(dataFinal);
+	document.getElementById("dataRange").value = dataToNum(dataFinal);
+	
+
+	geojsonUFs = L.geoJson(Estados, {
+		style: style,
+		onEachFeature: onEachFeatureUF
+	});
+
+	layerGroup_UF.addLayer(geojsonUFs);
+
+	geojsonRGs = L.geoJson(Regioes, {
+		style: style,
+		onEachFeature: onEachFeatureRG
+	});
+	layerGroup_RG.addLayer(geojsonRGs);
+
+	
+	info.addTo(Mapa);
+	defMapa.addTo(Mapa);
+
+
+	inicializaGraficos();
+
+
+	alteraDia();
+
+});
+
+function inicializa(data){
+	
 	var facts = crossfilter(data);
 	
 	//CrossFilter Dimensions :	
@@ -264,43 +389,8 @@ d3.csv("data/minSaude.csv", function(data){
 		obitosPorData.set(d.key, +d.value);
 		var let = d3.round((d.value*100/casosPorData.get(d.key)),2);
 		letPorData.set(d.key, let);
-	});
-
-	// Atualizando datas:
-
-
-	atualiza_mapsUFs();
-	atualiza_mapsRGs();
-
-
-	dataFinal = dimData.top(1)[0].data;
-	dataInicial = d3.time.day.offset(dataFinal, -30);
-	dataAtual = dataFinal;
-
-
-	document.getElementById("dataRange").min = dataToNum(dataInicial);
-	document.getElementById("dataRange").max = dataToNum(dataFinal);
-	document.getElementById("dataRange").value = dataToNum(dataFinal);
-	
-
-	geojsonUFs = L.geoJson(Estados, {
-		style: style,
-		onEachFeature: onEachFeatureUF
-	});
-
-	layerGroup_UF.addLayer(geojsonUFs);
-
-	geojsonRGs = L.geoJson(Regioes, {
-		style: style,
-		onEachFeature: onEachFeatureRG
-	});
-	layerGroup_RG.addLayer(geojsonRGs);
-
-	
-	info.addTo(Mapa);
-	defMapa.addTo(Mapa);
-
-
+	});}
+function inicializaGraficos(){
 	graficoNovosCasos = new dc.barChart("#divNovosCasos");
 	graficoNovosObitos = new dc.barChart("#divNovosObitos");
 	graficoAcumulados = new dc.compositeChart("#divObitosAcumulados");
@@ -393,7 +483,8 @@ d3.csv("data/minSaude.csv", function(data){
        			.group(groupObitos_dimData, "Óbitos")
        			.centerBar(true)
        			// .label(function(d){
-		        // 	return d.y;
+       			// 	if(d.y>1000)
+		        // 		return d3.round((d.y/1000),1)+'k';
 		        // })
        			.ordinalColors(['black'])
        	])
@@ -414,6 +505,8 @@ d3.csv("data/minSaude.csv", function(data){
 		.group(groupCasos_dimUF)
         
 		.title(function(d){
+			if(d.value == 0)
+        		return '-';
 			return d.value.toLocaleString("pt-BR");
 			// return(d.key +':'+d.value);
 		})
@@ -435,6 +528,8 @@ d3.csv("data/minSaude.csv", function(data){
 		.renderHorizontalGridLines(true)
         .renderVerticalGridLines(true)
         .label(function(d){
+        	if(d.y == 0)
+        		return '';
         	// if(x>1400)
 	        	return d.y.toLocaleString('pt-BR');
         })
@@ -499,128 +594,14 @@ d3.csv("data/minSaude.csv", function(data){
 	    	.tickFormat(function(d){
 		    	return d.toLocaleString("pt-BR");
 		    });
-		    
-	alteraDia();
-
-});
-
-
-function render(){
-
-	limparFiltros();
-
-	Mapa.removeLayer(layerGroup_UF);
-	Mapa.removeLayer(layerGroup_RG);
-
-
-	legenda.addTo(Mapa);
-
-	dimData.filter(function(d){
-		if(d<=dataAtual)
-		return d;
-	});
-
-	let minDate = d3.time.month.offset(dataAtual, -1),
-	maxDate = d3.time.day.offset(dataAtual, 1)
-
-	graficoNovosCasos.x(d3.time.scale().domain([minDate, maxDate]));
-	graficoNovosObitos.x(d3.time.scale().domain([minDate, maxDate]));
-	graficoAcumulados.x(d3.time.scale().domain([minDate, maxDate]));
-	
-	graficoAcumulados.render();
-	
-	var titleAbs = document.getElementById("valoresAbsolutosTitle");
-	var titleAbsRG = document.getElementById("valoresAbsolutosRGTitle");
-
-	if(escala){
-		graficoUF.group(groupObitos_dimUF)
-		.ordering(function(d) { return -d.value; });
-		graficoRG.group(groupObitos_dimRG);
-		titleAbs.innerHTML = 'Total de óbitos registrados, por estado';
-		titleAbsRG.innerHTML='Total de óbitos registrados, por região';
-	}else{
-		graficoUF.group(groupCasos_dimUF)
-		.ordering(function(d) { return -d.value; });
-		graficoRG.group(groupCasos_dimRG);
-		titleAbs.innerHTML = 'Total de casos confirmados, por estado';
-		titleAbsRG.innerHTML='Total de casos confirmados, por região';
-
-	}
-
-
-	if(controleUF_RG){
-		
-		layerGroup_RG.addTo(Mapa);
-		AtualizaCoresRG();
-
-	
-		if(escala){
-			groupLet_dimRG.top(Infinity).forEach(function (d){
-				d.value = letPorRG.get(d.key);
-			});
-			
-		}else{
-			groupTaxa_dimRG.top(Infinity).forEach(function (d){
-				d.value = taxaPorRG.get(d.key);
-			});
-			
-		}
-
-	}else{
-		layerGroup_UF.addTo(Mapa);
-		AtualizaCoresUF();
-
-		if(escala){
-			groupLet_dimUF.top(Infinity).forEach(function (d){
-				d.value = letPorUF.get(d.key);
-			});
-			
-		}else{
-			groupTaxa_dimUF.top(Infinity).forEach(function (d){
-				d.value = taxaPorUF.get(d.key);
-			});
-			
-		}
-		
-	}
-
-	atualiza_mapsUFs();
-	atualiza_mapsRGs();
-			
-	dc.renderAll();
-
-
-	 d3.selectAll("g.row")
-	 	.on('mouseover', function(d){
-	 		highlightFeature(getLayer(d.key));
-	 	})
-	 	.on('mouseout', function(d){
-	 		if(controleUF_RG)
-	 			geojsonRGs.resetStyle(geojsonRGs[d.key]);
-	 		else
-	 			geojsonUFs.resetStyle(geojsonUFs[d.key]);
-	 		
-	 		info.update();
-	 	})
-	 	;
-
-
-	var title = document.getElementById("title"),
-	dia  = formatDay(dataAtual),
-	mes = formatMonth(dataAtual),
-	ano = formatYear(dataAtual),
-	dataLabel = document.getElementById("dataLabel");
-
-	dataLabel.innerHTML = '<label id = "dataLabel"> Data: '+dia+"/"+mes+"/"+ano+'</label>';
-
-
-	title.innerHTML = 'Coronavírus no Brasil ('+dia+"/"+mes+"/"+ano+')<h1>'+
-		'<span class="label label-info">'+casosPorData.get(dataAtual).toLocaleString('pt-BR')+' Casos</span>\n'+
-		'<span class="label label-warning">'+d3.round(taxaPorData.get(dataAtual),1)+' p/ 100mil/h</span>\n'+
-		'<span class="label label-danger">'+obitosPorData.get(dataAtual).toLocaleString('pt-BR')+' Óbitos</span>\n'+
-		'<span class="label label-default">'+d3.round(letPorData.get(dataAtual),1)+'% Let.</span>	</h1>';
-
+	graficoUF
+		.xAxis()
+	    	.tickFormat(function(d){
+		    	return d.toLocaleString("pt-BR");
+		    });
 }
+
+
 
 function atualiza_mapsUFs(){
 	groupCasos_dimUF.all()
@@ -628,6 +609,7 @@ function atualiza_mapsUFs(){
 		casosPorUF.set(d.key, +d.value);
 		var taxa = d3.round((d.value*100000)/populacaoUF(d.key),2);
 		taxaPorUF.set(d.key, +taxa);
+
 	});
 	groupObitos_dimUF.all()
 	.forEach(function(d){
@@ -672,13 +654,13 @@ function onEachFeatureRG(feature, layer) {
 function AtualizaCoresUF(){
 
 	var quantize = getQuantize();
-	
 
 	var UFs = groupCasos_dimUF.top(Infinity);
 	UFs.forEach(function (d){
 		var layer = geojsonUFs._layers[d.key];
 		geojsonUFs.resetStyle(layer);
 		});}
+
 function style(feature) {
 	var quantize = getQuantize();
 	var ind = IndCor(feature.properties),
@@ -705,8 +687,6 @@ function getLayer(id){
 function IndCor(id){
 	if(controleUF_RG){
 		if(escala){
-			// var let = 
-			// indRG[] letPorRG.get(id.nome));
 			return letPorRG.get(id.nome);
 		}
 		return taxaPorRG.get(id.nome);
