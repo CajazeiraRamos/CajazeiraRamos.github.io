@@ -60,12 +60,18 @@
 			
 			<div id="divControles">
 				<h2>
-					Taxa / Letalidade
+					
+					<!-- Estado / Região
+					<label class="switch"> 
+						<input type="checkbox" id="trocaEscala" onchange="trocaControleUF_RG()">  
+						<span class="slider round"></span> 
+					</label>  -->
+					Incidência / Letalidade
 					<label class="switch"> 
 						<input type="checkbox" id="trocaEscala" onchange="trocaEscala()">  
 						<span class="slider round"></span> 
 					</label>
-					Estado / Região
+					Taxas / Valores Absolutos
 					<label class="switch"> 
 						<input type="checkbox" id="trocaEscala" onchange="trocaControleUF_RG()">  
 						<span class="slider round"></span> 
@@ -108,9 +114,9 @@
 						}
 					</script>
 				</h2>
+
 			</div>
 
-			
 			<div id="divDashBoard">
 				
 				<div style="margin-left: 7%;">
@@ -127,10 +133,10 @@
 						<h2 style="margin-left: 5%;">Casos acumulados</h2>
 					</div>	
 					<div id="divNovosCasos">
-						<h2 style="margin-left: 5%;">Novos casos por dia</h2>
+						<h2 style="margin-left: 5%;">Novos casos por dia (último mês)</h2>
 					</div>
 					<div id="divNovosObitos">
-						<h2 style="margin-left: 5%;">Novos óbitos por dia</h2>
+						<h2 style="margin-left: 5%;">Novos óbitos por dia (último mês)</h2>
 					</div>
 				</div>
 				

@@ -26,6 +26,7 @@
 #divControles h2{
 
 	padding: 12px;}
+
 #divControles button{
 	height: 30%;
 	width: 200px;
@@ -223,3 +224,9 @@ input:checked + .slider:before {
 /*#graficoMapa{
 	width: 200px;
 }*/
+
+.Controle{
+	padding: 20px;
+	width:250px;
+	height: 200px;
+}
