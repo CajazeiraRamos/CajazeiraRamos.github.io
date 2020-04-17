@@ -200,7 +200,9 @@ function trocaEscala(){
 }
 function trocaControleUF_RG(){
 	controleUF_RG = !controleUF_RG;
-	atualizaMapa();}
+	info.update();
+	atualizaMapa();
+}
 
 function trocaControleTxVa(){
 	// alert("Não implementado ainda");
