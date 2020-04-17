@@ -56,20 +56,31 @@ let dataAtual, dataInicial, dataFinal, escala=false, controleUF_RG=false, Contro
 	
 
 let quantizeTaxa = d3.scale.linear()
-			.domain([0,5,10,15,20,25,30])
-			.range(colorbrewer.Reds[7]),
+			.domain([0,5,10,15,20,30,40])
+			.range(['#eff3ff','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#084594']),
+				
+			// .range(['#edf8e9','#c7e9c0','#a1d99b','#74c476','#41ab5d','#238b45','#005a32'])
+			// .range(['#eff3ff','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#084594'])
+			
+			// .range(colorbrewer.Reds[7]),
 	quantizeLet = d3.scale.linear()
 			    .domain([0,1,3,5,7,10,15])
-			    .range(['#f7f7f7','#d9d9d9','#bdbdbd','#969696','#737373','#525252','#252525']),
+			    .range(['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#807dba','#6a51a3','#4a1486']),
+			    // .range(['#f7f7f7','#d9d9d9','#bdbdbd','#969696','#737373','#525252','#252525']),
 
 	quantizeCasos = d3.scale.linear()
 				.domain([0,100,500,1000,5000,10000,15000])
-				.range(['#eff3ff','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#084594']),
+				.range(['#edf8fb','#ccece6','#99d8c9','#66c2a4','#41ae76','#238b45','#005824']),
+				
+				// .range(['#eff3ff','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#084594']),
 				// .range(colorbrewer.Reds[7]),
 
 	quantizeObitos = d3.scale.linear()
 			    .domain([0,10,50,100,200,500,1000])
-			    .range(['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#807dba','#6a51a3','#4a1486']);
+			    .range(['#edf8e9','#c7e9c0','#a1d99b','#74c476','#41ab5d','#238b45','#005a32'])
+			    // .range(['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#807dba','#6a51a3','#4a1486'])
+			   ;
+			    // .range(['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#807dba','#6a51a3','#4a1486']);
 
 // console.log(quantizeObitos.range());
 
@@ -245,9 +256,9 @@ function alteraDia(){
 
 
 	title.innerHTML = 'Coronavírus no Brasil ('+dia+"/"+mes+"/"+ano+')<h1>'+
-		'<span class="label label-info">'+casosPorData.get(dataAtual).toLocaleString('pt-BR')+' Casos</span>\n'+
-		'<span class="label label-warning">'+d3.round(taxaPorData.get(dataAtual),1)+' p/ 100mil/h</span>\n'+
-		'<span class="label label-danger">'+obitosPorData.get(dataAtual).toLocaleString('pt-BR')+' Óbitos</span>\n'+
+		'<span class="label label-default">'+casosPorData.get(dataAtual).toLocaleString('pt-BR')+' Casos</span>\n'+
+		'<span class="label label-default">'+d3.round(taxaPorData.get(dataAtual),1)+' p/ 100mil/h</span>\n'+
+		'<span class="label label-default">'+obitosPorData.get(dataAtual).toLocaleString('pt-BR')+' Óbitos</span>\n'+
 		'<span class="label label-default">'+d3.round(letPorData.get(dataAtual),1)+'% Let.</span>	</h1>';}
 function atualizaMapa(){
 
