@@ -284,7 +284,8 @@ function atualizaGraficos(){
 					if(d.value == 0)
 		        		return '-';
 					return d3.round(d.value,1).toLocaleString("pt-BR");
-				});
+				})
+				;
 			graficoRG.group(groupObitos_dimRG)
 				.title(function(d){
 					if(d.value == 0)
@@ -363,15 +364,15 @@ function atualizaGraficos(){
 		}
 	}
 
-	var cores = getQuantize();
+	// var cores = getQuantize();
 
-	graficoUF.colors(function(d){
-		return cores(indPorUF(d));
-	});
+	// graficoUF.colors(function(d){
+	// 	return cores(indPorUF(d));
+	// });
 
-	graficoRG.colors(function(d){
-		return cores(indPorRG(d));
-	});
+	// graficoRG.colors(function(d){
+	// 	return cores(indPorRG(d));
+	// });
 
 	dc.renderAll();
 
