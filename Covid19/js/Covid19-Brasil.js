@@ -303,6 +303,7 @@ function atualizaGraficos(){
 				x.value = letPorRG.get(x.key);
 			});
 
+			
 			graficoUF.group(groupLet_dimUF)
 				.title(function(d){
 					if(d.value == 0)
@@ -484,9 +485,29 @@ function inicializa(data){
 	groupCasos_dimRG = dimRG.group()
 		.reduceSum(function(d){
 			return d.casosNovos;});
+	
+	// function reduceAdd(p, v, nf) {
+	// 	console.log(p);
+	// 	console.log(v);
+	// 	console.log(nf);
+	//   return p + 1;
+	// }
+
+	// function reduceRemove(p, v, nf) {
+	//   return p - 1;
+	// }
+
+	// function reduceInitial() {
+	//   return 0;
+	// }
+
+	// groupTaxa_dimUF = dimUF.group(reduceAdd,reduceRemove,reduceInitial);
+
 	groupTaxa_dimRG = dimRG.group()
 		.reduceSum(function(d){
 			return d.casosNovos;});
+
+
 	groupObitos_dimRG = dimRG.group()
 		.reduceSum(function(d){
 			return d.obitosNovos;});
@@ -519,7 +540,10 @@ function inicializa(data){
 		obitosPorData.set(d.key, +d.value);
 		var let = d3.round((d.value*100/casosPorData.get(d.key)),2);
 		letPorData.set(d.key, let);
-	});}
+	});
+	
+
+}
 function inicializaGraficos(){
 
 	graficoNovosCasos = new dc.barChart("#divNovosCasos");
@@ -630,7 +654,6 @@ function inicializaGraficos(){
 		.elasticX(true)
 		.dimension(dimUF)
 		.group(groupCasos_dimUF)
-        
 		.title(function(d){
 			if(d.value == 0)
         		return '-';
@@ -640,7 +663,18 @@ function inicializaGraficos(){
 		.colorAccessor(function (d, i){return d.key;})
 		.colors(function(d){
 			return colorRegiao(RGPorUF.get(d));
-		});
+		})
+		.on('filtered', function(d){
+			groupTaxa_dimRG.top(Infinity).forEach(function(x){
+				x.value = taxaPorRG.get(x.key);
+			});
+			groupLet_dimRG.top(Infinity).forEach(function(x){
+				x.value = letPorRG.get(x.key);
+			});
+		})
+
+
+		;
 	graficoRG
 		.width(widthGraficos)
 		.height(heightGraficos)
@@ -650,22 +684,89 @@ function inicializaGraficos(){
 		.group(groupCasos_dimRG)
 		.labelOffsetX(-30)
 		.label(function(d){
-			// console.log(d);
 			return siglaRegiao(d.key);
 		})
-		// .labelOffsetX(-110)
 		.elasticX(true)
 		.renderTitleLabel(true)
 		.title(function(d){
 			if(d.value == 0)
         		return '-';
 			return d.value.toLocaleString("pt-BR");
-			// return(d.key +':'+d.value);
 		})
 		.colorAccessor(function (d, i){return d.key;})
 		.colors(function(d){
 			return colorRegiao(d);
 		})
+		.filterHandler(function(dimension, filters){
+			// console.log(dimension);
+			// console.log(filters);
+            dimension.filter(null);
+                if(filters.length === 0){
+                	
+                	groupTaxa_dimUF.top(Infinity).forEach(function(x){
+						x.value = taxaPorUF.get(x.key);
+					});
+					groupLet_dimUF.top(Infinity).forEach(function(x){
+						x.value = letPorUF.get(x.key);
+					});
+                    dimension.filter(null);
+                } else {
+                	
+
+
+                    dimension.filterFunction(function(d){
+                    	for(var i = 0; i < filters.length; ++i) {
+                            var filter = filters[i];
+                            if(d.indexOf(filter) === 0) return true;
+                        }
+                        return false;
+                    });
+
+                    // for(var i=0;i)
+                    groupTaxa_dimUF.top(Infinity).forEach(function(x){
+						var rg = RGPorUF.get(x.key);
+						var controle = false; 
+						for(var i =0; i<filters.length; ++i){
+							if(filters[i] == rg)
+								controle = true;
+						}
+						if(controle)
+							x.value = taxaPorUF.get(x.key);
+						else
+							x.value = 0;
+					});
+                    groupLet_dimUF.top(Infinity).forEach(function(x){
+						var rg = RGPorUF.get(x.key);
+						var controle = false; 
+						for(var i =0; i<filters.length; ++i){
+							if(filters[i] == rg)
+								controle = true;
+						}
+						if(controle)
+							x.value = letPorUF.get(x.key);
+						else
+							x.value = 0;
+					});
+                }
+        });
+		// .on('filtered', function(d, filter, i){
+		// 	console.log(d);
+		// 	console.log(filter);
+		// 	console.log(i);
+		
+		// 	// console.log(d.filterPrinter());
+		// 	// console.log(d.data());
+		// 	if(filter){
+		// 		groupTaxa_dimUF.top(Infinity).forEach(function(x){
+		// 		if(RGPorUF.get(x.key)==filter)
+		// 			x.value = taxaPorUF.get(x.key);
+		// 		else{
+		// 			x.value = 0;
+		// 		}
+		// 		});
+		// 	}
+
+		// })
 		;
 
 
