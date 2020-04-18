@@ -94,11 +94,9 @@ var layerGroup_RG = new L.LayerGroup();
 let geojsonUFs, geojsonRGs;
 
 
-let Mapa = L.map('divMapa', { zoomControl:false }).setView(centroMapa, zoomMapa);
+let Mapa = L.map('divMapa').setView(centroMapa, zoomMapa);
 L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {maxZoom: 18, attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>`})
 .addTo(Mapa);
-Mapa.scrollWheelZoom.disable();
-Mapa.doubleClickZoom.disable();
 
 let info = L.control(), 
 legenda = L.control({position: 'bottomright'}),
@@ -288,8 +286,8 @@ function atualizaGraficos(){
 	
 	graficoAcumulados.render();
 
-	var titleAbs = document.getElementById("valoresAbsolutosTitle");
-	var titleAbsRG = document.getElementById("valoresAbsolutosRGTitle");
+	// var titleAbs = document.getElementById("valoresAbsolutosTitle");
+	// var titleAbsRG = document.getElementById("valoresAbsolutosRGTitle");
 
 	if(escala){
 		if(ControleTxVa){
@@ -375,8 +373,8 @@ function atualizaGraficos(){
 					return d3.round(d.value,1).toLocaleString("pt-BR");
 				});
 
-			titleAbs.innerHTML = 'Nº de casos para cada 100 mil habitantes, por estado';
-			titleAbsRG.innerHTML='Nº de casos para cada 100 mil habitantes, por região';
+			// titleAbs.innerHTML = 'Nº de casos para cada 100 mil habitantes, por estado';
+			// titleAbsRG.innerHTML='Nº de casos para cada 100 mil habitantes, por região';
 		}
 	}
 
@@ -572,9 +570,9 @@ function inicializaGraficos(){
     widthGraficos = x*0.38,
     heightGraficos = 350;	
 
-    if(x<1500){
-    	widthGraficos = x*0.8;
-    }
+    // if(x<1500){
+    // 	widthGraficos = x*0.8;
+    // }
 
  //    vardocument.getElementById("valoresAbsolutosTitle")).style.width = widthGraficos;
 	// document.getElementById("valoresAbsolutosRGTitle").style.width = widthGraficos;
@@ -664,7 +662,7 @@ function inicializaGraficos(){
 		});
 	graficoUF
 		.width(widthGraficos)
-		.height((heightGraficos*2)+65)
+		.height((heightGraficos*2))
 	    .margins(marginsGraficos)
 		.renderLabel(true)
 		.renderTitleLabel(true)
