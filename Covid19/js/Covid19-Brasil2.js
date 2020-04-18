@@ -568,16 +568,16 @@ function inicializaGraficos(){
 	var graficoData = new dc.lineChart("#graficoData");
 	
     var x = (window.innerWidth),
-    widthGraficos = x*0.8,
+    widthGraficos = x*0.38,
     heightGraficos = 350;	
 	
 	var marginsGraficos = {left: 60, top: 10, right: 80, bottom: 60};
 
-	var min = dtgFormat.parse("30/01/2020");
+	var min = dtgFormat.parse("01/03/2020");
 
     graficoData
-    	.width(widthGraficos)
-        .height(heightGraficos)
+    	.width(x*0.8)
+        .height(400)
         .margins(marginsGraficos)
         .dimension(dimData)
         .group(groupCasos_dimData)
