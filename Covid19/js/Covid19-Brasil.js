@@ -662,6 +662,8 @@ function inicializaGraficos(){
 		   	var txt = chart.selectAll('g.x text');
 		   	txt.attr('transform', 'translate(-15,15) rotate(315)')
 		});
+
+
 	graficoUF
 		.width(widthGraficos)
 		.height((heightGraficos*2)+65)
@@ -1008,8 +1010,22 @@ function highlightFeature(e) {
 
 	info.update(layer.feature);}
 function highlightFeaturev2(e) {
+
 	let layer =  e.target;
-	info.update(layer.feature);}
+	var cod = layer.feature.properties.UF;
+	// dimUF.filter(function(d){
+	// 	console.log(d);
+	// 	if(d == cod);
+	// 		return true;
+	// 	return false;
+	// })
+	// dimUF.filter(cod);
+	// dc.renderAll();
+
+
+	info.update(layer.feature);
+
+}
 function resetHighlight(e) {
 	if(controleUF_RG)
 		geojsonRGs.resetStyle(e.target);

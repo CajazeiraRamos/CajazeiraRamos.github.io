@@ -348,8 +348,8 @@ function atualizaGraficos(){
 		        		return '-';
 					return d3.round(d.value,1).toLocaleString("pt-BR");
 				});
-			titleAbs.innerHTML = 'Total de casos confirmados, por estado';
-			titleAbsRG.innerHTML='Total de casos confirmados, por região';
+			// titleAbs.innerHTML = 'Total de casos confirmados, por estado';
+			// titleAbsRG.innerHTML='Total de casos confirmados, por região';
 
 		}else{
 			
@@ -565,10 +565,54 @@ function inicializaGraficos(){
 	graficoUF = new dc.rowChart("#divCasosPorUF");
 	graficoRG = new dc.rowChart("#divCasosPorRG");
 
+	var graficoData = new dc.lineChart("#graficoData");
 	
     var x = (window.innerWidth),
-    widthGraficos = x*0.38,
+    widthGraficos = x*0.8,
     heightGraficos = 350;	
+	
+	var marginsGraficos = {left: 60, top: 10, right: 80, bottom: 60};
+
+	var min = dtgFormat.parse("30/01/2020");
+
+    graficoData
+    	.width(widthGraficos)
+        .height(heightGraficos)
+        .margins(marginsGraficos)
+        .dimension(dimData)
+        .group(groupCasos_dimData)
+		.elasticY(true)
+        .x(d3.time.scale().domain([min, dataAtual]))
+        .xUnits(d3.time.days)
+        .elasticY(true)
+        .on("filtered", function(chart,filter){
+        	console.log("filtro");
+        	ControleTxVa = 1;
+        	if(filter){
+        		// console.log(filter[0]);
+        		let minDate = filter[0],
+				maxDate = filter[1];
+
+				graficoNovosCasos.x(d3.time.scale().domain([minDate, maxDate]));
+				graficoNovosObitos.x(d3.time.scale().domain([minDate, maxDate]));
+				graficoAcumulados.x(d3.time.scale().domain([minDate, maxDate]));
+        	}
+
+                  // updateMarkers();
+   //          groupTaxa_dimUF.top(Infinity).forEach(function(x){
+			// 	x.value = taxaPorUF.get(x.key);
+			// });
+			// groupTaxa_dimRG.top(Infinity).forEach(function(x){
+			// 	x.value = taxaPorRG.get(x.key);
+			// });
+        })
+        .on('renderlet', function (chart) {
+		   	chart.selectAll('g.x text')
+		     	.attr('transform', 'translate(-20,20) rotate(-45)')
+
+		});
+
+
 
     // if(x<1500){
     // 	widthGraficos = x*0.8;
@@ -577,8 +621,7 @@ function inicializaGraficos(){
  //    vardocument.getElementById("valoresAbsolutosTitle")).style.width = widthGraficos;
 	// document.getElementById("valoresAbsolutosRGTitle").style.width = widthGraficos;
 
-    var marginsGraficos = {left: 60, top: 10, right: 80, bottom: 60};
-
+    
 	graficoNovosCasos
 		.width(widthGraficos)
 		.height(heightGraficos)
@@ -629,7 +672,7 @@ function inicializaGraficos(){
 		.width(widthGraficos)
 		.height(heightGraficos)
 		.margins(marginsGraficos)
-		.brushOn(false)
+		.brushOn(true)
 		.xUnits(d3.time.days)
 		.elasticY(true)
 		.title(function(d){
@@ -646,7 +689,8 @@ function inicializaGraficos(){
        			// .centerBar(true)
        			.renderArea(true)
        			.renderDataPoints(true)
-       			.ordinalColors(['#e34a33']),
+       			.ordinalColors(['#e34a33'])
+       			,
        		dc.barChart(graficoAcumulados)
        			.group(groupObitos_dimData, "Óbitos")
        			.centerBar(true)
@@ -656,13 +700,17 @@ function inicializaGraficos(){
 		        // })
        			.ordinalColors(['black'])
        	])
+
        	.on('renderlet', function (chart) {
 		   	var txt = chart.selectAll('g.x text');
 		   	txt.attr('transform', 'translate(-15,15) rotate(315)')
-		});
+		})
+       ;
+
+
 	graficoUF
 		.width(widthGraficos)
-		.height((heightGraficos*2))
+		.height((heightGraficos*3))
 	    .margins(marginsGraficos)
 		.renderLabel(true)
 		.renderTitleLabel(true)
