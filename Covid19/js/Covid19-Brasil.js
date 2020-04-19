@@ -261,7 +261,9 @@ function alteraDia(){
 		'<span class="label label-default">'+casosPorData.get(dataAtual).toLocaleString('pt-BR')+' Casos</span>\n'+
 		'<span class="label label-default">'+d3.round(taxaPorData.get(dataAtual),1)+' p/ 100mil/h</span>\n'+
 		'<span class="label label-default">'+obitosPorData.get(dataAtual).toLocaleString('pt-BR')+' Óbitos</span>\n'+
-		'<span class="label label-default">'+d3.round(letPorData.get(dataAtual),1)+'% Let.</span>	</h1>';}
+		'<span class="label label-default">'+d3.round(letPorData.get(dataAtual),1)+'% Let.</span> \n'+	
+		// '<button  class="label label-default" onclick="maisInfos()">+<span>'+
+		'</h1>';}
 function atualizaMapa(){
 
 	Mapa.removeLayer(layerGroup_UF);
@@ -413,7 +415,13 @@ function atualizaGraficos(){
 	 		info.update();
 	 	});}
 
-d3.csv("https://adimo.clinicasodontologicas.com.br/static/minSaude.csv", function(data){
+function maisInfos(){
+	// alert("teste");
+}
+
+d3.csv("data/minSaude.csv", function(data){
+
+// d3.csv("https://adimo.clinicasodontologicas.com.br/static/minSaude.csv", function(data){
 	// console.log(data);
 	data.forEach(function(d) {
 		// console.log(d);

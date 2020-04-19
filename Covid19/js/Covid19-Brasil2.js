@@ -576,7 +576,7 @@ function inicializaGraficos(){
 	var min = dtgFormat.parse("01/03/2020");
 
     graficoData
-    	.width(x*0.8)
+    	.width(x*0.76)
         .height(400)
         .margins(marginsGraficos)
         .dimension(dimData)
@@ -667,7 +667,12 @@ function inicializaGraficos(){
 		.on('renderlet', function (chart) {
 		   	var txt = chart.selectAll('g.x text');
 		   	txt.attr('transform', 'translate(-15,15) rotate(315)')
-		});
+		}).on("filtered", function(chart,filter){
+			console.log(filter);
+		})
+
+
+		;
 	graficoAcumulados
 		.width(widthGraficos)
 		.height(heightGraficos)
@@ -834,6 +839,14 @@ function inicializaGraficos(){
 		;
 
 
+	graficoData
+		.xAxis()
+		    .ticks(d3.time.days, 2)
+		    .tickFormat(function(d){
+		    	var dia = formatDay(d),
+		    	mes = formatMonth(d);
+		    	return (dia+'/'+mes);});
+
 	graficoNovosCasos
 		.xAxis()
 		    .ticks(d3.time.days, 2)
@@ -841,6 +854,7 @@ function inicializaGraficos(){
 		    	var dia = formatDay(d),
 		    	mes = formatMonth(d);
 		    	return (dia+'/'+mes);});
+
 	graficoNovosCasos
 		.yAxis()
 	    	.tickFormat(function(d){
@@ -879,7 +893,10 @@ function inicializaGraficos(){
 		.xAxis()
 	    	.tickFormat(function(d){
 		    	return d.toLocaleString("pt-BR");
-		    });}
+		    });
+
+
+	    }
 
 
 
