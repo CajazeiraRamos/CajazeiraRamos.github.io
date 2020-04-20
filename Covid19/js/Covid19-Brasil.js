@@ -232,9 +232,11 @@ function limparFiltros(){
 function alteraDia(){
 	
 	limparFiltros();
+	console.log(dataAtual);
 
 	var novaData = NumToData(document.getElementById("dataRange").value);
 	dataAtual = novaData;
+
 
 	dimData.filter(function(d){
 		if(d<=dataAtual)
@@ -422,12 +424,23 @@ function maisInfos(){
 d3.csv("data/minSaude.csv", function(data){
 
 // d3.csv("https://adimo.clinicasodontologicas.com.br/static/minSaude.csv", function(data){
-	// console.log(data);
+	console.log(data);
 	data.forEach(function(d) {
 		// console.log(d);
 		d.regiao = d.regiao;
 		d.uf = d.estado;
-		d.data = dtgFormat.parse(d.data);
+		// var x1,x2,x3;
+		var Y = d.data.substr(0,4),
+		M = d.data.substr(5,2),
+		D = d.data.substr(8,2),
+		strData = D+'/'+M+'/'+Y;
+		
+		// console.log(d.data.substr(3,2));
+
+		d.data = dtgFormat.parse(strData);
+
+
+
 		d.nome = nomeUF(d.uf);
 		d.casosNovos = +d.casosNovos;
 		d.casosAcumulados = +d.casosAcumulados;
@@ -441,6 +454,8 @@ d3.csv("data/minSaude.csv", function(data){
 
 	// Atualizando datas:
 	inicializa(data);
+
+	console.log(dimData.top(Infinity));
 
 	dataFinal = dimData.top(1)[0].data;
 	dataInicial = d3.time.day.offset(dataFinal, -15);
@@ -483,7 +498,7 @@ function inicializa(data){
 	
 	//CrossFilter Dimensions :	
 	dimData = facts.dimension(function(d){
-
+		console.log(d.data);
 		return d.data;});
 	dimUF = facts.dimension(function(d){
 
