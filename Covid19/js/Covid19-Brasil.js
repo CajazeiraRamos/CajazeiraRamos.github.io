@@ -430,15 +430,15 @@ d3.csv("data/minSaude.csv", function(data){
 		d.regiao = d.regiao;
 		d.uf = d.estado;
 	
-		// var Y = d.data.substr(0,4),
-		// M = d.data.substr(5,2),
-		// D = d.data.substr(8,2),
-		// strData = D+'/'+M+'/'+Y;
+		var Y = d.data.substr(0,4),
+		M = d.data.substr(5,2),
+		D = d.data.substr(8,2),
+		strData = D+'/'+M+'/'+Y;
 		
 		// console.log(d.data.substr(3,2));
 
-		// d.data = dtgFormat.parse(strData);
-		d.data =dtgFormat.parse(d.data);
+		d.data = dtgFormat.parse(strData);
+		// d.data =dtgFormat.parse(d.data);
 
 
 		d.nome = nomeUF(d.uf);
