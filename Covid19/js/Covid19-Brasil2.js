@@ -586,7 +586,9 @@ function inicializaGraficos(){
         .xUnits(d3.time.days)
         .elasticY(true)
         .on("filtered", function(chart,filter){
+
         	console.log("filtro");
+        	console.log("y");
         	ControleTxVa = 1;
         	if(filter){
         		// console.log(filter[0]);
