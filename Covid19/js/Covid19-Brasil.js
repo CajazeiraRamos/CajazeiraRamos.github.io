@@ -56,7 +56,7 @@ let dataAtual, dataInicial, dataFinal, escala=false, controleUF_RG=false, Contro
 	
 
 let quantizeTaxa = d3.scale.linear()
-			.domain([0,10,20,40,60,80,100])
+			.domain([0,25,50,100,150,200,300])
 			.range(['#eff3ff','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#084594']),
 				
 			// .range(['#edf8e9','#c7e9c0','#a1d99b','#74c476','#41ab5d','#238b45','#005a32'])
@@ -69,14 +69,14 @@ let quantizeTaxa = d3.scale.linear()
 			    // .range(['#f7f7f7','#d9d9d9','#bdbdbd','#969696','#737373','#525252','#252525']),
 
 	quantizeCasos = d3.scale.linear()
-				.domain([0,500,1000,5000,10000,15000,20000])
+				.domain([0,1000,5000,10000,15000,25000,40000])
 				.range(['#edf8fb','#ccece6','#99d8c9','#66c2a4','#41ae76','#238b45','#005824']),
 				
 				// .range(['#eff3ff','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#084594']),
 				// .range(colorbrewer.Reds[7]),
 
 	quantizeObitos = d3.scale.linear()
-			    .domain([0,10,50,100,500,1000,2000])
+			    .domain([0,50,100,500,1000,2000,3000])
 			    .range(['#edf8e9','#c7e9c0','#a1d99b','#74c476','#41ab5d','#238b45','#005a32'])
 			    // .range(['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#807dba','#6a51a3','#4a1486'])
 			   ;
