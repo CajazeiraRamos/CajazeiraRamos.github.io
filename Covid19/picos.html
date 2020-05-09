@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+  	<meta charset="utf-8">
+    <title>Coronavirus no Piauí</title>
+
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+
+
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"  integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+
+    <script type="text/javascript" src="cidadesPI.js"></script>
+	<link rel="stylesheet" href="css/dc.css">
+	<script src="js/crossfilter.js" charset="utf-8"></script>
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/dc.js" charset="utf-8"></script>
+
+	<!-- <script src="dc.js" charset="utf-8"></script> -->
+	<!-- <link rel="stylesheet" href="dc.css"> -->
+	<!-- <script src="crossfilter.js" charset="utf-8"></script> -->
+
+	
+    <style type="text/css">
+      	#mapid { width: 80%; height: 800px;}
+      	/*#chart { width: 40%; }*/
+		.info {
+			padding: 6px 8px;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+			background: rgba(255,255,255,0.8);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+		}
+		.info h4 {
+			margin: 0 0 5px;
+			color: #777;
+		}
+
+		.legend {
+			text-align: left;
+			line-height: 25px;
+			color: #555;
+		}
+		.legend i {
+			width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 8px;
+			opacity: 0.7;
+		}
+    </style>
+    <link rel="stylesheet" href="https://cajazeiraramos.github.io/css/style.css">
+    <link rel="stylesheet" href="https://cajazeiraramos.github.io/assets/site1.css">
+  </head>
+
+  <body style="margin-left: 100px; margin-top: 100px;">
+	
+	<nav class="nav"> 
+		<ul class="list"> 
+			<li class="item"> 
+				<a class="link" href="https://cajazeiraramos.github.io/Covid19/">Covid19 - BR</a> 
+			</li>
+			<li class="item"> 
+				<a class="link" href="https://cajazeiraramos.github.io/">Home</a> 
+			</li> 
+			<li class="item"> <a class="link" href="https://cajazeiraramos.github.io/about">About</a> 
+			</li> 
+		</ul>
+	 </nav>
+  
+
+
+
+	<h1> Mapa do Coronavirus no Piauí </h1>
+	<div id="mapid"></div>
+	
+	<p>
+		*Atualizado em 03 de Abril de 2020. Fonte: <a href="http://portal.saude.pi.gov.br/2020/inf_saude/epidemiologia/covid-19/covid-19.asp">Coord. Epidemiologia/CIEVS.</a> 
+		<br />
+		*O Gov. do Estado não fornece a distribuição de suspeitos por município. </p>
+	
+	<h1> Boletins diários SESAPI - Coronavirus</h1>
+	<div id="chart"></div>
+	
+    <script>
+
+
+
+    	var escalaCores = ["#fee8c8","#fdbb84","#e34a33", "black"];
+
+    	// var dataTable = dc.dataTable("#dc-table-graph");
+      	var Centro = [-6.65, -42.75];
+      	var mymap = L.map('mapid').setView(Centro, 7);
+
+      	L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {maxZoom: 18, attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>`}).addTo(mymap);
+
+
+
+		let susByID = d3.map();
+		let confByID = d3.map();
+		let mortesByID = d3.map();
+		let ClasseByID = d3.map();
+
+		let TotalSus = 0;  //Cidades
+		let TotalConf = 0; //Cidades
+		let TotalObt = 0;  //Cidades
+
+		let TotalCasos = 0;  //Casos
+		let TotalMortes = 0; //Casos
+
+		let info = L.control();
+
+			info.onAdd = function (map) {
+				this._div = L.DomUtil.create('div', 'info');
+				this.update();
+				return this._div;
+			};
+
+			info.update = function (e) {
+				// console.log("teste");
+				if(e){
+					var cidade = e.properties; 
+					var Nome = cidade.name;
+					var id = cidade.id.substr(0, 6);
+					var sus = susByID.get(id);
+					var conf = confByID.get(id);
+					var mortes = mortesByID.get(id);
+				}
+						            //console.log(feat);
+					this._div.innerHTML = '<h4>Número de casos por município* </h4>' +  (e ?
+						'<b>' + Nome + '</b><br />' + conf + ' Confirmado(s)' + '</b><br />' + mortes + ' Óbito(s)'
+						: 'Passe o mouse sobre sua cidade');
+			};
+
+			
+
+
+		function style(feature) {
+			var ID = feature.properties.id.substr(0, 6);
+			var classe = ClasseByID.get(ID);
+		 return {
+					weight: 1,
+					opacity: 1,
+					color: '#AAA',
+					dashArray: '3',
+					fillOpacity: 0.6,
+					fillColor: escalaCores[classe]
+				};
+		}
+		function highlightFeature(e) {
+			let layer = e.target;
+
+			layer.setStyle({
+						weight: 2,
+						color: 'black',
+						dashArray: '',
+						fillOpacity: 0.7
+			});
+
+			if (!L.Browser.ie && !L.Browser.opera) {
+				layer.bringToFront();
+			}
+
+			info.update(layer.feature);
+		}
+		
+		let geojson;
+
+		function resetHighlight(e) {
+			geojson.resetStyle(e.target);
+			info.update();
+		}
+
+		function zoomToFeature(e) {
+			mymap.fitBounds(e.target.getBounds());
+			info.update(e.target.feature);
+		}
+
+		function onEachFeature(feature, layer) {
+			layer.on({
+						mouseover: highlightFeature,
+						mouseout: resetHighlight,
+						click: zoomToFeature
+					});
+		}
+
+
+		d3.csv("covid19PIv2.csv", function(data){
+	        
+	        data.forEach(function(d) {
+	           	
+	           	// console.log(d);
+
+	           	d.nome = d.Cidade;
+	           	d.id = d.ID;
+	           	d.sus = +d.Suspeitos;
+	           	d.conf = +d.Confirmados;
+	           	d.mortes = +d.Mortes;
+	           	susByID.set(d.id,+d.sus);
+	           	confByID.set(d.id,+d.conf);
+	           	mortesByID.set(d.id,+d.mortes); 
+
+
+	           	d.Classe = 0;
+
+	           	if(d.sus > 0){
+	           		d.Classe = 1;
+	           		TotalSus++;
+	           	}
+
+	           	if(d.conf > 0){
+	           		d.Classe = 2;
+	           		TotalConf++;
+	           		TotalCasos+=d.conf;
+	           	}
+
+	           	if(d.mortes > 0){
+	           		d.Classe = 3;
+	           		TotalObt++;
+	           		TotalMortes+=d.mortes;
+	           	}
+
+
+	            ClasseByID.set(d.id, +d.Classe);
+
+	        });
+	        
+			geojson = L.geoJson(Cidades, {
+				style: style,
+				onEachFeature: onEachFeature
+			}).addTo(mymap);
+
+			let legend = L.control({position: 'bottomright'});
+			var Legendas = ["Cidades sem registro ("+(224-(TotalSus+TotalConf))+")","Com suspeitos (Não Informado)" ,"Com casos confirmados ("+TotalConf+")", "Com óbitos ("+TotalObt+")"]
+			
+
+			legend.onAdd = function (mymap) {
+
+				let div = L.DomUtil.create('div', 'info legend'),
+					labels = [],
+		            n = escalaCores.length;
+				for (let i = 0; i < n; i++) {
+					let c = escalaCores[i];
+					labels.push(
+						'<i style="background:' + escalaCores[i] + '"></i> '+Legendas[i]
+					);
+				}
+
+				div.innerHTML = labels.join('<br>');
+				return div;
+			};
+
+		   	
+
+		   	// Teste:
+
+		   	let legend2 = L.control({position: 'topright'});
+			var escalaCores2 = ["#e34a33", "black"];
+			var Legendas2 = ["Total de casos confirmados: <b>"+(TotalCasos+2)+"</b>", "Total de óbitos: <b>"+TotalMortes+"</b>"];
+
+
+			legend2.onAdd = function (mymap) {
+
+				let div = L.DomUtil.create('div', 'info legend'),
+					labels = [],
+		            n = escalaCores2.length;
+		            labels.push("<b>Piauí - 04 de Abril de 2020: </b> ");
+				for (let i = 0; i < n; i++) {
+					let c = escalaCores[i];
+					labels.push(
+						'<i style="background:' + escalaCores2[i] + '"></i> '+Legendas2[i]
+					);
+				}
+
+				div.innerHTML = labels.join('<br>');
+				return div;
+			};
+
+			legend.addTo(mymap);
+		   	legend2.addTo(mymap);
+		   	info.addTo(mymap);
+
+		});		
+
+		
+
+
+		var compositeChart = dc.compositeChart('#chart');
+
+
+		d3.csv("data/covid19PI.csv", function(data){	
+
+            var dtgFormat = d3.time.format("%Y/%m/%d");
+
+            data.forEach(function(d){
+            	d.date = dtgFormat.parse(d.date);
+            	d.sus = +d.suspeitos;
+            	d.conf = +d.confirmados;
+            	d.des = +d.descartados;
+            	d.total = +d.total;
+            	d.mortes = +d.mortes;
+            	// console.log(d.mortes);
+
+            });
+
+             //criando um crossfilter
+            var facts = crossfilter(data);
+
+            var dateDim = facts.dimension(function(d){
+            	// var dia = d.date.toLocaleDateString();
+            	// console.log(dia);
+            	// var dia = dateFormat(d.date)/;
+                return d.date;
+
+
+
+            });
+            // console.log(dateDim);
+           
+            var SusByDayGroup = dateDim.group().reduceSum(function(d){
+                return d.sus;
+            });
+
+            var ConfByDayGroup = dateDim.group().reduceSum(function(d){
+                return d.conf;
+            });
+
+           	var DesByDayGroup = dateDim.group().reduceSum(function(d){
+                return d.des;
+            });
+
+           	var TotalByDayGroup = dateDim.group().reduceSum(function(d){
+                return d.total;
+            });
+            var MortesByDayGroup = dateDim.group().reduceSum(function(d){
+                return d.mortes;
+            });
+
+            // console.log(MortesByDayGroup);
+            // console.log(SuspeitosByDay);
+ 			
+            var dia0 = new Date(2020, 2, 16);
+            var dia1 = new Date(2020, 3, 05);
+
+ 		  compositeChart.width(1000)
+                     .height(400)
+                     .margins({top: 50, right: 50, bottom: 25, left: 50})
+                     .dimension(dateDim)
+                     .x(d3.time.scale().domain([dia0, dia1]))
+                     .elasticX(false)
+                     .elasticY(true)
+                     .mouseZoomable(true)
+                     .xUnits(d3.time.days)
+                     .renderHorizontalGridLines(true)
+                     .renderVerticalGridLines(true)
+                     .legend(dc.legend().x(80).y(0).itemHeight(20).gap(10))
+                     .brushOn(false)
+                     .title(function (d){
+			            var value = d.value.avg?d.value.avg:d.value;
+			            if(isNaN(value)) value = 0;
+			            var data = dateFormat(d.key);
+			            return (data+": "+d.value);
+			        })
+                     .compose([
+                     	dc.lineChart(compositeChart)
+                            .group(DesByDayGroup, 'Descartados')
+                            .ordinalColors(['#4daf4a']),
+                        dc.lineChart(compositeChart)
+                            .group(SusByDayGroup, 'Suspeitos')
+                            .ordinalColors(['#377eb8']),
+                        dc.lineChart(compositeChart)
+                            .group(ConfByDayGroup, 'Confirmados')
+                            .ordinalColors(['#e41a1c']),
+                    
+                        // dc.lineChart(compositeChart)
+                        //     .group(TotalByDayGroup, 'Notificações')
+                        //     .ordinalColors(['#984ea3'])
+                        //     ,
+                        dc.lineChart(compositeChart)
+                            .group(MortesByDayGroup, 'Mortes')
+                            .ordinalColors(['black'])
+                      ]);
+
+
+     
+
+
+            dc.renderAll();
+
+            function dateFormat(d){  //Retorna Dia/Mês
+            	var data = "",
+            	month = '' + (d.getMonth() + 1),
+        		day = '' + d.getDate(),
+        		year = d.getFullYear();
+
+        		if (month.length < 2) 
+			        month = '0' + month;
+			    if (day.length < 2) 
+			        day = '0' + day;
+
+        		data = (day+"/"+month);
+        		// console.log(data);
+            	// console.log(key.getMonth()+1);
+            	return data;
+            }
+
+		});
+
+    </script>
+
+   	<footer class="footer-main" style="margin-top: 500px; font: 14px/14px Arial,Helvetica, sans-serif; font-weight: bold;"> 
+
+   		<a class="link" href="https://cajazeiraramos.github.io/">Alexandre R Cajazeira Ramos © 2020 </a> 
+	    	<p>
+				*Fonte: <a href="https://brasil.io/dataset/covid19/caso_full/?search=Picos">Brasil.io</a>
+			</p>
+
+			<!-- <a href="javascript:">Reset All</a> -->
+	      </footer>
+
+	  	
+
+  </body>
+</html>
