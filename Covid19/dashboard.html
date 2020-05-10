@@ -20,10 +20,10 @@
 	    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="crossorigin="anonymous"></script>
 
 		
-		 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+		
 
 		<link rel="stylesheet" href="css/dc.css">
-		<link rel="stylesheet" href="css/Covid19-Brasil.css">
+		<link rel="stylesheet" href="css/dashboard.css">
 	    <link rel="stylesheet" href="https://cajazeiraramos.github.io/css/style.css">
 	    <link rel="stylesheet" href="https://cajazeiraramos.github.io/assets/site1.css">
 	    
@@ -49,6 +49,7 @@
 
 
 		<div id ="divGeral">
+			
 			<h1 id = "title">Coronavírus no Brasil - <span class="label label-info">X Casos</span>
 				<span class="label label-danger">X Óbitos</span>
 				<span class="label label-warning">X p/ 100mil/h</span>
@@ -56,22 +57,17 @@
 				
 			</h1>
 
-			<div id="divMapa"></div>
+			<!-- <div id="divMapa"></div> -->
 			
 			<div id="divControles">
 				<h2>
 					
-					<!-- Estado / Região
-					<label class="switch"> 
-						<input type="checkbox" id="trocaEscala" onchange="trocaControleUF_RG()">  
-						<span class="slider round"></span> 
-					</label>  -->
 					Incidência
 					<label class="switch"> 
 						<input type="checkbox" id="trocaEscala" onchange="trocaEscala()">  
 						<span class="slider round"></span> 
 					</label>
-					Óbitos <br>
+					Óbitos |
 					Taxas
 					<label class="switch"> 
 						<input type="checkbox" id="trocaEscala" onchange="trocaControleTxVa()">  
@@ -82,13 +78,44 @@
 				</h2>
 			</div>
 			
+	
+
+			<div id="divDashBoard">
+				
+				<div style="margin-left: 1%;">
+
+					<div id="divCasosPorUF">
+						<h2 style="margin-left: 5%;" id="valoresAbsolutosTitle"></h2>
+					</div>
+
+					<div id="divCasosPorRG">
+						<h2 style="margin-left: 5%;" id = "valoresAbsolutosRGTitle">Dados por Região</h2>
+					</div>
+
+					<div id="divObitosAcumulados">
+						<h2 style="margin-left: 5%;">Casos acumulados (último mês)</h2>
+					</div>	
+					<div id="divNovosCasos">
+						<h2 style="margin-left: 5%;">Novos casos por dia (último mês)</h2>
+					</div>
+					<div id="divNovosObitos">
+						<h2 style="margin-left: 5%;">Novos óbitos por dia (último mês)</h2>
+					</div>
+				</div>
+				
+			</div>
+
 			<div class="slidecontainer">
+				<h2> <label>-</label>
+					<input type="range" min="1" max="100" value="100" class="slider2" id="dataRange" onchange="alteraDia()">
+				</h2>
 				<h2>
 					<label id = "dataLabel">Data: 10/04/2020</label>
-					<input type="range" min="1" max="100" value="100" class="slider2" id="dataRange" onchange="alteraDia()">
-
+					
 					<button id= "ant" onclick="diaAnt()"><</button>
 					<button id= "prox" onclick="proxDia()">></button>
+
+					
 					
 					<script type="text/javascript">
 						function proxDia(){
@@ -119,39 +146,17 @@
 
 			</div>
 
-			<div id="divDashBoard">
-				
-				<div style="margin-left: 7%;">
-
-					<div id="divCasosPorUF">
-						<h2 style="margin-left: 5%;" id="valoresAbsolutosTitle"></h2>
-					</div>
-
-					<div id="divCasosPorRG">
-						<h2 style="margin-left: 5%;" id = "valoresAbsolutosRGTitle">Dados por Região</h2>
-					</div>
-
-					<div id="divObitosAcumulados">
-						<h2 style="margin-left: 5%;">Casos acumulados (último mês)</h2>
-					</div>	
-					<div id="divNovosCasos">
-						<h2 style="margin-left: 5%;">Novos casos por dia (último mês)</h2>
-					</div>
-					<div id="divNovosObitos">
-						<h2 style="margin-left: 5%;">Novos óbitos por dia (último mês)</h2>
-					</div>
-				</div>
-				
-			</div>
 			<label style="width: 50%;">-</label>
 
 			<!-- <button id= "limparFiltros" onclick="limparFiltros()">Limpar Filtros</button> -->
 
 		</div>
 
-		<script type="text/javascript" src="js/Covid19-BrasilI3.js"></script>
 		
-	    <footer class="footer-main" style="margin-top: 5%; font: 14px/14px Arial, Helvetica, sans-serif; font-weight: bold;"> <a class="link" href="https://cajazeiraramos.github.io/">Alexandre R Cajazeira Ramos © 2020 </a> 
+		<script type="text/javascript" src="js/dashboard.js"></script>
+		
+	    <footer class="footer-main" style="margin-top: 5%; font: 14px/14px Arial, Helvetica, sans-serif; font-weight: bold;">
+	     <!-- <a class="link" href="https://cajazeiraramos.github.io/">Alexandre R Cajazeira Ramos © 2020 </a>  -->
 	    	<p>
 				*Fonte: <a href="https://covid.saude.gov.br/">Ministério da Saúde</a> e <a href="https://www.ibge.gov.br/apps/populacao/projecao/index.html?utm_source=portal&utm_medium=popclock&utm_campaign=novo_popclock">IBGE</a>
 			</p>

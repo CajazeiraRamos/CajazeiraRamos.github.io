@@ -9,23 +9,25 @@
 }
 #divGeral h1{
 	padding: 8px;
-	/*margin-left: 1%;*/
+	margin-left: 10%;
+	font-size: 60px;
 }
-
-#divMapa{
-	width: 98%;
-	height: 1000px;
-	margin-left: 1%;
-	/*margin-top: 2%;*/
-	border-radius: 15px;}
+#divGeral h2{
+	padding: 8px;
+	margin-left: 10%;
+	font-size: 40px;
+}
 #divControles{
 	width: 80%;
 	margin-left: 10%;
-	margin-top: 1%;
+
+    text-align: center;
+	/*margin-top: 1%;*/
 	border-radius: 15px;
 	text-align:center;}
 #divControles h2{
 
+	font-size: 40px;
 	padding: 12px;}
 
 #divControles button{
@@ -50,9 +52,10 @@
 #divDashBoard{
 	/*background-color: #e3e3e3;*/
 	width: 98%;
-	height: 1000px;
+	/*height: 1000px;*/
 	margin-left: 1%;
 	margin-top: 1%;
+	margin-bottom: 5%;
 	border-radius: 15px;}
 
 .divDashBoardC{
@@ -64,17 +67,24 @@
 }
 
 .slidecontainer{
+
 	width: 50%;
-	margin-top: 1%;
+	margin-top: 50px;
 	margin-left: 25%;
 	text-align: center;}
 
+#dataRange{
+	margin-top: 10px;
+}
+#dataLabel{
+	font-size: 40px;
+}
 /* The switch - the box around the slider */
 .switch {
 	position: relative;
 	display: inline-block;
 	width: 80px;
-	height: 30px;
+	height: 40px;
 	margin-top: 1%;}
 /* Hide default HTML checkbox */
 .switch input {
@@ -148,37 +158,6 @@ input:checked + .slider:before {
   cursor: pointer;}
 
 
-.info {
-	padding: 6px 8px;
-	font: 22px/24px Arial, Helvetica, sans-serif;
-	background: white;
-	background: rgba(255,255,255,0.8);
-	box-shadow: 0 0 15px rgba(0,0,0,0.2);
-	border-radius: 5px;
-}
-.info h4 {
-	margin: 0 0 5px;
-	color: #777;
-}
-/*.barra i {
-	margin-top: 5px;
-	height: 20px;
-	float: left;
-	opacity: 1;
-}*/
-.legend {
-	text-align: left;
-	line-height: 30px;
-	color: #555;
-}
-
-.legend i {
-	width: 30px;
-	height: 30px;
-	float: left;
-	margin-right: 8px;
-	opacity: 0.7;
-}
 .Row{
 	background: white;
 	background: rgba(255,255,255,0.8);
@@ -187,7 +166,7 @@ input:checked + .slider:before {
 }
 .dc-chart g.row text {
 	fill: black;
-	font: 14px/14px Arial, Helvetica, sans-serif;
+	font: 18px/18px Arial, Helvetica, sans-serif;
 	font-weight: bold;
 }
 .dc-chart g.row {
@@ -206,12 +185,12 @@ input:checked + .slider:before {
 
 .barLabel{
 	fill: black;
-	font: 16px/22px Arial, Helvetica, sans-serif;
+	font: 24px/26px Arial, Helvetica, sans-serif;
 	font-weight: bold;
 }
 #divDashBoard text{
 	fill: black;
-	font: 16px/28px Arial, Helvetica, sans-serif;
+	font: 22px/24px Arial, Helvetica, sans-serif;
 	font-weight: bold;
 }
 /*#divCasosPorRG text {

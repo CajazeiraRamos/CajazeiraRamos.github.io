@@ -4,7 +4,7 @@
 
   	<head>
 	  	<meta charset="utf-8">
-	    <title>Coronavirus no Brasil, por Alexandre Cajazeira Ramos</title>
+	    <title>Painel Coronavírus no Brasil, por Alexandre R. Cajazeira Ramos</title>
 
     
 	   
@@ -23,7 +23,7 @@
 		 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
 
 		<link rel="stylesheet" href="css/dc.css">
-		<link rel="stylesheet" href="css/Covid19-Brasil.css">
+		<link rel="stylesheet" href="css/dashboard.css">
 	    <link rel="stylesheet" href="https://cajazeiraramos.github.io/css/style.css">
 	    <link rel="stylesheet" href="https://cajazeiraramos.github.io/assets/site1.css">
 	    
@@ -34,14 +34,12 @@
 	 
   	</head>
 
-  	<body>
+  	<body style="background: #e3e3e3;">
 
         
 		<nav class="nav"> 
 			<ul class="list"> 
-				<!-- <li class="item"> 
-					<a class="link" href="https://cajazeiraramos.github.io/Covid19/piaui.html">Covid19 - PI</a> 
-				</li> -->
+	
 				<li class="item"> 
 					<a class="link" href="https://cajazeiraramos.github.io/">©Alexandre</a> 
 				</li> 
@@ -51,47 +49,64 @@
 
 
 		<div id ="divGeral">
-			<h1 id = "title">Coronavírus no Brasil - <span class="label label-info">X Casos</span>
-				<span class="label label-danger">X Óbitos</span>
-				<span class="label label-warning">X p/ 100mil/h</span>
-				<span class="label label-default">X% Letalidade</span>		
-				
+			
+			<h1 id = "title">
 			</h1>
-<!-- 			<div id="divCabeçalho">
 
-			<h1 id = "dadosBrasil">
-				<span class="label label-info">X Casos</span>
-				<span class="label label-danger">X Óbitos</span>
-				<span class="label label-warning">X p/ 100mil/h</span>
-				<span class="label label-default">X% Letalidade</span>				
-			</h1>	
-			
-			</div> -->
-			<div id="divMapa"></div>
-			
 			<div id="divControles">
 				<h2>
-					Taxa / Letalidade
+					
+					Incidência
 					<label class="switch"> 
 						<input type="checkbox" id="trocaEscala" onchange="trocaEscala()">  
 						<span class="slider round"></span> 
 					</label>
-					Estado / Região
+					Óbitos |
+					Valores Absolutos
 					<label class="switch"> 
-						<input type="checkbox" id="trocaEscala" onchange="trocaControleUF_RG()">  
+						<input type="checkbox" id="trocaEscala" onchange="trocaControleTxVa()">  
 						<span class="slider round"></span> 
 					</label> 
-					<!-- <button id= "limparFiltros" onclick="limparFiltros()">Limpar Filtros</button> -->
+					Taxas
+					
 				</h2>
 			</div>
 			
-			<div class="slidecontainer">
-				<h2>
-					<label id = "dataLabel">Data: 10/04/2020</label>
-					<input type="range" min="1" max="100" value="100" class="slider2" id="dataRange" onchange="alteraDia()">
+			<div id="divDashBoard">
+				
+				<div style="margin-left: 7%;">
 
+					<div id="graficoData"></div>
+
+					<div id="divCasosPorRG">
+						<label style="width: 40%;" id = "valoresAbsolutosRGTitle">Dados por Região</label>
+					</div>
+					
+					<div id="divCasosPorUF">
+						<label style="width: 40%;" id="valoresAbsolutosTitle">testeeeeeeeeeeee</label>
+					</div>
+					<div id="divObitosAcumulados">
+						<label style="width: 40%;">Casos acumulados (último mês)</label>
+					</div>	
+					<div id="divNovosCasos">
+						<label style="width: 40%;">Novos casos por dia (último mês)</label>
+					</div>
+					<div id="divNovosObitos">
+						<label style="width: 40%;">Novos óbitos por dia (último mês)</label>
+					</div>
+				</div>
+				
+			</div>
+			<!-- <div class="slidecontainer">
+				<h2>
+					<input type="range" min="1" max="100" value="100" class="slider2" id="dataRange" onchange="alteraDia()" style="margin-bottom: 15px;">
+
+					<label id = "dataLabel">Data: 10/04/2020</label>
+					
 					<button id= "ant" onclick="diaAnt()"><</button>
 					<button id= "prox" onclick="proxDia()">></button>
+
+					
 					
 					<script type="text/javascript">
 						function proxDia(){
@@ -119,67 +134,20 @@
 						}
 					</script>
 				</h2>
-			</div>
 
-			
-			<div id="divDashBoard">
-				<div style="margin-left: 5%;">
-					<div id="divNovosCasos">
-						<h2 id="NovosCasosTitle" style="margin-left: 5%;">Evolução Diária- </h2>
-					</div>
-					<div id="divAcumulados">
-						<h2 id="AcumuladosTitle" style="margin-left: 5%;">Casos acumulados</h2>
-					</div>
-				</div>
+			</div> -->
+			<label style="width: 50%;">-</label>
 
-			</div>		
 		</div>
+
+		<script type="text/javascript" src="js/dashboard2.js"></script>
 		
-	<!-- 	<script type="text/javascript">
-
-  				var estados, regioes;
-
-  				$.ajax({
-					url: 'http://servicodados.ibge.gov.br/api/v2/malhas/?resolucao=2',
-					type: 'GET',
-					headers: {
-				    	"Accept": 'application/vnd.geo+json'
-				  	},
-					success: function(result,status,xhr) {
-						//called when successful
-						estados = result;
-						console.log('carregou',estados);
-					},
-					error: function(xhr,status,error) {
-						console.log(error);
-					}
-				});
-				$.ajax({
-					url: 'http://servicodados.ibge.gov.br/api/v2/malhas/?resolucao=1',
-					type: 'GET',
-					headers: {
-				    	"Accept": 'application/vnd.geo+json'
-				  	},
-					success: function(result,status,xhr) {
-						//called when successful
-						regioes = result;
-						console.log('carregou',regioes);
-					},
-					error: function(xhr,status,error) {
-						console.log(error);
-					}
-				});
-
-				console.log(regioes);
-
-
-  		</script> -->
-		<script type="text/javascript" src="js/Covid19-Brasil.js"></script>
-		
-	    <footer class="footer-main" style="margin-top: 5%; font: 14px/14px Arial, Helvetica, sans-serif; font-weight: bold;"> Alexandre R Cajazeira Ramos © 2020 
+	    <footer class="footer-main" style="margin-top: 5%; font: 14px/14px Arial, Helvetica, sans-serif; font-weight: bold;"> 
 	    	<p>
 				*Fonte: <a href="https://covid.saude.gov.br/">Ministério da Saúde</a> e <a href="https://www.ibge.gov.br/apps/populacao/projecao/index.html?utm_source=portal&utm_medium=popclock&utm_campaign=novo_popclock">IBGE</a>
 			</p>
+
+			<!-- <a href="javascript:">Reset All</a> -->
 	      </footer>
 
   	</body>
