@@ -83,7 +83,7 @@
 
 	<p class="text-justify">
 		É possível visualizar e comparar um conjunto restrito de unidades clicando nas barras do gráfico seguinte.
-		Por exemplo, ao selecionar "Administração Direta" no próximo gráfico, podemos observar aqui uma queda drástica de valores pagos a partir de 2019.    
+		Por exemplo, ao selecionar "Administração Direta" no próximo gráfico, podemos observar aqui uma queda drástica de valores pagos a partir de 2019 (-86% em relação à 2018).    
 	</p>	
 	
 	<div id="chart2"></div>	
@@ -122,7 +122,7 @@
 	
 	<p class="text-justify">
 		Ao selecionar uma ou mais barras horizontais deste gráfico é possível visualizar a evolução temporal de um conjunto restrito de subfunções no gráfico anterior. 
-		Pode-se observar, por exemplo, que os valores pagos para Proteção e Benefícios ao Trabalhador mudaram de patamar em 2014, quando saltou de 3.2 para 20.5 milhões em despesas pagas, aproximadamente.  
+		Pode-se observar, por exemplo, que os valores pagos para Proteção e Benefícios ao Trabalhador mudaram de patamar em 2014, quando saltou de 3.2 para 20.5 milhões em despesas pagas (+525%), aproximadamente.  
 	</p>
 
 	<p class="text-justify">
@@ -194,6 +194,8 @@
 			d.liquidado = parseFloat(d.Liquidado);
 			d.unidadeOrcamentaria = d.Unidade_Orçamentária;
 			d.pago = parseFloat(d.Pago);
+			d.dotInicial = parseFloat(d.Dotação_Inicial);
+			d.dotAtual = parseFloat(d.Dotação_Atual);
         });
 		
 		var facts = crossfilter(data);
@@ -241,6 +243,13 @@
 			.reduceSum(function(d){
 				return d.empenhado;});
 
+		dot_inicial_group = ano_dimension.group()
+			.reduceSum(function(d){
+				return d.dotInicial;});
+		dot_atual_group = ano_dimension.group()
+			.reduceSum(function(d){
+				return d.dotAtual;});
+
 		pago_group_subF = subFuncao_dimension.group()
 			.reduceSum(function(d){
 				return d.pago;});
@@ -272,6 +281,7 @@
 		var target = document.getElementById('target')
 		max_width = target.offsetWidth;
 
+		colors = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854'];
 		// if(max_width < 800)
 
 		chart1
@@ -286,15 +296,18 @@
 			.xUnits(dc.units.ordinal)
 			.margins({left: 100, top: 40, right: 80, bottom: 100})
 			.elasticY(true)
-			.title(function(d){
-				return 'R$  '+ d.value.toLocaleString("pt-BR")+',00';
-			})
+			.title(function (d) {
+                return d.key + '[' + this.layer + ']: ' + 'R$  '+ d.value.toLocaleString("pt-BR")+',00';;
+            })
+			.colors(d3.scale.ordinal().range(colors))
 			.renderHorizontalGridLines(true)
 			.renderVerticalGridLines(true)
 			.renderType('group')
 			.group(pago_group, "Pago")
 			.stack(liquidado_group, "Liquidado")
-			.stack(empenhado_group, "Empenhado")		
+			.stack(empenhado_group, "Empenhado")
+			.stack(dot_inicial_group, "Dotação Inicial")
+			.stack(dot_atual_group, "Dotação Final")		
 			.on('renderlet', function (chart) {
 				var txt = chart.selectAll('g.x text')
 					.attr('transform', 'translate(-15,10) rotate(-35)')});			
