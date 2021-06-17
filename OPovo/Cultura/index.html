@@ -73,6 +73,23 @@
 	</p>
 	
 	<div id="chart1"></div>
+
+	<h3>Qual a variação (%) dos valores ao longo do tempo? </h3>
+	<p class="text-justify">Gráficos temporários - Sem edição.
+
+		Importante: Os dados plotados no gráfico representam a variação em relação ao primeiro valor (ano de 2000). Assim a variação ao longo do tempo faz mais sentido. Se você quiser saber a variação em relação ao ano anterior, passe o mouse sobre os pontos em cada linha. Não coloquei todos os dados (Liquidado e Dotação inicial) pra não aparecer tanta sobreposição. Se for importante, troco rapidinho os valores apresentados.  
+
+	</p>
+	<p>
+		Aqui podemos observar que durante o "platô" dos valores pagos, entre 2012 e 2018, a dotação Atual teve tendência de querda. Isso pode reforçar a tese de que havia pouca demanda pra aumentar o orçamento.
+
+	</p>
+	<div id="chart13"></div>
+
+	<h3>Quanto (%) da Dotação Atual foi empenhado, liquidado e pago por ano? </h3>
+	<p class="text-justify">Gráficos temporários - Sem edição.</p>
+	<div id="chart12"></div>
+
 	
 	<h3>Distribuição de recursos <b>pagos</b> por Unidade Orçamentária ao longo do tempo</h3>
 	<p class="text-justify">
@@ -174,6 +191,8 @@
 <script type="text/javascript">   
 
 	chart1 = new dc.barChart("#chart1");
+	chart12 = new dc.compositeChart("#chart12");
+	chart13 = new dc.compositeChart("#chart13");
    	chart2 = new dc.barChart("#chart2");
 	chart3 = new dc.rowChart("#chart3");
    	chart4 = new dc.barChart("#chart4");
@@ -284,6 +303,8 @@
 		colors = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854'];
 		// if(max_width < 800)
 
+
+
 		chart1
 			.width(max_width)
 			.height(500)
@@ -302,15 +323,173 @@
 			.colors(d3.scale.ordinal().range(colors))
 			.renderHorizontalGridLines(true)
 			.renderVerticalGridLines(true)
+			.elasticY(true)
 			.renderType('group')
 			.group(pago_group, "Pago")
 			.stack(liquidado_group, "Liquidado")
 			.stack(empenhado_group, "Empenhado")
 			.stack(dot_inicial_group, "Dotação Inicial")
-			.stack(dot_atual_group, "Dotação Final")		
+			.stack(dot_atual_group, "Dotação Atual")		
 			.on('renderlet', function (chart) {
 				var txt = chart.selectAll('g.x text')
-					.attr('transform', 'translate(-15,10) rotate(-35)')});			
+					.attr('transform', 'translate(-15,10) rotate(-35)')});	
+				
+		chart12
+			.width(max_width)
+			.height(500)
+			.margins({left: 100, top: 40, right: 80, bottom: 100})
+			.legend(dc.legend().x(110).y(40).itemHeight(20).gap(3))
+			.renderHorizontalGridLines(true)
+			.x(d3.scale.linear().domain([2000,2021]))
+			.xUnits(dc.units.integers)
+			.elasticY(true)
+			.brushOn(false)
+			.title(function (d) {
+						dot = dot_atual_group.all().filter(function(item) { return item.key === d.key; })[0].value;
+						value = Math.round((100*d.value)/dot);
+						return d.key + '[' + this.layer + ']: '+ value +'%';;
+					})
+			.compose([
+				dc.lineChart(chart12)
+					// .dimension(ano_dimension)
+					.group(pago_group, "Pago")
+					.colors('#66c2a5')
+					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+					.valueAccessor(function(d) { 
+						dot = dot_atual_group.all().filter(function(item) { return item.key === d.key; })[0].value;
+						return (100*d.value)/dot;
+						return d.value }),					
+					
+				dc.lineChart(chart12)
+					// .dimension(ano_dimension)
+					.group(liquidado_group, "Liquidado")
+					.colors('#fc8d62')
+					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+					.valueAccessor(function(d) { 
+						dot = dot_atual_group.all().filter(function(item) { return item.key === d.key; })[0].value;
+						return (100*d.value)/dot;
+						return d.value }),
+					
+				dc.lineChart(chart12)
+					.dimension(ano_dimension)
+					.group(empenhado_group, "Empenhado")
+					.colors('#8da0cb')
+					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+					.valueAccessor(function(d) { 
+						dot = dot_atual_group.all().filter(function(item) { return item.key === d.key; })[0].value;
+						return (100*d.value)/dot;
+						return d.value }),						
+			])
+			chart12.xAxis().tickValues([2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010
+			, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021])
+
+		chart13
+			.width(max_width)
+			.height(500)
+			.margins({left: 100, top: 40, right: 80, bottom: 100})
+			.legend(dc.legend().x(110).y(40).itemHeight(20).gap(3))
+			.renderHorizontalGridLines(true)
+			.x(d3.scale.linear().domain([2000,2021]))
+			.xUnits(dc.units.integers)
+			.elasticY(true)
+			.brushOn(false)
+			.title(function (d) {
+
+				if(d.key == 2000)
+							return 0;
+						else{
+							key_ant = d.key-1;
+							ant = 0;
+							if(this.layer == "Pago")
+								ant = pago_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+							else if(this.layer == "Empenhado")
+								ant = empenhado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+							else 								
+								ant = dot_atual_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+							value =  Math.round((d.value/ant-1)*100);
+							return d.key + '[' + this.layer + ']: '+ value +'%';;
+						}
+					})
+			.compose([
+				dc.lineChart(chart12)
+					// .dimension(ano_dimension)
+					.group(pago_group, "Pago")
+					.colors('#66c2a5')
+					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+					.valueAccessor(function(d) { 
+						if(d.key == 2000)
+							return 0;
+						else{
+							key_ant = d.key-1;
+							key_ant = 2000; 
+							ant = pago_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+							return (d.value/ant-1)*100;
+						}
+					}),					
+					
+				// dc.lineChart(chart12)
+				// 	// .dimension(ano_dimension)
+				// 	.group(liquidado_group, "Liquidado")
+				// 	.colors('#fc8d62')
+				// 	.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+				// 	.valueAccessor(function(d) { 
+				// 		if(d.key == 2000)
+				// 			return 0;
+				// 		else{
+				// 			key_ant = d.key-1;
+				// 			ant = liquidado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+				// 			return (d.value/ant-1)*100;
+				// 		}
+				// 	}),
+					
+				dc.lineChart(chart12)
+					.dimension(ano_dimension)
+					.group(empenhado_group, "Empenhado")
+					.colors('#8da0cb')
+					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+					.valueAccessor(function(d) { 
+						if(d.key == 2000)
+							return 0;
+						else{
+							key_ant = d.key-1;
+							key_ant = 2000; 
+							ant = empenhado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+							return (d.value/ant-1)*100;
+						}
+					}),						
+				// dc.lineChart(chart12)
+				// 	.dimension(ano_dimension)
+				// 	.group(dot_inicial_group, "Dotação Inicial")
+				// 	.colors('#e78ac3')
+				// 	.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+				// 	.valueAccessor(function(d) { 
+				// 		if(d.key == 2000)
+				// 			return 0;
+				// 		else{
+				// 			key_ant = d.key-1;
+				// 			ant = dot_inicial_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+				// 			return (d.value/ant-1)*100;
+				// 		}
+				// 	}),	
+				dc.lineChart(chart12)
+					.dimension(ano_dimension)
+					.group(dot_atual_group, "Dotação Atual")
+					.colors('#a6d854')
+					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+					.valueAccessor(function(d) { 
+						if(d.key == 2000)
+							return 0;
+						else{
+							key_ant = d.key-1;
+							key_ant = 2000; 
+							ant = dot_atual_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+							return (d.value/ant-1)*100;
+						}
+					}),	
+			])
+			chart13.xAxis().tickValues([2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010
+			, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021])
+
 		
 		chart2
             .width(max_width)
