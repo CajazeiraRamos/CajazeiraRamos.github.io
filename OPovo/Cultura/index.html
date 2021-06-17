@@ -91,7 +91,7 @@
 	<div id="chart12"></div>
 
 	
-	<h3>Distribuição de recursos <b>pagos</b> por Unidade Orçamentária ao longo do tempo</h3>
+	<h3>Distribuição de recursos <b>executados</b> por Unidade Orçamentária ao longo do tempo</h3>
 	<p class="text-justify">
 		Neste gráfico é possível visualizar a distribuição dos valores pagos por Unidade Orçamentária em cada ano do período em análise, passando o mouse sobre a legenda do gráfico é possível destacar a evolução de uma unidade.
 		Agrupamos o conjunto de unidades orçamentárias em 10 categorias, conforme descrevemos <a target="_blank" href="https://docs.google.com/document/d/1_PQSRTNnhnrBWxiFXKLHsFav29ByTYzWE4wypA3wDRo/edit?usp=sharing">neste documento</a>.
@@ -105,7 +105,7 @@
 	
 	<div id="chart2"></div>	
 	
-	<h3>Distribuição geral de recursos <b>pagos</b> por Unidade Orçamentária</h3>
+	<h3>Distribuição geral de recursos <b>executados</b> por Unidade Orçamentária</h3>
 	<p class="text-justify">
 		Neste gráfico o conjunto completo de valores pagos por Unidade Orçamentária (para o período de tempo em análise) foi somado e ranqueado. 
 		Deste modo é possível visualizar a parcela global de cada Unidade Orçamentária ao longo do tempo. 
@@ -119,7 +119,7 @@
 	
 	<div id="chart3"></div>
 
-	<h3>Distribuição de recursos <b>pagos</b> por Subfunção ao longo do tempo</h3>
+	<h3>Distribuição de recursos <b>executados</b> por Subfunção ao longo do tempo</h3>
 	<p class="text-justify">
 		Neste gráfico é possível visualizar a distribuição dos valores pagos para as principais Subfunções em cada ano do período em análise, de maneira similar ao explorado pela Unidade Orçamentária. 
 		Para verificar valores ou destacar subfunções, clique ou deixe o mouse sobre a respectiva legenda ou barra vertical do gráfico. 
@@ -232,13 +232,13 @@
             .group()
                 .reduce((p, v) => {
                     p[v.unidadeOrcamentaria] = (p[v.unidadeOrcamentaria] || 0) + v.pago;
-                    p[v.modalidade] = (p[v.modalidade] || 0) + v.pago;
-                    p[v.subFuncao] = (p[v.subFuncao] || 0) + v.pago;
+                    p[v.modalidade] = (p[v.modalidade] || 0) + v.liquidado;
+                    p[v.subFuncao] = (p[v.subFuncao] || 0) + v.liquidado;
                     return p;
                 }, (p, v) => {
                     p[v.unidadeOrcamentaria] = (p[v.unidadeOrcamentaria] || 0) - v.pago;
-					p[v.modalidade] = (p[v.modalidade] || 0) - v.pago;
-                    p[v.subFuncao] = (p[v.subFuncao] || 0) - v.pago;
+					p[v.modalidade] = (p[v.modalidade] || 0) - v.liquidado;
+                    p[v.subFuncao] = (p[v.subFuncao] || 0) - v.liquidado;
                     return p;
                 }, () => ({}));	
         
@@ -325,11 +325,13 @@
 			.renderVerticalGridLines(true)
 			.elasticY(true)
 			.renderType('group')
-			.group(pago_group, "Pago")
-			.stack(liquidado_group, "Liquidado")
-			.stack(empenhado_group, "Empenhado")
-			.stack(dot_inicial_group, "Dotação Inicial")
-			.stack(dot_atual_group, "Dotação Atual")		
+			.group(liquidado_group, "Executado")
+			.stack(dot_atual_group, "Orçamento")
+			// .group(pago_group, "Pago")
+			// .stack(liquidado_group, "Liquidado")
+			// .stack(empenhado_group, "Empenhado")
+			// .stack(dot_inicial_group, "Dotação Inicial")
+			// .stack(dot_atual_group, "Dotação Atual")		
 			.on('renderlet', function (chart) {
 				var txt = chart.selectAll('g.x text')
 					.attr('transform', 'translate(-15,10) rotate(-35)')});	
@@ -350,19 +352,19 @@
 						return d.key + '[' + this.layer + ']: '+ value +'%';;
 					})
 			.compose([
-				dc.lineChart(chart12)
-					// .dimension(ano_dimension)
-					.group(pago_group, "Pago")
-					.colors('#66c2a5')
-					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
-					.valueAccessor(function(d) { 
-						dot = dot_atual_group.all().filter(function(item) { return item.key === d.key; })[0].value;
-						return (100*d.value)/dot;
-						return d.value }),					
+				// dc.lineChart(chart12)
+				// 	// .dimension(ano_dimension)
+				// 	.group(pago_group, "Pago")
+				// 	.colors('#66c2a5')
+				// 	.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+				// 	.valueAccessor(function(d) { 
+				// 		dot = dot_atual_group.all().filter(function(item) { return item.key === d.key; })[0].value;
+				// 		return (100*d.value)/dot;
+				// 		return d.value }),					
 					
 				dc.lineChart(chart12)
 					// .dimension(ano_dimension)
-					.group(liquidado_group, "Liquidado")
+					.group(liquidado_group, "Executado")
 					.colors('#fc8d62')
 					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
 					.valueAccessor(function(d) { 
@@ -370,15 +372,15 @@
 						return (100*d.value)/dot;
 						return d.value }),
 					
-				dc.lineChart(chart12)
-					.dimension(ano_dimension)
-					.group(empenhado_group, "Empenhado")
-					.colors('#8da0cb')
-					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
-					.valueAccessor(function(d) { 
-						dot = dot_atual_group.all().filter(function(item) { return item.key === d.key; })[0].value;
-						return (100*d.value)/dot;
-						return d.value }),						
+				// dc.lineChart(chart12)
+				// 	.dimension(ano_dimension)
+				// 	.group(empenhado_group, "Empenhado")
+				// 	.colors('#8da0cb')
+				// 	.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+				// 	.valueAccessor(function(d) { 
+				// 		dot = dot_atual_group.all().filter(function(item) { return item.key === d.key; })[0].value;
+				// 		return (100*d.value)/dot;
+				// 		return d.value }),						
 			])
 			chart12.xAxis().tickValues([2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010
 			, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021])
@@ -400,9 +402,9 @@
 						else{
 							key_ant = d.key-1;
 							ant = 0;
-							if(this.layer == "Pago")
-								ant = pago_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
-							else if(this.layer == "Empenhado")
+							if(this.layer == "Executado")
+								ant = liquidado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+							else if(this.layer == "Orçamento")
 								ant = empenhado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
 							else 								
 								ant = dot_atual_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
@@ -411,10 +413,26 @@
 						}
 					})
 			.compose([
+				// dc.lineChart(chart12)
+				// 	// .dimension(ano_dimension)
+				// 	.group(pago_group, "Pago")
+				// 	.colors('#66c2a5')
+				// 	.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+				// 	.valueAccessor(function(d) { 
+				// 		if(d.key == 2000)
+				// 			return 0;
+				// 		else{
+				// 			key_ant = d.key-1;
+				// 			key_ant = 2000; 
+				// 			ant = pago_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+				// 			return (d.value/ant-1)*100;
+				// 		}
+				// 	}),					
+					
 				dc.lineChart(chart12)
 					// .dimension(ano_dimension)
-					.group(pago_group, "Pago")
-					.colors('#66c2a5')
+					.group(liquidado_group, "Executado")
+					.colors('#fc8d62')
 					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
 					.valueAccessor(function(d) { 
 						if(d.key == 2000)
@@ -422,25 +440,10 @@
 						else{
 							key_ant = d.key-1;
 							key_ant = 2000; 
-							ant = pago_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+							ant = liquidado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
 							return (d.value/ant-1)*100;
 						}
-					}),					
-					
-				// dc.lineChart(chart12)
-				// 	// .dimension(ano_dimension)
-				// 	.group(liquidado_group, "Liquidado")
-				// 	.colors('#fc8d62')
-				// 	.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
-				// 	.valueAccessor(function(d) { 
-				// 		if(d.key == 2000)
-				// 			return 0;
-				// 		else{
-				// 			key_ant = d.key-1;
-				// 			ant = liquidado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
-				// 			return (d.value/ant-1)*100;
-				// 		}
-				// 	}),
+					}),
 					
 				dc.lineChart(chart12)
 					.dimension(ano_dimension)
@@ -473,7 +476,7 @@
 				// 	}),	
 				dc.lineChart(chart12)
 					.dimension(ano_dimension)
-					.group(dot_atual_group, "Dotação Atual")
+					.group(dot_atual_group, "Orçamento")
 					.colors('#a6d854')
 					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
 					.valueAccessor(function(d) { 
