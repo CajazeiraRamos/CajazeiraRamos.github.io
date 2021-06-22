@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Data.doc/OPovo - Explorando o #19jForaBolsonaro</title>
+	<meta charset="UTF-8"> 
+
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.css" />
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.0-alpha.6/crossfilter.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.js"></script>
+	 -->
+	<link rel="stylesheet" href="css/dc.css">
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+   <script src="js/crossfilter.js" charset="utf-8"></script>
+   <script src="js/dc.js" charset="utf-8"></script>
+
+   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<link rel="icon" href="https://yt3.ggpht.com/ytc/AAUvwniBqGmJubYSj-rjkhRMVK9svDC9HCDkzmAhL7JqATo=s900-c-k-c0x00ffffff-no-rj">
+
+	<style>
+		/* style="max-width: 1100px; font-size: 14px;" */
+		/* p{
+			width: 90%;
+			margin-left: 2%;
+			font-size: 16px;
+		}
+		.container{
+			width: 90%;
+			margin-left: 5%;
+			margin-top: 20px;
+		} */
+
+	</style>
+
+
+
+</head>
+<body>
+
+<div class="container" id="target">
+
+	Para alterar o csv/hashtag: <input type="text" id="path" value="data/19jForaBolsonaro.csv"><br>
+	<button onclick="rend()">LoadData</button>
+
+
+	<h1> Explorando Dados (Data.doc / OPovo)</h1>
+	<label id="total"></label>
+
+
+	<br>
+	Buscar número de ocorrências por termo: <input type="text" id="busca" value="vacina"><br>
+	<button onclick="busca()">Buscar</button>
+	<label id="buscaResult"></label>
+	<label>*nesta contagem não são consideradas hashtags, urls ou @. Apenas o número de vezes que o termo aparece.
+		<br>*Todavia, os gráficos serão filtrados considerando apenas os tweets que contem o termo buscado, mesmo que seja em uma #, @ ou url.
+	<label>
+
+	<hr>
+
+
+
+	<div id="topics-array-rows"></div>
+
+	
+	<div id="time-chart"><h3>Tweets por minuto</h3></div>
+
+
+	<div id="row-chart"><h3>10 usuários com mais interação (likes + retweet + replies) em tweets com a #</h3></div>
+	<div id="row2-chart"><h3>10 tweets com mais interação (likes + retweet + replies) em tweets com a #</h3></div>
+	
+	<!-- <div id="row3-chart"><h3>Hasgtags mais citadas</h3></div> -->
+	
+	<hr>
+	<table class="table table-hover" id="table" style="margin-top: 50px;">
+		<thead>
+			<tr class="header">
+				<th>Tweet_id</th>
+				<th>@</th>
+				<th>Tweet</th>
+				<th>Date</th>
+				<th>nlikes</th>
+				<th>nreplies</th>
+				<th>nretweets</th>
+			</tr>
+		</thead>
+	</table>
+</div>
+<script type="text/javascript"> 
+
+
+	
+	var facts;
+    var dateDimention;
+    var tweetDimention;
+	var tweetGroup;
+
+	rend();
+	var txt = '';
+	function rend(){
+		txt = '';
+		path = document.getElementById("path").value;
+		d3.csv(path, function(data){
+
+			var dtgFormat = d3.time.format.utc("%Y-%m-%d %H:%M:%S %Z");
+
+			var userById = d3.map();
+			var lin = dc.barChart("#time-chart");
+			var row = dc.rowChart("#row-chart");
+			var row2 = dc.rowChart("#row2-chart");
+			// var row3 = dc.rowChart("#row3-chart");
+			dataTable = dc.dataTable("#table");
+
+
+			// id,conversation_id,created_at,date,timezone,place,tweet,language,
+			// hashtags,cashtags,user_id,user_id_str,username,name,day,hour,link,
+			// urls,photos,video,thumbnail,retweet,nlikes,nreplies,nretweets,
+			// quote_url,search,near,geo,source,user_rt_id,user_rt,
+			// retweet_id,reply_to,retweet_date,translate,trans_src,trans_dest
+
+			var cont = 0;
+			
+			// var url = "aaa http://fdsadfs.com/dasfsdadf/afsdasf.html aaa and I said http://fdsadfs.com/dasfsdadf/afsdasf.html aaa";
+			// var b = url.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+			// console.log(b);
+			// postText = 'this is a @test of @hashtags';
+			var regexp = new RegExp('#([^\\s]*)','g');
+			var regexp2 = new RegExp('@([^\\s]*)','g');
+			// postText = postText.replace(regexp2, '');
+			// console.log(postText);
+
+
+			data.forEach(function(d) {	
+				str = d.date + ' ' + d.timezone; 
+				d.dtg = dtgFormat.parse(str);
+				d.tweet = d.tweet;
+				d.username = '@'+d.username;
+				d.nlikes = +d.nlikes;
+				d.nreplies = +d.nreplies;
+				d.nretweets = +d.nretweets;
+				userById.set(d.id, d.username);
+				d.hashtags = d.hashtags;
+				
+				aux = '' + d.tweet;
+				noUrls = aux.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '');
+				noHashtags = noUrls.replace(regexp, '');
+				noUserlinks = noHashtags.replace(regexp2, '');					
+				txt += noUserlinks;
+
+				cont++;			
+			});
+
+			document.getElementById("total").innerHTML = "Total de Tweets: " + cont;
+			
+			facts = crossfilter(data);
+			dateDimention = facts.dimension(function(d){return d.dtg;});
+			
+			tweetDimention = facts.dimension(function(d){return d.tweet;});
+			tweetGroup = tweetDimention.group()
+				.reduceSum(function(d){
+					return d.nlikes + d.nreplies + d.nretweets;});
+
+			var minuteDimention = facts.dimension(function(d){
+				return d3.time.minute(d.dtg);})
+			var minuteDimentionCount = minuteDimention.group();
+
+
+			var userDimention = facts.dimension(function(d){return d.username;});
+
+			var userGroup = userDimention.group()
+				.reduceSum(function(d){
+					return d.nlikes + d.nreplies + d.nretweets;});
+
+			var idDimention = facts.dimension(function(d){return d.id;});
+			
+			var idGroup = idDimention.group()
+				.reduceSum(function(d){
+					return d.nlikes + d.nreplies + d.nretweets;});
+
+
+			var hashtagDim = facts.dimension(function(d){return d.hashtags;}, true);
+			var hashtagGroup = hashtagDim.group();
+
+			lin
+				.width(960)
+			    .height(400)
+			    .transitionDuration(500)
+				.margins({top:10, right: 10, bottom:20, left:40})
+			    .dimension(minuteDimention)
+			    .group(minuteDimentionCount)
+			    .brushOn(true)
+			    .elasticY(true)
+			    .x(d3.time.scale().domain(d3.extent(data, function(d) {return d.dtg; })));
+
+
+			row
+				.width(960)
+				.height(600)
+				.margins({left: 10, top: 20, right: 80, bottom: 60})
+				.x(d3.scale.linear().domain([0,50000]))
+				.elasticX(true)
+				.title(function(d){
+					return 'Total de '+ d.value.toLocaleString("pt-BR")+'';
+				})
+				.renderLabel(true)
+				.renderTitleLabel(true)
+				.dimension(userDimention)
+				.group(userGroup)
+				.rowsCap(10)
+				.ordering(function(d) { return -d.value });
+			
+			row2
+				.width(960)
+				.height(600)
+				.margins({left: 10, top: 20, right: 80, bottom: 60})
+				.x(d3.scale.linear().domain([0,50000]))
+				.elasticX(true)
+				.title(function(d){
+					return 'Total de '+ d.value.toLocaleString("pt-BR")+'';
+				})
+				.label(function(d){
+					// console.log(d);
+					return userById.get(d.key);
+					return d.key;
+				})
+				.renderLabel(true)
+				.renderTitleLabel(true)
+				.dimension(idDimention)
+				.group(idGroup)
+				.rowsCap(10)
+				.ordering(function(d) { return -d.value });
+
+			// row3
+			// 	.width(960)
+			// 	.height(600)
+			// 	.margins({left: 10, top: 20, right: 80, bottom: 60})
+			// 	// .x(d3.scale.linear().domain([0,50000]))
+			// 	.elasticX(true)
+			// 	.renderLabel(true)
+			// 	.renderTitleLabel(true)
+			// 	.dimension(hashtagDim)
+			// 	.group(hashtagGroup)
+			// 	.rowsCap(10)
+			// 	.ordering(function(d) { return -d.value });
+
+			dataTable
+				.width(960)
+			    .height(800)
+			    .dimension(dateDimention)
+			    .group(function(d) {
+			        return "Tebalea de dados";
+			    })
+			    .size(20)
+			    .columns([
+						function(d) { return d.id; },
+			            function(d) { return d.username; },                    
+			            function (d) { return d.tweet; },                
+			            function (d) { return d.dtg; },
+			            function (d) { return d.nlikes; },
+			            function (d) { return d.nreplies; },
+						function (d) { return d.nretweets; },			
+						
+					])
+			    .sortBy(function(d) { return -d.nlikes; })
+			    .order(d3.ascending);
+
+			dc.renderAll();
+		});
+
+	}
+
+	function busca(){
+		var termo = document.getElementById("busca").value.toLowerCase();
+		var verify = new RegExp(termo, 'g');
+		texto = txt.toLowerCase();
+		var total = (texto.match(verify) || []).length;
+		document.getElementById("buscaResult").innerHTML = "Nº: " +total;
+
+		// tweetDimention.filter(function(d){
+		// 	// console.log(d);
+		
+		// })
+		tweetDimention.filterFunction(function(d){
+			var texto = '';
+			texto += d;
+			texto = texto.toLowerCase();
+			var total = (texto.match(verify) || []).length;
+			if(total>0)
+				return true;
+			return false;
+		});
+		dc.renderAll();
+	}
+
+</script>
+
+
+ <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- Latest compiled and minified JavaScript -->
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</body>
+</html>
