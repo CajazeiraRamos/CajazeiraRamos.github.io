@@ -34,9 +34,12 @@
 		O gráfico abaixo apresenta os valores anuais do orçamento da cultura e sua respectiva execução. Você pode selecionar uma ou mais colunas para delimitar o período de tempo que deseja analisar, assim os próximos gráficos serão atualizados.   
 	</p>
 
+
 	<div id="chart1">
 		<h4>Valores totais do Orçamento e sua Execução entre 2000 e 2021</h4>
 	</div>
+	<br>
+
 	<p>
 		Ao analisar a variação dos valores ao longo do tempo, expressa no gráfico abaixo, percebe-se uma estabilização na execução do recurso público entre 2012 e 2018 e, em paralelo, uma diminuição gradativa da dotação orçamentária.
 	</p>
@@ -44,6 +47,7 @@
 
 		<h4>Variação do Orçamento e sua Execução entre 2000 e 2021</h4>
 	</div>
+	<br>
 	<h3>E como é gasto o orçamento da Cultura?</h3>
 	<p>
 		Observaremos agora a distribuição anual e o ranque de gastos executados por unidade orçamentária.		
@@ -63,11 +67,11 @@
 	<div id="chart3">
 		<h4>Orçamento executado por Unidade Orçamentária</b></h4>
 	</div>
-
+	<br>
 	<div id="chart4">
 		<h4>Distribuição anual do orçamento executado por Unidade Orçamentária</h4>
 	</div>	
-
+	<br>
 	<p>
 		Para finalizar, vamos detalhar um pouco mais como é gasto o orçamento. 
 		Os gráficos a seguir apresentam a distribuição dos recursos da Cultura por <b>subfunção</b>. Fique à vontade para explorar os dados.
@@ -79,8 +83,9 @@
 	
 
 	<div id="chart5"><h4>Orçamento executado por Subfunção</b></h4></div>
+	<br>
 	<div id="chart6"><h4>Distribuição anual do orçamento executado por Subfunção</h4></div>
-	
+	<br>
 
 
 	<h3><b>Metodologia </b></h3>
@@ -194,13 +199,11 @@
         // if (article_div[0] != undefined){
 		// 	max_width = article_div[0].offsetWidth;
 		// }else{
-		// 	max_width = document.body.clientWidth;		
+		var max_width = document.body.clientWidth;		
 		// }
-		
-		// console.log(article_div);
-		max_width = window.innerWidth;
-		console.log(max_width);
-
+		if(max_width<500)
+			max_width=1000; 
+			
 		chart1
 			.width(max_width)
 			.height(500)
