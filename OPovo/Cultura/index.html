@@ -190,8 +190,15 @@
 			
 		// var target = document.getElementById('target')
 		// max_width = target.offsetWidth;
+		var article_div = document.getElementsByClassName("default-article white");
+        if (article_div[0] != undefined){
+			max_width = article_div[0].offsetWidth;
+		}else{
+			max_width = document.body.clientWidth;		
+		}
 		
-        max_width = document.body.clientWidth;		
+		console.log(article_div);
+		console.log(max_width);
 		// max_width = document.width;
 
 		chart1
