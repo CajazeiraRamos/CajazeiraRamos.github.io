@@ -31,7 +31,7 @@
 	</p>
 
 	<p>
-		O gráfico abaixo apresenta os valores anuais do orçamento da cultura e sua respectiva execução. Você pode selecionar uma ou mais colunas para delimitar o período de tempo que deseja analisar, assim os próximos gráficos serão atualizados.   
+		O gráfico abaixo apresenta os valores anuais do orçamento da cultura e sua respectiva execução. Você pode selecionar uma ou mais colunas para delimitar o período de tempo que deseja analisar, assim os próximos gráficos serão atualizados <b>automaticamente, com as informações referentes apenas ao período de tempo selecionado</b>. Para limpar as seleções,<a onclick="ResetCharts();">clique aqui</a>.   
 	</p>
 
 
@@ -48,20 +48,20 @@
 		<h4>Variação do Orçamento e sua Execução entre 2000 e 2021</h4>
 	</div>
 	<br>
-	<h3>E como é gasto o orçamento da Cultura?</h3>
+	<h3><b>E como é gasto o orçamento da Cultura?</b></h3>
 	<p>
-		Observaremos agora a distribuição anual e o ranque de gastos executados por unidade orçamentária.		
+		Observaremos agora a distribuição anual e o ranque de gastos executados por unidade orçamentária.
 		Reforçamos que os gráficos estão livres para você filtrar as informações da maneira que desejar. 
 		Mas oferecemos o seguinte exemplo de análise:
 	</p>
 	<p>
-		Pode-se observar que enquanto o Fundo Nacional de Cultura foi prioridade no segundo governo Lula (<a onclick="govLulaFilter();">selecionando 2007 à 2010 no gráfico 4</a>), 
-		ele caiu para a sétima posição no governo Dilma, quando a administração direta passou a receber a maior parcela de recursos (<a onclick="govDilmaFilter();">2011-2014</a>).
-		Depois de analisar, você pode <a onclick="ResetCharts();">remover a seleção</a>. 
-	</p> 	
-	
+		Pode-se observar que enquanto o Fundo Nacional de Cultura foi prioridade no segundo governo Lula (<a onclick="govLulaFilter();">selecionando 2007 à 2010 no gráfico 4</a>),
+		 ele caiu para a sétima posição no governo Dilma, quando a administração direta passou a receber a maior parcela de recursos (<a onclick="govDilmaFilter();">2011-2014</a>).
+		Depois de analisar, você pode <a onclick="ResetCharts();">remover</a> a seleção.
+	</p>	
 	<p>
-		Os gráficos funcionam assim: é possível selecionar uma ou mais unidades de interesse no gráfico abaixo, ou delimitar um período de tempo clicando nas colunas do gráfico seguinte. As informações em todos os demais gráficos da página serão atualizadas automaticamente. 
+		<b>Para você fazer outras análises, explicamos como os gráficos funcionam:</b> é possível selecionar uma ou mais unidades de interesse no gráfico abaixo, ou delimitar um período de tempo clicando nas colunas do gráfico seguinte.
+		 As informações em todos os demais gráficos da página serão atualizadas automaticamente.
 	</p>
 
 	<div id="chart3">
@@ -202,7 +202,7 @@
 		var max_width = document.body.clientWidth;		
 		// }
 		if(max_width<500)
-			max_width=1000; 
+			max_width=800; 
 			
 		chart1
 			.width(max_width)
