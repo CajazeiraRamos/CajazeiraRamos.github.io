@@ -1,68 +1,171 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>dc.js - Grouped Bar Example</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="../css/dc.css"/>
-  </head>
-  <body>
+<html>
+<head>
+	<title>Data.doc/OPovo - Para onde foi o orçamento da Cultura nos últimos 20 anos? 	</title>
+	<meta charset="UTF-8"> 
+	<link rel="stylesheet" href="css/dc.css">
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+   <script src="js/crossfilter.js" charset="utf-8"></script>
+   <script src="js/dc.js" charset="utf-8"></script>
 
-    <div id="test"></div>
+   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<link rel="icon" href="https://yt3.ggpht.com/ytc/AAUvwniBqGmJubYSj-rjkhRMVK9svDC9HCDkzmAhL7JqATo=s900-c-k-c0x00ffffff-no-rj">
 
-    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script type="text/javascript" src="../js/d3.js"></script>
-    <script src="js/crossfilter.js" charset="utf-8"></script>
-    <script src="js/dc.js" charset="utf-8"></script>
-    <script type="text/javascript">
+	<style>
+		/* style="max-width: 1100px; font-size: 14px;" */
+		/* p{
+			width: 90%;
+			margin-left: 2%;
+			font-size: 16px;
+		} */
+		.container{
+			width: 90%;
+			margin-left: 5%;
+			margin-top: 20px;
+		}
+	</style>
 
-      var chart = dc.barChart("#test");
-      d3.csv("morley.csv", function(error, experiments) {
+</head>
+<body>
 
-          experiments.forEach(function(x) {
-              x.Speed = +x.Speed;
-          });
+<div class="container" id="target">
+	
 
-          var ndx                 = crossfilter(experiments),
-              runDimension        = ndx.dimension(function(d) {return +d.Run;}),
-              speedSumGroup       = runDimension.group().reduce(function(p, v) {
-                  p[v.Expt] = (p[v.Expt] || 0) + v.Speed;
-                  return p;
-              }, function(p, v) {
-                  p[v.Expt] = (p[v.Expt] || 0) - v.Speed;
-                  return p;
-              }, function() {
-                  return {};
-              });
+	<div id="chart1">
+		<h4>Valores totais do Orçamento e sua Execução entre 2000 e 2021</h4>
+	</div>
 
-          function sel_stack(i) {
-              return function(d) {
-                  return d.value[i];
-              };
-          }
+		
+</div>
+<script type="text/javascript">   
 
-          chart
-              .width(768)
-              .height(480)
-              .x(d3.scale.linear().domain([0,21]))
-              .margins({left: 50, top: 10, right: 10, bottom: 20})
-              .brushOn(false)
-              .clipPadding(10)
-              .title(function(d) {
-                  return d.key + '[' + this.layer + ']: ' + d.value[this.layer];
-              })
-              .yAxisLabel("This is the Y Axis!")
-              .renderType('group')
-              .centerBar(true)
-              .dimension(runDimension)
-              .group(speedSumGroup, "1", sel_stack('1'));
+	chart1 = new dc.barChart("#chart1");
+	var facts, ano_dimension, subFuncao_dimension, unidade_dimension, dimension;
+	var group, executado_group, orcamento_group, executado_porSubfuncao_group, executado_porUnidade_group;
+		
 
-          for(var i = 2; i<6; ++i)
-              chart.stack(speedSumGroup, ''+i, sel_stack(i));
-          chart.render();
+	list_of_colorsv0 = ['#fc8d62', '#66c2a5'];
+	list_of_colorsv1 = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a'];
+	list_of_colorsv2 = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f','#e5c494'];
+		
+	cores_por_unidade = d3.scale.ordinal()
+		.domain(["Administração Direta","Agência Nacional do Cinema",
+			"Fundação Biblioteca Nacional","Fundação Cultural Palmares","Fundação Nacional de Artes",
+			"Fundo Nacional de Cultura","Instituto Brasileiro de Museus","IPHAN","Outros"])
+		.range(list_of_colorsv1)
 
-      });
+	cores_por_subfuncao = d3.scale.ordinal()
+		.domain(["392 - Difusão Cultural","122 - Administração Geral",
+			"391 - Patrimônio Histórico, Artístico e Arqueológico","128 - Formação de Recursos Humanos","331 - Proteção e Benefícios ao Trabalhador",
+			"301 - Atenção Básica","125 - Normatização e Fiscalização"])
+		.range(list_of_colorsv2)	
+		
 
-    </script>
+	d3.csv("data/dadosSIOPtratados.csv", function(data){
+        var dtgFormat = d3.time.format.utc("%Y");
+		data.forEach(function(d) {
+            d.ano = parseInt(d.Ano);
+			d.subFuncao = d.Subfunção;
+			d.modalidade = d.Modalidade_de_Aplicação;
+			d.empenhado = parseFloat(d.Empenhado);
+			d.liquidado = parseFloat(d.Liquidado);
+			d.unidadeOrcamentaria = d.Unidade_Orçamentária;
+			d.pago = parseFloat(d.Pago);
+			d.dotInicial = parseFloat(d.Dotação_Inicial);
+			d.dotAtual = parseFloat(d.Dotação_Atual);
+        });
+		
+		facts = crossfilter(data);
 
-  </body>
+
+		ano_dimension = facts.dimension(function(d){return d.ano;});
+		subFuncao_dimension = facts.dimension(function(d){return d.subFuncao;});
+		unidade_dimension = facts.dimension(function(d){return d.unidadeOrcamentaria;})
+		
+		dimension = facts.dimension(function(d){return d.ano;});
+		
+		
+
+		group = dimension.group()
+                .reduce((p, v) => {
+                    p[v.unidadeOrcamentaria] = (p[v.unidadeOrcamentaria] || 0) + v.liquidado;
+                    p[v.modalidade] = (p[v.modalidade] || 0) + v.liquidado;
+                    p[v.subFuncao] = (p[v.subFuncao] || 0) + v.liquidado;
+                    return p;
+                }, (p, v) => {
+                    p[v.unidadeOrcamentaria] = (p[v.unidadeOrcamentaria] || 0) - v.liquidado;
+					p[v.modalidade] = (p[v.modalidade] || 0) - v.liquidado;
+                    p[v.subFuncao] = (p[v.subFuncao] || 0) - v.liquidado;
+                    return p;
+                }, () => ({}));	
+        
+        function sel_stack (i) {
+			return function(d){
+				if(d.value[i] == undefined)
+					d.value[i] = 0;
+				return d.value[i];
+			}
+        }
+
+		executado_group = ano_dimension.group()
+			.reduceSum(function(d){
+				return d.liquidado;});
+		
+		orcamento_group = ano_dimension.group()
+			.reduceSum(function(d){
+				return d.dotAtual;});
+
+		executado_porSubfuncao_group = subFuncao_dimension.group()
+			.reduceSum(function(d){
+				return d.liquidado;});
+
+		executado_porUnidade_group = unidade_dimension.group()
+			.reduceSum(function(d){
+				return d.liquidado;});	
+
+			
+		var target = document.getElementById('target')
+		max_width = target.offsetWidth;
+
+
+		chart1
+			.width(max_width)
+			.height(500)
+			.dimension(ano_dimension)
+			.alwaysUseRounding(true)       
+			.legend(dc.legend().x(110).y(40).itemHeight(20).gap(3))
+			.x(d3.scale.ordinal().domain(ano_dimension)) 
+			.xUnits(dc.units.ordinal)
+			.margins({left: 100, top: 50, right: 80, bottom: 100})
+			.elasticY(true)
+			.title(function (d) {
+                return d.key + '[' + this.layer + ']: ' + 'R$  '+ d.value.toLocaleString("pt-BR")+',00';;
+            })
+			.colors(d3.scale.ordinal().range(list_of_colorsv0))
+			.renderHorizontalGridLines(true)
+			.renderVerticalGridLines(true)
+			.elasticY(true)
+			.renderType('group')
+			.group(orcamento_group, "Orçamento")	
+			.stack(executado_group, "Executado")
+		
+			.on('renderlet', function (chart) {
+				var txt = chart.selectAll('g.x text')
+					.attr('transform', 'translate(-15,10) rotate(-35)')});	
+
+		dc.renderAll();
+		
+	});			
+
+</script>
+
+
+ <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- Latest compiled and minified JavaScript -->
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</body>
 </html>
