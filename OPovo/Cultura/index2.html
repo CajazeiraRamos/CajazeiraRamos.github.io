@@ -124,7 +124,8 @@
 		// max_width = target.offsetWidth;
 
         // max_width = 800;
-        max_width = document.width;
+        max_width = document.body.clientWidth;
+        
 		chart1
 			.width(max_width)
 			.height(500)
