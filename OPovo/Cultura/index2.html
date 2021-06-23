@@ -19,11 +19,7 @@
 			margin-left: 2%;
 			font-size: 16px;
 		} */
-		.container{
-			width: 90%;
-			margin-left: 5%;
-			margin-top: 20px;
-		}
+		
         /* .d3chart{
 			width: 90%;
 			margin-left: 5%;
@@ -33,15 +29,10 @@
 </head>
 <body>
 
-<div class="container" id="target">
-	
-
-	<div id="chart1" class="d3chart">
-		<h4>Valores totais do Orçamento e sua Execução entre 2000 e 2021</h4>
-	</div>
-
-		
+<div id="chart1" class="d3chart">
+	<h4>Valores totais do Orçamento e sua Execução entre 2000 e 2021</h4>
 </div>
+
 <script type="text/javascript">   
 
 	chart1 = new dc.barChart("#chart1");
@@ -129,11 +120,11 @@
 				return d.liquidado;});	
 
 			
-		var target = document.getElementById('target')
-		max_width = target.offsetWidth;
+		// var target = document.getElementById('target')
+		// max_width = target.offsetWidth;
 
-        max_width = 800;
-
+        // max_width = 800;
+        max_width = document.width;
 		chart1
 			.width(max_width)
 			.height(500)
