@@ -19,25 +19,13 @@
 			margin-left: 2%;
 			font-size: 16px;
 		} */
-		.container{
-			width: 90%;
-			margin-left: 5%;
-			margin-top: 20px;
+		h4{
+			font-weight: bold;
 		}
 	</style>
 
 </head>
 <body>
-
-<div class="container" id="target">
-	
-	<!-- <h2>Para onde foi o orçamento da Cultura nos últimos 20 anos? </h2>
-	<br>
-	<p>
-		Explore os dados orçamentários da Cultura brasileira desde o ano 2000 e analise as prioridades dos governos na série histórica.
-		<br>por Alexandre Cajazeira, Catalina Leite e Thays Lavor
-	</p> -->
-	
 	<p>
 		A Cultura brasileira sempre teve pouca prioridade desde sua fundação, em 1985, representando menos de 1% do Orçamento da União (OU). No entanto, entre 2013 e 2021, houve uma redução significativa (cerca de 49%) no orçamento da pasta, como podemos observar nesta série histórica.
 	</p>
@@ -95,7 +83,7 @@
 	
 
 
-	<h3> Metodologia </h3>
+	<h3><b>Metodologia </b></h3>
 	<p>
 		A partir dos dados disponibilizados pelo <a target="_blank" href="https://www1.siop.planejamento.gov.br/QvAJAXZfc/opendoc.htm?document=IAS%2FExecucao_Orcamentaria.qvw&host=QVS%40pqlk04&anonymous=true">Painel do Orçamento</a>, do Sistema Integrado de Planejamento e Orçamento - SIOP, 
 		o Data.doc - Núcleo de Dados do O POVO - analisou os gastos do Governo Federal relacionados à Cultura entre os anos 2000 e 2021. 
@@ -107,8 +95,6 @@
 		Para acessar um arquivo .csv com o conjunto de dados explorado, até o dia 10 de junho de 2021, <a target="_blank" href="data/dadosSIOPtratados.csv">clique aqui</a>.      
 	</p>
 
-		
-</div>
 <script type="text/javascript">   
 
 	chart1 = new dc.barChart("#chart1");
@@ -202,9 +188,10 @@
 				return d.liquidado;});	
 
 			
-		var target = document.getElementById('target')
-		max_width = target.offsetWidth;
-
+		// var target = document.getElementById('target')
+		// max_width = target.offsetWidth;
+		
+        max_width = document.body.clientWidth;		
 
 		chart1
 			.width(max_width)
