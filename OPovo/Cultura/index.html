@@ -190,16 +190,16 @@
 			
 		// var target = document.getElementById('target')
 		// max_width = target.offsetWidth;
-		var article_div = document.getElementsByClassName("default-article white");
-        if (article_div[0] != undefined){
-			max_width = article_div[0].offsetWidth;
-		}else{
-			max_width = document.body.clientWidth;		
-		}
+		// var article_div = document.getElementsByClassName("default-article white");
+        // if (article_div[0] != undefined){
+		// 	max_width = article_div[0].offsetWidth;
+		// }else{
+		// 	max_width = document.body.clientWidth;		
+		// }
 		
-		console.log(article_div);
+		// console.log(article_div);
+		max_width = window.innerWidth;
 		console.log(max_width);
-		// max_width = document.width;
 
 		chart1
 			.width(max_width)
