@@ -45,7 +45,7 @@
 		}
 		.dc-chart g.dc-legend-item text{
 			fill: black;
-			font: 16px/16px Arial, Helvetica, sans-serif;
+			font: 14px/14px Arial, Helvetica, sans-serif;
 			font-weight: bold;
 		}
 
@@ -150,7 +150,7 @@
 
 	list_of_colorsv0 = ['#fc8d62', '#66c2a5'];
 	list_of_colorsv1 = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a'];
-	list_of_colorsv2 = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f','#e5c494'];
+	list_of_colorsv2 = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f','#e5c494','#bdbdbd'];
 		
 	cores_por_unidade = d3.scale.ordinal()
 		.domain(["Administração Direta","Agência Nacional do Cinema",
@@ -362,7 +362,7 @@
 
 		chart3
 			.width(max_width)
-			.height(600)
+			.height(500)
 			.margins({left: 10, top: 20, right: 80, bottom: 60})
 			.x(d3.scale.linear().domain([0,50000]))
 			.elasticX(true)
@@ -394,16 +394,16 @@
 			.renderVerticalGridLines(true)
 			.colors(cores_por_unidade)
 			.dimension(dimension)  
-			.group(group, "Administração Direta", sel_stack('Administração Direta'))
-            .stack(group, "Agência Nacional do Cinema", sel_stack('Agência Nacional do Cinema'))
+			.group(group, "IPHAN", sel_stack('IPHAN'))
+			.stack(group, "Administração Direta", sel_stack('Administração Direta'))
+            .stack(group, "Fundo Nacional de Cultura", sel_stack('Fundo Nacional de Cultura'))
+			.stack(group, "Agência Nacional do Cinema", sel_stack('Agência Nacional do Cinema'))
+            .stack(group, "Instituto Brasileiro de Museus", sel_stack('Instituto Brasileiro de Museus'))
+            .stack(group, "Fundação Nacional de Artes", sel_stack('Fundação Nacional de Artes'))
             .stack(group, "Fundação Biblioteca Nacional", sel_stack('Fundação Biblioteca Nacional'))
             .stack(group, "Fundação Casa de Rui Barbosa", sel_stack('Fundação Casa de Rui Barbosa'))
             .stack(group, "Fundação Cultural Palmares", sel_stack('Fundação Cultural Palmares'))
-            .stack(group, "Fundação Nacional de Artes", sel_stack('Fundação Nacional de Artes'))
-            .stack(group, "Fundo Nacional de Cultura", sel_stack('Fundo Nacional de Cultura'))
-			.stack(group, "Instituto Brasileiro de Museus", sel_stack('Instituto Brasileiro de Museus'))
-            .stack(group, "IPHAN", sel_stack('IPHAN'))
-			.stack(group, "Outros", sel_stack('Outros'))
+            .stack(group, "Outros", sel_stack('Outros'))
 			.on('renderlet', function (chart) {
 				var txt = chart.selectAll('g.x text')
 					.attr('transform', 'translate(-15,10) rotate(-35)')});								
@@ -417,7 +417,7 @@
 		    });
 		chart5
 			.width(max_width)
-			.height(600)
+			.height(450)
 			.margins({left: 10, top: 20, right: 80, bottom: 60})
 			.x(d3.scale.linear().domain([0,50000]))
 			.elasticX(true)
@@ -436,7 +436,9 @@
 			.width(max_width)
             .height(500)
 			.margins({left: 100, top: 20, right: 300, bottom: 80})
-            .legend(dc.legend().x(max_width-300).y(50).itemHeight(20).gap(5)) 
+			// .legend(dc.htmlLegend().container('#name-legend').horizontal(true).highlightSelected(true))
+            // .horizontal(true)
+			.legend(dc.legend().x(max_width-300).y(50).itemHeight(20).gap(5)) 
             .x(d3.scale.ordinal().domain(dimension))
 			.xUnits(dc.units.ordinal)
             .clipPadding(10)
