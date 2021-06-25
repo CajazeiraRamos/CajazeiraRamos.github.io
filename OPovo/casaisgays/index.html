@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Data.doc/OPovo - Para onde foi o orçamento da Cultura nos últimos 20 anos? 	</title>
+	<meta charset="UTF-8"> 
+	<link rel="stylesheet" href="css/dc.css">
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+   <script src="js/crossfilter.js" charset="utf-8"></script>
+   <script src="js/dc.js" charset="utf-8"></script>
+
+   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<link rel="icon" href="https://yt3.ggpht.com/ytc/AAUvwniBqGmJubYSj-rjkhRMVK9svDC9HCDkzmAhL7JqATo=s900-c-k-c0x00ffffff-no-rj">
+
+	<style>
+		/* style="max-width: 1100px; font-size: 14px;" */
+		p{
+			font-family: var(--noto);
+    		font-weight: 400;
+		    font-size: 21px;
+			color: #333;
+			line-height: 32px;
+			margin-top: 0;
+			margin-bottom: 20px;
+			word-break: break-word;
+		}
+		h3{
+			margin-left: 3%;
+			font-weight: bold;
+		}
+		label{
+			margin-left: 3%;
+		}
+		.dc-chart g.axis text{
+			fill: black;
+			font: 14px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		.dc-chart text.pie-slice{
+			fill: black;
+			font: 16px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		
+		.dc-chart g.row text {
+			fill: black;
+			font-family: var(--noto);
+			font-size: 14px;
+			font-weight: bold;
+		}
+		.dc-chart g.dc-legend-item text{
+			fill: black;
+			font: 14px/14px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+
+	</style>
+
+</head>
+<body>
+	<p>
+		Explorando dados 
+	</p>
+
+	<h3>Tipo de Licença e número de dias por Estado</h3>
+	<div id="chart1"></div>
+	<div id="chart2"></div> 
+	<br>
+	<label style="width: 700px;"><a onclick="reset()">Clique aqui para limpar filtros</a></label>
+	
+	<label style="width: 700px;">Fonte: Levantamento do Data.doc com base nos dados do XXXXX</label>
+	
+	
+<script type="text/javascript">   
+
+	list_of_colors_tipo = ['#fc8d62', '#66c2a5','#bdbdbd'];
+
+	sigla_nome_UF = d3.scale.ordinal()
+	.domain(["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"])
+	.range(['Acre','Alagoas','Amapá','Amazonas','Bahia','Ceará','Distrito Federal','Espírito Santo','Goiás','Maranhão','Mato Grosso','Mato Grosso do Sul','Minas Gerais','Pará','Paraíba','Paraná','Pernambuco','Piauí','Rio de Janeiro','Rio Grande do Norte','Rio Grande do Sul','Rondônia','Roraima','Santa Catarina','São Paulo','Sergipe','Tocantins']),
+
+			
+	d3.csv("data/dataset.csv", function(data){		
+
+		data.forEach(function(d) {
+            d.uf = d.UF;
+			d.reg = d.Região 
+			d.ndias = parseFloat(d.Licença_em_dias);
+			d.tipo = d.TIPO_LICENÇA;
+        });
+
+		var facts, ano_dimension;
+		var group, executado_group, orcamento_group, executado_porSubfuncao_group, executado_porUnidade_group;
+	
+		var pieChart = new dc.pieChart("#chart1"),
+		rowChart = new dc.rowChart("#chart2");
+		
+		facts = crossfilter(data);
+		tipo_dimension = facts.dimension(function(d){return d.tipo;});
+		uf_dimension = facts.dimension(function(d){return d.uf});
+
+		tipo_group = tipo_dimension.group();
+		uf_group = uf_dimension.group()
+			.reduceSum(function(d){
+				return d.ndias;});
+
+		
+		pieChart
+			.width(350)
+          	.height(500)
+          	.innerRadius(50)
+			.externalRadiusPadding(50)
+            .dimension(tipo_dimension)
+            .group(tipo_group)
+			.colors(d3.scale.ordinal().range(list_of_colors_tipo))
+			.legend(dc.legend().x(80).y(425).itemHeight(20).gap(3)
+			.legendText(function (d) {
+				if(d.data == 1)
+					return d.name + ': 1 estado'
+				return d.name + ': ' + d.data + 
+					' estados'}))
+			.on('pretransition', function(chart) {
+				chart.selectAll('text.pie-slice').text(function(d) {
+					return dc.utils.printSingleValue((d.endAngle - d.startAngle) / (2*Math.PI) * 100) + '%';
+				})
+			});
+		
+		rowChart
+			.width(450)
+			.height(650)
+			.margins({left: 50, top: 20, right: 80, bottom: 60})
+			.elasticX(true)
+			.title(function(d){
+				if(d.value > 0)
+					return ''+ d.value.toLocaleString("pt-BR")+' dias';
+				else
+					return '-'
+			})
+			.labelOffsetX(-30)
+			.othersGrouper(false)
+			.renderLabel(true)
+			.renderTitleLabel(true)
+			.dimension(uf_dimension)
+			.group(uf_group)
+			.ordering(function(d) { return -d.value });
+	
+		dc.renderAll()
+	});
+</script>
+
+
+ <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- Latest compiled and minified JavaScript -->
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</body>
+</html>
