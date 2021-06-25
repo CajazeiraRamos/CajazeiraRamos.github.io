@@ -14,14 +14,41 @@
 
 	<style>
 		/* style="max-width: 1100px; font-size: 14px;" */
-		/* p{
-			width: 90%;
-			margin-left: 2%;
-			font-size: 16px;
-		} */
-		h4{
+		p{
+			font-family: var(--noto);
+    		font-weight: 400;
+		    font-size: 21px;
+			color: #333;
+			line-height: 32px;
+			margin-top: 0;
+			margin-bottom: 20px;
+			word-break: break-word;
+		}
+		h3{
+			margin-left: 3%;
 			font-weight: bold;
 		}
+		label{
+			margin-left: 3%;
+		}
+		.dc-chart g.axis text{
+			fill: black;
+			font: 14px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		
+		.dc-chart g.row text {
+			fill: black;
+			font-family: var(--noto);
+			font-size: 16px;
+			font-weight: bold;
+		}
+		.dc-chart g.dc-legend-item text{
+			fill: black;
+			font: 16px/16px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+
 	</style>
 
 </head>
@@ -36,19 +63,20 @@
 
 
 	<div id="chart1">
-		<h4>Valores totais do Orçamento e sua Execução entre 2000 e 2021</h4>
+		<h3>Valores totais do Orçamento e sua Execução entre 2000 e 2021</h3>
 	</div>
-	<br>
+	<label>Fonte: Levantamento do Data.doc com base nos dados do Siop</label>
+	<!-- <br>
 
 	<p>
 		Ao analisar a variação dos valores ao longo do tempo, expressa no gráfico abaixo, percebe-se uma estabilização na execução do recurso público entre 2012 e 2018 e, em paralelo, uma diminuição gradativa da dotação orçamentária.
-	</p>
-	<div id="chart2">
+	</p> -->
+	<!-- <div id="chart2">
 
 		<h4>Variação do Orçamento e sua Execução entre 2000 e 2021</h4>
 	</div>
-	<br>
-	<h3><b>E como é gasto o orçamento da Cultura?</b></h3>
+	<br> -->
+	<h2><b>E como é gasto o orçamento da Cultura?</b></h2>
 	<p>
 		Observaremos agora a distribuição anual e o ranque de gastos executados por unidade orçamentária.
 		Reforçamos que os gráficos estão livres para você filtrar as informações da maneira que desejar. 
@@ -65,12 +93,16 @@
 	</p>
 
 	<div id="chart3">
-		<h4>Orçamento executado por Unidade Orçamentária</b></h4>
+		<h3>Orçamento executado por Unidade Orçamentária</b></h3>
 	</div>
+	<label>Fonte: Levantamento do Data.doc com base nos dados do Siop</label>
+	
 	<br>
 	<div id="chart4">
-		<h4>Distribuição anual do orçamento executado por Unidade Orçamentária</h4>
+		<h3>Distribuição anual do orçamento executado por Unidade Orçamentária</h3>
 	</div>	
+	<label>Fonte: Levantamento do Data.doc com base nos dados do Siop</label>
+	
 	<br>
 	<p>
 		Para finalizar, vamos detalhar um pouco mais como é gasto o orçamento. 
@@ -82,9 +114,12 @@
 	</p>
 	
 
-	<div id="chart5"><h4>Orçamento executado por Subfunção</b></h4></div>
+	<div id="chart5"><h3>Orçamento executado por Subfunção</b></h3></div>
+	<label>Fonte: Levantamento do Data.doc com base nos dados do Siop</label>
+	
 	<br>
-	<div id="chart6"><h4>Distribuição anual do orçamento executado por Subfunção</h4></div>
+	<div id="chart6"><h3>Distribuição anual do orçamento executado por Subfunção</h3></div>
+	<label>Fonte: Levantamento do Data.doc com base nos dados do Siop</label>
 	<br>
 
 
@@ -103,7 +138,7 @@
 <script type="text/javascript">   
 
 	chart1 = new dc.barChart("#chart1");
-	chart2 = new dc.compositeChart("#chart2");
+	// chart2 = new dc.compositeChart("#chart2");
 	chart3 = new dc.rowChart("#chart3");
    	chart4 = new dc.barChart("#chart4");
 	chart5 = new dc.rowChart("#chart5");
@@ -124,17 +159,18 @@
 		.range(list_of_colorsv1)
 
 	cores_por_subfuncao = d3.scale.ordinal()
-		.domain(["392 - Difusão Cultural","122 - Administração Geral",
-			"391 - Patrimônio Histórico, Artístico e Arqueológico","128 - Formação de Recursos Humanos","331 - Proteção e Benefícios ao Trabalhador",
-			"301 - Atenção Básica","125 - Normatização e Fiscalização"])
+		.domain(["Administração Geral", "Difusão Cultural", "Patrimônio Histórico, Artístico e Arqueológico", "Outros Encargos Especiais", "Proteção e Benefícios ao Trabalhador", "Promoção Comercial", "Lazer"])
 		.range(list_of_colorsv2)	
+		// ["Difusão Cultural","Administração Geral",
+		// 	"Patrimônio Histórico, Artístico e Arqueológico","Formação de Recursos Humanos","Proteção e Benefícios ao Trabalhador",
+		// 	"Atenção Básica","Normatização e Fiscalização"]
 		
-
+		
 	d3.csv("data/dadosSIOPtratados.csv", function(data){
         var dtgFormat = d3.time.format.utc("%Y");
 		data.forEach(function(d) {
             d.ano = parseInt(d.Ano);
-			d.subFuncao = d.Subfunção;
+			d.subFuncao = d.Subfunção.substr(6);
 			d.modalidade = d.Modalidade_de_Aplicação;
 			d.empenhado = parseFloat(d.Empenhado);
 			d.liquidado = parseFloat(d.Liquidado);
@@ -212,11 +248,31 @@
 			.legend(dc.legend().x(110).y(40).itemHeight(20).gap(3))
 			.x(d3.scale.ordinal().domain(ano_dimension)) 
 			.xUnits(dc.units.ordinal)
-			.margins({left: 100, top: 50, right: 80, bottom: 100})
+			.margins({left: 80, top: 20, right: 80, bottom: 40})
 			.elasticY(true)
+			// .yAxisLabel("Valores em R$ para a Cultura")
+			// .xAxisLabel("Valores para a cultura por Ano")
 			.title(function (d) {
-                return d.key + '[' + this.layer + ']: ' + 'R$  '+ d.value.toLocaleString("pt-BR")+',00';;
-            })
+				if(d.key == 2000)
+					return 'As variações são calculadas a partir de 2001';
+				else{
+					key_ant = d.key-1;
+					key_0 = 2000;
+					variacao = 0;
+					ant = 0;
+					if(this.layer == "Executado"){
+						variacao = executado_group.all().filter(function(item) { return item.key === key_0; })[0].value;
+						ant = executado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+					}else{
+						variacao = orcamento_group.all().filter(function(item) { return item.key === key_0; })[0].value;
+						ant = orcamento_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+					}								
+					value =  Math.round((d.value/ant-1)*100);
+					variacao =  Math.round((d.value/variacao-1)*100);
+					return ''+ this.layer +' em '+d.key+': '+ 'R$  '+ d.value.toLocaleString("pt-BR")+',00' +'\n'+
+					'- O montante representa '+ variacao +'% do valor em 2000;\n'+
+					'- A variação em relação ao ano anterior foi de  '+ value +'%.';;
+				}})
 			.colors(d3.scale.ordinal().range(list_of_colorsv0))
 			.renderHorizontalGridLines(true)
 			.renderVerticalGridLines(true)
@@ -229,71 +285,80 @@
 				var txt = chart.selectAll('g.x text')
 					.attr('transform', 'translate(-15,10) rotate(-35)')});	
 		
-		chart2
-			.width(max_width)
-			.height(500)
-			.margins({left: 50, top: 40, right: 80, bottom: 100})
-			.legend(dc.legend().x(110).y(100).itemHeight(20).gap(3))
-			.renderHorizontalGridLines(true)
-			.x(d3.scale.linear().domain([2000,2021]))
-			.xUnits(dc.units.integers)
-			.elasticY(true)
-			.brushOn(false)
-			.title(function (d) {
-				if(d.key == 2000)
-							return 'As variações são calculadas a partir de 2001';
-						else{
-							key_ant = d.key-1;
-							key_0 = 2000;
-							variacao = 0;
-							ant = 0;
-							if(this.layer == "Executado"){
-								variacao = executado_group.all().filter(function(item) { return item.key === key_0; })[0].value;
-								ant = executado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
-							}else{
-								variacao = orcamento_group.all().filter(function(item) { return item.key === key_0; })[0].value;
-								ant = orcamento_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
-							}								
-							value =  Math.round((d.value/ant-1)*100);
-							variacao =  Math.round((d.value/variacao-1)*100);
-							return ''+ this.layer +':\n'+
-							d.key + ' representa '+ variacao +'% do valor de 2000;'+
-							' \nA variação em relação ao ano anterior foi de  '+ value +'%';;
-						}
-					})
-			.compose([
-				dc.lineChart(chart2)
-					.dimension(ano_dimension)
-					.group(orcamento_group, "Orçamento")
-					.colors('#fc8d62')
-					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
-					.valueAccessor(function(d) { 
-						if(d.key == 2000)
-							return 0;
-						else{
-							key_ant = 2000; 
-							ant = orcamento_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
-							return (d.value/ant-1)*100;
-						}
-					}),					
-				dc.lineChart(chart2)
-					.group(executado_group, "Executado")
-					.colors('#66c2a5')
-					.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
-					.valueAccessor(function(d) { 
-						if(d.key == 2000)
-							return 0;
-						else{
-							// key_ant = d.key-1;
-							key_ant = 2000; 
-							ant = executado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
-							return (d.value/ant-1)*100;
-						}
-					}),				
-			])
-			.on('renderlet', function (chart) {
-				var txt = chart.selectAll('g.x text')
-					.attr('transform', 'translate(-15,10) rotate(-35)')});	
+		var format = d3.format("s");
+		chart1.yAxis()
+	    	.tickFormat(function(d){
+	    		return 'R$ ' + format(d)
+				.replace(/G/," bi ")
+				.replace(/M/," mi ")
+				.replace(/k/," mil ");
+		    	// return d.toLocaleString("pt-BR");
+		    });
+		// chart2
+		// 	.width(max_width)
+		// 	.height(500)
+		// 	.margins({left: 50, top: 20, right: 80, bottom: 100})
+		// 	.legend(dc.legend().x(110).y(100).itemHeight(20).gap(3))
+		// 	.renderHorizontalGridLines(true)
+		// 	.x(d3.scale.linear().domain([2000,2021]))
+		// 	.xUnits(dc.units.integers)
+		// 	.elasticY(true)
+		// 	.brushOn(false)
+		// 	.title(function (d) {
+		// 		if(d.key == 2000)
+		// 					return 'As variações são calculadas a partir de 2001';
+		// 				else{
+		// 					key_ant = d.key-1;
+		// 					key_0 = 2000;
+		// 					variacao = 0;
+		// 					ant = 0;
+		// 					if(this.layer == "Executado"){
+		// 						variacao = executado_group.all().filter(function(item) { return item.key === key_0; })[0].value;
+		// 						ant = executado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+		// 					}else{
+		// 						variacao = orcamento_group.all().filter(function(item) { return item.key === key_0; })[0].value;
+		// 						ant = orcamento_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+		// 					}								
+		// 					value =  Math.round((d.value/ant-1)*100);
+		// 					variacao =  Math.round((d.value/variacao-1)*100);
+		// 					return ''+ this.layer +':\n'+
+		// 					d.key + ' representa '+ variacao +'% do valor de 2000;'+
+		// 					' \nA variação em relação ao ano anterior foi de  '+ value +'%';;
+		// 				}
+		// 			})
+		// 	.compose([
+		// 		dc.lineChart(chart2)
+		// 			.dimension(ano_dimension)
+		// 			.group(orcamento_group, "Orçamento")
+		// 			.colors('#fc8d62')
+		// 			.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+		// 			.valueAccessor(function(d) { 
+		// 				if(d.key == 2000)
+		// 					return 0;
+		// 				else{
+		// 					key_ant = 2000; 
+		// 					ant = orcamento_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+		// 					return (d.value/ant-1)*100;
+		// 				}
+		// 			}),					
+		// 		dc.lineChart(chart2)
+		// 			.group(executado_group, "Executado")
+		// 			.colors('#66c2a5')
+		// 			.renderDataPoints({radius: 5, fillOpacity: 0.8, strokeOpacity: 0.0})
+		// 			.valueAccessor(function(d) { 
+		// 				if(d.key == 2000)
+		// 					return 0;
+		// 				else{
+		// 					// key_ant = d.key-1;
+		// 					key_ant = 2000; 
+		// 					ant = executado_group.all().filter(function(item) { return item.key === key_ant; })[0].value;
+		// 					return (d.value/ant-1)*100;
+		// 				}
+		// 			}),				
+		// 	])
+		// 	.on('renderlet', function (chart) {
+		// 		var txt = chart.selectAll('g.x text')
+		// 			.attr('transform', 'translate(-15,10) rotate(-35)')});	
 
 		chart3
 			.width(max_width)
@@ -316,8 +381,8 @@
 		chart4
             .width(max_width)
             .height(500)
-			.margins({left: 100, top: 40, right: 230, bottom: 80})
-            .legend(dc.legend().x(max_width-230).y(50).itemHeight(20).gap(5)) 
+			.margins({left: 100, top: 20, right: 300, bottom: 80})
+            .legend(dc.legend().x(max_width-300).y(50).itemHeight(20).gap(5)) 
             .clipPadding(10)
 			.elasticY(true)
             .x(d3.scale.ordinal().domain(dimension))
@@ -328,8 +393,8 @@
 			.renderHorizontalGridLines(true)
 			.renderVerticalGridLines(true)
 			.colors(cores_por_unidade)
-			.dimension(dimension)           
-            .group(group, "Administração Direta", sel_stack('Administração Direta'))
+			.dimension(dimension)  
+			.group(group, "Administração Direta", sel_stack('Administração Direta'))
             .stack(group, "Agência Nacional do Cinema", sel_stack('Agência Nacional do Cinema'))
             .stack(group, "Fundação Biblioteca Nacional", sel_stack('Fundação Biblioteca Nacional'))
             .stack(group, "Fundação Casa de Rui Barbosa", sel_stack('Fundação Casa de Rui Barbosa'))
@@ -342,7 +407,14 @@
 			.on('renderlet', function (chart) {
 				var txt = chart.selectAll('g.x text')
 					.attr('transform', 'translate(-15,10) rotate(-35)')});								
-
+		chart4.yAxis()
+	    	.tickFormat(function(d){
+	    		return 'R$ ' + format(d)
+				.replace(/G/," bi ")
+				.replace(/M/," mi ")
+				.replace(/k/," mil ");
+		    	// return d.toLocaleString("pt-BR");
+		    });
 		chart5
 			.width(max_width)
 			.height(600)
@@ -357,14 +429,14 @@
 			.renderTitleLabel(true)
 			.dimension(subFuncao_dimension)
 			.group(executado_porSubfuncao_group)
-			.rowsCap(10)
+			.rowsCap(7)
 			.ordering(function(d) { return -d.value });	
 
 		chart6
 			.width(max_width)
             .height(500)
-			.margins({left: 100, top: 40, right: 230, bottom: 80})
-            .legend(dc.legend().x(max_width-230).y(50).itemHeight(20).gap(5)) 
+			.margins({left: 100, top: 20, right: 300, bottom: 80})
+            .legend(dc.legend().x(max_width-300).y(50).itemHeight(20).gap(5)) 
             .x(d3.scale.ordinal().domain(dimension))
 			.xUnits(dc.units.ordinal)
             .clipPadding(10)
@@ -375,19 +447,26 @@
 			.renderHorizontalGridLines(true)
 			.renderVerticalGridLines(true)
 			.colors(cores_por_subfuncao)
-			.dimension(dimension)           
-            .group(group, "392 - Difusão Cultural", sel_stack('392 - Difusão Cultural'))
-            .stack(group, "122 - Administração Geral", sel_stack('122 - Administração Geral'))
-            .stack(group, "391 - Patrimônio Histórico, Artístico e Arqueológico", sel_stack('391 - Patrimônio Histórico, Artístico e Arqueológico'))
-            .stack(group, "128 - Formação de Recursos Humanos", sel_stack('128 - Formação de Recursos Humanos'))
-            .stack(group, "331 - Proteção e Benefícios ao Trabalhador", sel_stack('331 - Proteção e Benefícios ao Trabalhador'))
-            .stack(group, "301 - Atenção Básica", sel_stack('301 - Atenção Básica'))
-            .stack(group, "125 - Normatização e Fiscalização", sel_stack('125 - Normatização e Fiscalização'))
-			.on('renderlet', function (chart) {
+			.dimension(dimension)
+            .group(group, 'Administração Geral', sel_stack('Administração Geral'))
+			.stack(group, "Difusão Cultural", sel_stack('Difusão Cultural'))
+            .stack(group, "Patrimônio Histórico, Artístico e Arqueológico", sel_stack('Patrimônio Histórico, Artístico e Arqueológico'))
+            .stack(group, "Outros Encargos Especiais", sel_stack('Outros Encargos Especiais'))
+            .stack(group, "Promoção Comercial", sel_stack('Promoção Comercial'))
+            .stack(group, "Proteção e Benefícios ao Trabalhador", sel_stack('Proteção e Benefícios ao Trabalhador'))
+			.stack(group, "Lazer", sel_stack('Lazer'))
+            .on('renderlet', function (chart) {
 				var txt = chart.selectAll('g.x text')
 					.attr('transform', 'translate(-15,10) rotate(-35)')});	
-            	
-
+				
+		chart6.yAxis()
+	    	.tickFormat(function(d){
+	    		return 'R$ ' + format(d)
+				.replace(/G/," bi ")
+				.replace(/M/," mi ")
+				.replace(/k/," mil ");
+		    	// return d.toLocaleString("pt-BR");
+		    });
 
 
 		dc.renderAll();
