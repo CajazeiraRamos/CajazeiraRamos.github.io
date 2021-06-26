@@ -4,6 +4,12 @@
 	<title>Data.doc/OPovo - Para onde foi o orçamento da Cultura nos últimos 20 anos? 	</title>
 	<meta charset="UTF-8"> 
 	<link rel="stylesheet" href="css/dc.css">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
 	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
    <script src="js/crossfilter.js" charset="utf-8"></script>
    <script src="js/dc.js" charset="utf-8"></script>
@@ -36,6 +42,12 @@
 			font: 14px/18px Arial, Helvetica, sans-serif;
 			font-weight: bold;
 		}
+		.btn{
+			fill: black;
+			font: 14px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+
 		.dc-chart text.pie-slice{
 			fill: black;
 			font: 16px/18px Arial, Helvetica, sans-serif;
@@ -58,20 +70,46 @@
 
 </head>
 <body>
-	<p>
-		Explorando dados 
-	</p>
-
 	<h3>Tipo de Licença e número de dias por Estado</h3>
+	
+	<hr>
 	<div id="chart1"></div>
 	<div id="chart2"></div> 
-	<br>
-	<label style="width: 700px;"><a onclick="reset()">Clique aqui para limpar filtros</a></label>
+
+	<label style="width: 600px;"><b>Clique nos gráficos ou escolha uma região para filtrar os resultados: </b></label>
+	<div class="btn-group" style="width: 600px; margin-left: 3%;">
+			
+		<button class= "btn" onclick="rg_filter('Norte');">Norte</button>
+		<button class= "btn" onclick="rg_filter('Nordeste');">Nordeste</button>
+		<button class= "btn" onclick="rg_filter('Centro-oeste');">Centro-oeste</button>
+		<button class= "btn" onclick="rg_filter('Sudeste');">Sudeste</button>
+		<button class= "btn" onclick="rg_filter('Sul');">Sul</button>
+		<button class= "btn btn-primary" onclick="limparFiltros()">Limpar Filtros</button>
+	</div>
 	
-	<label style="width: 700px;">Fonte: Levantamento do Data.doc com base nos dados do XXXXX</label>
+	<!-- <label style="width: 600px;"><br><a onclick="limparFiltros()">Clique aqui para limpar os filtros</a></label> -->
+	
+	<label style="width: 700px;"><br>Fonte: Levantamento do Data.doc através da Lei de Acesso à Informação</label>
 	
 	
 <script type="text/javascript">   
+
+	var facts, ano_dimension;
+	var group, executado_group, orcamento_group, executado_porSubfuncao_group, executado_porUnidade_group;
+	
+	var pieChart = new dc.pieChart("#chart1"),
+		rowChart = new dc.rowChart("#chart2");
+		
+	function limparFiltros(){
+		pieChart.filterAll();
+		rowChart.filterAll();
+		rg_dimension.filterAll();
+		dc.renderAll();
+	}
+	function rg_filter(nome_regiao){
+		rg_dimension.filter(nome_regiao);
+		dc.renderAll();
+	}
 
 	list_of_colors_tipo = ['#fc8d62', '#66c2a5','#bdbdbd'];
 
@@ -89,13 +127,12 @@
 			d.tipo = d.TIPO_LICENÇA;
         });
 
-		var facts, ano_dimension;
-		var group, executado_group, orcamento_group, executado_porSubfuncao_group, executado_porUnidade_group;
-	
-		var pieChart = new dc.pieChart("#chart1"),
-		rowChart = new dc.rowChart("#chart2");
+		
 		
 		facts = crossfilter(data);
+
+		rg_dimension = facts.dimension(function(d){return d.reg;});
+
 		tipo_dimension = facts.dimension(function(d){return d.tipo;});
 		uf_dimension = facts.dimension(function(d){return d.uf});
 
@@ -115,6 +152,8 @@
 			.colors(d3.scale.ordinal().range(list_of_colors_tipo))
 			.legend(dc.legend().x(80).y(425).itemHeight(20).gap(3)
 			.legendText(function (d) {
+				if(d.data == 0)
+					return '-'
 				if(d.data == 1)
 					return d.name + ': 1 estado'
 				return d.name + ': ' + d.data + 
@@ -124,11 +163,19 @@
 					return dc.utils.printSingleValue((d.endAngle - d.startAngle) / (2*Math.PI) * 100) + '%';
 				})
 			});
+		// dc.override(pieChart, 'legendables', function() {
+        //   	var items = pieChart._legendables();
+		// 	  console.log(items);
+		// 		// if (el1 > el2) Swap(el1,el2)
+		// 		// if (el2 > el3) Swap(el2,el3)
+		// 		// if (el1 > el2) Swap(el1,el2)
+        //   	return items.reverse();
+      	// });
 		
 		rowChart
 			.width(450)
-			.height(650)
-			.margins({left: 50, top: 20, right: 80, bottom: 60})
+			.height(600)
+			.margins({left: 50, top: 10, right: 80, bottom: 30})
 			.elasticX(true)
 			.title(function(d){
 				if(d.value > 0)
@@ -147,13 +194,6 @@
 		dc.renderAll()
 	});
 </script>
-
-
- <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
- <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <!-- Latest compiled and minified JavaScript -->
- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 </body>
 </html>
