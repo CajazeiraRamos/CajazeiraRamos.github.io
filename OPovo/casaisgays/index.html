@@ -74,7 +74,7 @@
 	<hr>
 	
 	<label style="margin-left: 5%;"><b>Clique nos gráficos ou escolha uma região para filtrar os resultados: </b></label>
-	<div class="btn-group">
+	<div class="btn-group" style="margin-left: 5%;">
 			
 		<button class= "btn" onclick="rg_filter('Norte');">Norte</button>
 		<button class= "btn" onclick="rg_filter('Nordeste');">Nordeste</button>
@@ -90,7 +90,7 @@
 	
 	<!-- <label style="width: 600px;"><br><a onclick="limparFiltros()">Clique aqui para limpar os filtros</a></label> -->
 	
-	<label><br>Fonte: Levantamento do Data.doc através da Lei de Acesso à Informação</label>
+	<label>Fonte: Levantamento do Data.doc através da Lei de Acesso à Informação</label>
 	
 	
 <script type="text/javascript">   
@@ -154,23 +154,24 @@
 			.width(300)
           	.height(500)
           	.innerRadius(15)
-			.externalRadiusPadding(50)
+			.externalRadiusPadding(35)
             .dimension(tipo_dimension)
             .group(tipo_group)
 			.colors(mapa_cores_por_tipo)
-			.legend(dc.legend().x(20).y(50).itemHeight(20).gap(3)
+			.legend(dc.legend().x(50).y(40).itemHeight(20).gap(3)
 			.legendText(function (d) {
 				if(d.data == 0)
-					return '-'
+					return  d.name + ': -'
 				if(d.data == 1)
 					return d.name + ': 1 estado'
 				return d.name + ': ' + d.data + 
 					' estados'}))
 			.on('pretransition', function(chart) {
 				chart.selectAll('text.pie-slice').text(function(d) {
-					return dc.utils.printSingleValue((d.endAngle - d.startAngle) / (2*Math.PI) * 100) + '%';
+					return Math.round(((d.endAngle - d.startAngle) / (2*Math.PI) * 100),1) + '%';
 				})
 			});
+
 		// dc.override(pieChart, 'legendables', function() {
         //   	var items = pieChart._legendables();
 		// 	  console.log(items);
@@ -183,7 +184,7 @@
 		rowChart
 			.width(400)
 			.height(520)
-			.margins({left: 50, top: 30, right: 80, bottom: 10})
+			.margins({left: 50, top: 30, right: 80, bottom: 30})
 			.elasticX(true)
 			.title(function(d){
 				if(d.value > 0)
