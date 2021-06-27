@@ -3,10 +3,18 @@
 <head>
 	<title>Data.doc/OPovo - Para onde foi o orçamento da Cultura nos últimos 20 anos? 	</title>
 	<meta charset="UTF-8"> 
-	<link rel="stylesheet" href="css/dc.css">
-	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-   <script src="js/crossfilter.js" charset="utf-8"></script>
-   <script src="js/dc.js" charset="utf-8"></script>
+
+	<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+   
+	
+	<link rel="stylesheet" href="https://unpkg.com/dc@4/dist/style/dc.css">
+	<script src="js/crossfilter.js" charset="utf-8"></script>
+   <script src="https://unpkg.com/dc@4/dist/dc.js" charset="utf-8"></script>
+
+   <link rel = "stylesheet" href="https://cdn.jsdelivr.net/gh/jaklub/dc.js@grouped-or-stacked-bars-artifacts/dc.css
+	">
+	<script src="https://cdn.jsdelivr.net/gh/jaklub/dc.js@grouped-or-stacked-bars-artifacts/dc.js
+	" charset="utf-8"></script>
 
    	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
@@ -100,6 +108,7 @@
 	<br>
 	<div id="chart4">
 		<h3>Distribuição anual do orçamento executado por Unidade Orçamentária</h3>
+		<div id="chart4-legend" class="dc-html-legend-container"></div>
 	</div>	
 	<label>Fonte: Levantamento do Data.doc com base nos dados do Siop</label>
 	
@@ -118,7 +127,9 @@
 	<label>Fonte: Levantamento do Data.doc com base nos dados do Siop</label>
 	
 	<br>
-	<div id="chart6"><h3>Distribuição anual do orçamento executado por Subfunção</h3></div>
+	<div id="chart6"><h3>Distribuição anual do orçamento executado por Subfunção</h3>
+		<div id="chart6-legend" class="dc-html-legend-container"></div>
+	</div>
 	<label>Fonte: Levantamento do Data.doc com base nos dados do Siop</label>
 	<br>
 
@@ -138,7 +149,7 @@
 <script type="text/javascript">   
 
 	chart1 = new dc.barChart("#chart1");
-	// chart2 = new dc.compositeChart("#chart2");
+	// chart2 = new dc.compositeChart("#chart1");
 	chart3 = new dc.rowChart("#chart3");
    	chart4 = new dc.barChart("#chart4");
 	chart5 = new dc.rowChart("#chart5");
@@ -152,13 +163,13 @@
 	list_of_colorsv1 = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a'];
 	list_of_colorsv2 = ['#66c2a5','#fc8d62','#8da0cb','#e78ac3','#a6d854','#ffd92f','#e5c494','#bdbdbd'];
 		
-	cores_por_unidade = d3.scale.ordinal()
+	cores_por_unidade = d3.scaleOrdinal()
 		.domain(["Administração Direta","Agência Nacional do Cinema",
 			"Fundação Biblioteca Nacional","Fundação Cultural Palmares","Fundação Nacional de Artes",
 			"Fundo Nacional de Cultura","Instituto Brasileiro de Museus","IPHAN","Outros"])
 		.range(list_of_colorsv1)
 
-	cores_por_subfuncao = d3.scale.ordinal()
+	cores_por_subfuncao = d3.scaleOrdinal()
 		.domain(["Administração Geral", "Difusão Cultural", "Patrimônio Histórico, Artístico e Arqueológico", "Outros Encargos Especiais", "Proteção e Benefícios ao Trabalhador", "Promoção Comercial", "Lazer"])
 		.range(list_of_colorsv2)	
 		// ["Difusão Cultural","Administração Geral",
@@ -167,7 +178,7 @@
 		
 		
 	d3.csv("data/dadosSIOPtratados.csv", function(data){
-        var dtgFormat = d3.time.format.utc("%Y");
+        var dtgFormat = d3.utcParse("%Y");
 		data.forEach(function(d) {
             d.ano = parseInt(d.Ano);
 			d.subFuncao = d.Subfunção.substr(6);
@@ -246,10 +257,13 @@
 			.dimension(ano_dimension)
 			.alwaysUseRounding(true)       
 			.legend(dc.legend().x(110).y(40).itemHeight(20).gap(3))
-			.x(d3.scale.ordinal().domain(ano_dimension)) 
+			.x(d3.scaleOrdinal().domain(ano_dimension)) 
 			.xUnits(dc.units.ordinal)
 			.margins({left: 80, top: 20, right: 80, bottom: 40})
 			.elasticY(true)
+			.turnOnControls(true)
+			.groupBars(true)
+			// .renderType('group')
 			// .yAxisLabel("Valores em R$ para a Cultura")
 			// .xAxisLabel("Valores para a cultura por Ano")
 			.title(function (d) {
@@ -273,11 +287,11 @@
 					'- O montante representa '+ variacao +'% do valor em 2000;\n'+
 					'- A variação em relação ao ano anterior foi de  '+ value +'%.';;
 				}})
-			.colors(d3.scale.ordinal().range(list_of_colorsv0))
+			.colors(d3.scaleOrdinal().range(list_of_colorsv0))
 			.renderHorizontalGridLines(true)
 			.renderVerticalGridLines(true)
 			.elasticY(true)
-			.renderType('group')
+			// .renderType('group')
 			.group(orcamento_group, "Orçamento")	
 			.stack(executado_group, "Executado")
 		
@@ -364,7 +378,7 @@
 			.width(max_width)
 			.height(500)
 			.margins({left: 10, top: 20, right: 80, bottom: 60})
-			.x(d3.scale.linear().domain([0,50000]))
+			.x(d3.scaleLinear().domain([0,50000]))
 			.elasticX(true)
 			.title(function(d){
 				return 'R$  '+ d.value.toLocaleString("pt-BR")+',00';
@@ -381,11 +395,12 @@
 		chart4
             .width(max_width)
             .height(500)
-			.margins({left: 100, top: 20, right: 300, bottom: 80})
-            .legend(dc.legend().x(max_width-300).y(50).itemHeight(20).gap(5)) 
-            .clipPadding(10)
+			.margins({left: 100, top: 20, right: 80, bottom: 80})
+            // .legend(dc.legend().x(max_width-300).y(50).itemHeight(20).gap(5)) 
+            .legend(new dc.htmlLegend().container('#chart4-legend').horizontal(true).highlightSelected(true))
+			.clipPadding(10)
 			.elasticY(true)
-            .x(d3.scale.ordinal().domain(dimension))
+            .x(d3.scaleOrdinal().domain(dimension))
 			.xUnits(dc.units.ordinal)
 			.title(function (d) {
                 return d.key + '[' + this.layer + ']: ' + 'R$  '+ d.value[this.layer].toLocaleString("pt-BR")+',00';;
@@ -419,7 +434,7 @@
 			.width(max_width)
 			.height(450)
 			.margins({left: 10, top: 20, right: 80, bottom: 60})
-			.x(d3.scale.linear().domain([0,50000]))
+			.x(d3.scaleLinear().domain([0,50000]))
 			.elasticX(true)
 			.title(function(d){
 				return 'R$  '+ d.value.toLocaleString("pt-BR")+',00';
@@ -435,11 +450,13 @@
 		chart6
 			.width(max_width)
             .height(500)
-			.margins({left: 100, top: 20, right: 300, bottom: 80})
+			.margins({left: 100, top: 20, right: 80, bottom: 80})
 			// .legend(dc.htmlLegend().container('#name-legend').horizontal(true).highlightSelected(true))
             // .horizontal(true)
-			.legend(dc.legend().x(max_width-300).y(50).itemHeight(20).gap(5)) 
-            .x(d3.scale.ordinal().domain(dimension))
+			.legend(new dc.htmlLegend().container('#chart6-legend').horizontal(true).highlightSelected(true))
+			
+			// .legend(dc.legend().x(max_width-300).y(50).itemHeight(20).gap(5)) 
+            .x(d3.scaleOrdinal().domain(dimension))
 			.xUnits(dc.units.ordinal)
             .clipPadding(10)
 			.elasticY(true)
