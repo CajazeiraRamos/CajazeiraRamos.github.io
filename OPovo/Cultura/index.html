@@ -39,6 +39,18 @@
 		label{
 			margin-left: 3%;
 		}
+		.dc-html-legend{
+			margin-left: 3%;
+		}
+		.dc-legend-item-color{
+			height: 35px;
+			width: 35px;
+		}
+		.dc-legend-item-label{
+			fill: black;
+			font: 16px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
 		.dc-chart g.axis text{
 			fill: black;
 			font: 14px/18px Arial, Helvetica, sans-serif;
@@ -250,6 +262,9 @@
 		// }
 		if(max_width<500)
 			max_width=800; 
+
+		
+		const format = d3.format(".2s");
 			
 		chart1
 			.width(max_width)
@@ -299,9 +314,13 @@
 				var txt = chart.selectAll('g.x text')
 					.attr('transform', 'translate(-15,10) rotate(-35)')});	
 		
-		var format = d3.format("s");
+		
+		// const f = format(".2s");
+		
 		chart1.yAxis()
 	    	.tickFormat(function(d){
+				if(d == 0)
+					return '0'
 	    		return 'R$ ' + format(d)
 				.replace(/G/," bi ")
 				.replace(/M/," mi ")
@@ -378,10 +397,14 @@
 			.width(max_width)
 			.height(500)
 			.margins({left: 10, top: 20, right: 80, bottom: 60})
-			.x(d3.scaleLinear().domain([0,50000]))
+			// .x(d3.scaleLinear().domain([0,50000])).ticks(4)
 			.elasticX(true)
 			.title(function(d){
-				return 'R$  '+ d.value.toLocaleString("pt-BR")+',00';
+				return 'R$ ' + format(d.value)
+				.replace(/G/," bi ")
+				.replace(/M/," mi ")
+				.replace(/k/," mil ");
+				// return 'R$  '+ d.value.toLocaleString("pt-BR")+',00';
 			})
 
 			.colors(cores_por_unidade)
@@ -390,7 +413,19 @@
 			.dimension(unidade_dimension)
 			.group(executado_porUnidade_group)
 			.rowsCap(10)
-			.ordering(function(d) { return -d.value });
+			.ordering(function(d) { return -d.value })
+			.xAxis().ticks(5);
+
+			chart3.xAxis()
+	    	.tickFormat(function(d){
+				if(d == 0)
+					return '0'
+	    		return 'R$ ' + format(d)
+				.replace(/G/," bi ")
+				.replace(/M/," mi ")
+				.replace(/k/," mil ");
+		    	// return d.toLocaleString("pt-BR");
+		    });
 
 		chart4
             .width(max_width)
@@ -424,6 +459,8 @@
 					.attr('transform', 'translate(-15,10) rotate(-35)')});								
 		chart4.yAxis()
 	    	.tickFormat(function(d){
+				if(d == 0)
+					return '0'
 	    		return 'R$ ' + format(d)
 				.replace(/G/," bi ")
 				.replace(/M/," mi ")
@@ -437,7 +474,11 @@
 			.x(d3.scaleLinear().domain([0,50000]))
 			.elasticX(true)
 			.title(function(d){
-				return 'R$  '+ d.value.toLocaleString("pt-BR")+',00';
+				return 'R$ ' + format(d.value)
+				.replace(/G/," bi ")
+				.replace(/M/," mi ")
+				.replace(/k/," mil ");
+				// return 'R$  '+ d.value.toLocaleString("pt-BR")+',00';
 			})
 			.colors(cores_por_subfuncao)
 			.renderLabel(true)
@@ -445,7 +486,19 @@
 			.dimension(subFuncao_dimension)
 			.group(executado_porSubfuncao_group)
 			.rowsCap(7)
-			.ordering(function(d) { return -d.value });	
+			.ordering(function(d) { return -d.value })
+			.xAxis().ticks(5);	
+		
+		chart5.xAxis()
+	    	.tickFormat(function(d){
+				if(d == 0)
+					return '0'
+	    		return 'R$ ' + format(d)
+				.replace(/G/," bi ")
+				.replace(/M/," mi ")
+				.replace(/k/," mil ");
+		    	// return d.toLocaleString("pt-BR");
+		    });
 
 		chart6
 			.width(max_width)
@@ -480,11 +533,12 @@
 				
 		chart6.yAxis()
 	    	.tickFormat(function(d){
+	    		if(d == 0)
+					return '0'
 	    		return 'R$ ' + format(d)
 				.replace(/G/," bi ")
 				.replace(/M/," mi ")
 				.replace(/k/," mil ");
-		    	// return d.toLocaleString("pt-BR");
 		    });
 
 
