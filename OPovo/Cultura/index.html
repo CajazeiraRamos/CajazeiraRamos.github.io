@@ -274,7 +274,7 @@
 			.legend(dc.legend().x(110).y(40).itemHeight(20).gap(3))
 			.x(d3.scaleOrdinal().domain(ano_dimension)) 
 			.xUnits(dc.units.ordinal)
-			.margins({left: 80, top: 20, right: 80, bottom: 40})
+			.margins({left: 80, top: 20, right: 50, bottom: 40})
 			.elasticY(true)
 			.turnOnControls(true)
 			.groupBars(true)
@@ -309,13 +309,12 @@
 			// .renderType('group')
 			.group(orcamento_group, "Orçamento")	
 			.stack(executado_group, "Executado")
-		
-			.on('renderlet', function (chart) {
+            .on('renderlet', function (chart) {
 				var txt = chart.selectAll('g.x text')
-					.attr('transform', 'translate(-15,10) rotate(-35)')});	
-		
+					.attr('transform', 'translate(-15,5) rotate(-25)')});
 		
 		// const f = format(".2s");
+		chart1.xAxis().tickValues([2000,2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020])
 		
 		chart1.yAxis()
 	    	.tickFormat(function(d){
@@ -454,9 +453,13 @@
             .stack(group, "Fundação Casa de Rui Barbosa", sel_stack('Fundação Casa de Rui Barbosa'))
             .stack(group, "Fundação Cultural Palmares", sel_stack('Fundação Cultural Palmares'))
             .stack(group, "Outros", sel_stack('Outros'))
-			.on('renderlet', function (chart) {
+            .on('renderlet', function (chart) {
 				var txt = chart.selectAll('g.x text')
-					.attr('transform', 'translate(-15,10) rotate(-35)')});								
+					.attr('transform', 'translate(-15,5) rotate(-25)')});		
+					
+					
+		chart4.xAxis().tickValues([2000,2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020])
+
 		chart4.yAxis()
 	    	.tickFormat(function(d){
 				if(d == 0)
@@ -529,8 +532,10 @@
 			.stack(group, "Lazer", sel_stack('Lazer'))
             .on('renderlet', function (chart) {
 				var txt = chart.selectAll('g.x text')
-					.attr('transform', 'translate(-15,10) rotate(-35)')});	
+					.attr('transform', 'translate(-15,5) rotate(-25)')});	
 				
+		chart6.xAxis().tickValues([2000,2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020])
+
 		chart6.yAxis()
 	    	.tickFormat(function(d){
 	    		if(d == 0)
