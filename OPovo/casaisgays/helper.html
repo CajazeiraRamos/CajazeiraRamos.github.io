@@ -10,6 +10,8 @@ to fit the content
       function parentIframeResize()
       {
          var height = getParam('height');
+         console.log(height);
+         console.log("teste!!!");
          // This works as our parent's parent is on our domain..
          parent.parent.resizeIframe(height);
       }
