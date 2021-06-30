@@ -56,7 +56,7 @@ let dataAtual, dataInicial, dataFinal, escala=false, controleUF_RG=false, Contro
 	
 
 let quantizeTaxa = d3.scale.linear()
-			.domain([0,25,50,100,150,200,300])
+			.domain([0,5000,7000,9000,11000,13000,15000])
 			.range(['#eff3ff','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#084594']),
 				
 			// .range(['#edf8e9','#c7e9c0','#a1d99b','#74c476','#41ab5d','#238b45','#005a32'])
@@ -64,7 +64,7 @@ let quantizeTaxa = d3.scale.linear()
 			
 			// .range(colorbrewer.Reds[7]),
 	quantizeLet = d3.scale.linear()
-			    .domain([0,1,3,5,7,10,15])
+			    .domain([0,1,2,3,4,5,6])
 			    .range(['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#807dba','#6a51a3','#4a1486']),
 			    // .range(['#f7f7f7','#d9d9d9','#bdbdbd','#969696','#737373','#525252','#252525']),
 
@@ -421,7 +421,7 @@ function maisInfos(){
 	// alert("teste");
 }
 
-d3.csv("data/minSaude.csv", function(data){
+d3.csv("data/minSaude2.csv", function(data){
 
 // d3.csv("https://adimo.clinicasodontologicas.com.br/static/minSaude.csv", function(data){
 	// console.log(data);

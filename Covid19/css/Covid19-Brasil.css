@@ -190,9 +190,7 @@ input:checked + .slider:before {
 	font: 14px/14px Arial, Helvetica, sans-serif;
 	font-weight: bold;
 }
-.dc-chart g.row {
-	height: 30px;
-}
+
 
 /*.dc-chart g.pie-slice{
 	opacity: 0;
