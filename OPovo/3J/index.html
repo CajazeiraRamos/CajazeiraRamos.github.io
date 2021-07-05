@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Data.doc/OPovo - Explorando o #3J</title>
+	<meta charset="UTF-8"> 
+
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.css" />
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.0-alpha.6/crossfilter.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.js"></script>
+	 -->
+	<link rel="stylesheet" href="css/dc.css">
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+   <script src="js/crossfilter.js" charset="utf-8"></script>
+   <script src="js/dc.js" charset="utf-8"></script>
+
+   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<link rel="icon" href="https://yt3.ggpht.com/ytc/AAUvwniBqGmJubYSj-rjkhRMVK9svDC9HCDkzmAhL7JqATo=s900-c-k-c0x00ffffff-no-rj">
+
+
+
+</head>
+<body>
+
+<div class="container" id="target">
+	<div id="observablehq-title-8ec5386f"></div>
+	<div id="observablehq-chart-8ec5386f"></div>
+	<div id="observablehq-Fonte-8ec5386f"></div>
+	<!-- <p>Credit: <a href="https://observablehq.com/@alexandrecajamos/bubble-chart">Midia Ninja predomina o número de menções em manifestações do Twitter by Alexandre Ramos</a></p> -->
+	
+	<script type="module">
+	import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+	import define from "https://api.observablehq.com/@alexandrecajamos/bubble-chart.js?v=3";
+	new Runtime().module(define, name => {
+	  if (name === "title") return new Inspector(document.querySelector("#observablehq-title-8ec5386f"));
+	  if (name === "chart") return new Inspector(document.querySelector("#observablehq-chart-8ec5386f"));
+	  if (name === "Fonte") return new Inspector(document.querySelector("#observablehq-Fonte-8ec5386f"));
+	});
+	</script>
+
+	<hr>
+	<iframe width="100%" height="600" frameborder="0"
+	src="https://observablehq.com/embed/@alexandrecajamos/quem-gera-conteudo-no-contexto-da-3j?cells=title%2Cchart%2CFonte"></iframe>
+
+</div>
+
+<script type="text/javascript"> 
+
+
+</script>
+
+
+ <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- Latest compiled and minified JavaScript -->
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</body>
+</html>
