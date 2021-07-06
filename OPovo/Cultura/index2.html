@@ -89,7 +89,9 @@
 				return d.dotAtual;});
 
 
-		var max_width = document.body.clientWidth;
+		var max_width = 600;
+		if (document.body.clientWidth > 200)
+			max_width = document.body.clientWidth;
 		// if(max_width<400)
 			// max_width=800; 
 			
