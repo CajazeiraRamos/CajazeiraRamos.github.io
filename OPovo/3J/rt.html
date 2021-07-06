@@ -78,20 +78,23 @@
 <body>
 	<div class="container">
 
-   
-    <div id="observablehq-title-4a4afff1"></div>
-    <div style="width: 60%; margin-left: 20%;" id="observablehq-chart-4a4afff1"></div>
+    <h2>Midia Ninja e parlamentares de esquerda são os protagonistas na geração de conteúdo em protestos no Twitter</h2>
+    <!-- <p>
+        Destacamos neste gráfico os perfis com maior número de retweets envolvendo as #3J e #3JForaBolsonaro desde o dia 26 de junho.
+    </p> -->
+    <!-- <div id="observablehq-title-4a4afff1"></div> -->
+    <div style="width: 70%; margin-left: 15%;" id="observablehq-chart-4a4afff1"></div>
     
     <script type="module">
     import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
     import define from "https://api.observablehq.com/@alexandrecajamos/midia-ninja-e-parlamentares-de-esquerda-sao-os-protagonist.js?v=3";
     new Runtime().module(define, name => {
-    if (name === "title") return new Inspector(document.querySelector("#observablehq-title-4a4afff1"));
+    // if (name === "title") return new Inspector(document.querySelector("#observablehq-title-4a4afff1"));
     if (name === "chart") return new Inspector(document.querySelector("#observablehq-chart-4a4afff1"));
     });
     </script>
 
-<label style="min-width: 500px;">Fonte: Levantamento do Data.doc com base nos dados do Siop</label>
+<label style="min-width: 500px;">Fonte: Levantamento do Data.doc com base nos dados do Twitter</label>
 </div>
 
  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
