@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Data.doc/OPovo - Monitorando as #3J e #3JForaBolsonaro </title>
+	<meta charset="UTF-8"> 
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.0-alpha.6/crossfilter.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.js"></script>
+	<!-- <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script> -->
+   
+	<!-- 
+	<link rel="stylesheet" href="https://unpkg.com/dc@4/dist/style/dc.css">
+	<script src="js/crossfilter.js" charset="utf-8"></script>
+   <script src="https://unpkg.com/dc@4/dist/dc.js" charset="utf-8"></script>
+
+   <link rel = "stylesheet" href="https://cdn.jsdelivr.net/gh/jaklub/dc.js@grouped-or-stacked-bars-artifacts/dc.css
+	">
+	<script src="https://cdn.jsdelivr.net/gh/jaklub/dc.js@grouped-or-stacked-bars-artifacts/dc.js
+	" charset="utf-8"></script> -->
+
+   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<link rel="icon" href="https://yt3.ggpht.com/ytc/AAUvwniBqGmJubYSj-rjkhRMVK9svDC9HCDkzmAhL7JqATo=s900-c-k-c0x00ffffff-no-rj">
+
+	<style>
+		/* style="zmax-width: 1100px; font-size: 14px;" */
+		p{
+			font-family: var(--noto);
+    		font-weight: 400;
+		    font-size: 21px;
+			color: #333;
+			line-height: 32px;
+			margin-top: 0;
+			margin-bottom: 20px;
+			word-break: break-word;
+		}
+		h3{
+			margin-left: 5%;
+			font-weight: bold;
+		}
+		label{
+			margin-left: 3%;
+		}
+		.dc-html-legend{
+			margin-left: 3%;
+		}
+		.dc-legend-item-color{
+			height: 35px;
+			width: 35px;
+		}
+		.dc-legend-item-label{
+			fill: black;
+			font: 16px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		.dc-chart g.axis text{
+			fill: black;
+			font: 14px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		
+		.dc-chart g.row text {
+			fill: black;
+			font-family: var(--noto);
+			font-size: 16px;
+			font-weight: bold;
+		}
+		.dc-chart g.dc-legend-item text{
+			fill: black;
+			font: 14px/14px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+
+	</style>
+
+</head>
+<body>
+	<div class="container">
+		<h1>Como as manifestações contra o Governo ocuparam o Twitter?</h1>
+		<p>O <i>dataDoc</i> buscou tweets a partir das hashtags <b>#3J</b> e <b>#3JForaBolsonaro</b>, durante a última semana.<br>
+			Vericamos cerca de 340 mil tweets no total, com um pico no sábado à noite, com quase 20 mil tweets por hora.<br>
+			Em nossa análise anterior (atos do dia 24 de junho), computamos 128 mil tweets.  
+		</p>
+
+    <div id='time-chart'><h3>Número de tweets por hora</h3></div>
+	
+	<label style="min-width: 500px;">Fonte: Twitter</label>
+	<hr>
+	<div id='topics-array-rows'><h3>Usuários mais citados</h3></div>
+	<div id='ht-array-rows'><h3>Principais Hashtags</h3></div>
+	
+	<label style="min-width: 500px;">Fonte: Twitter</label>
+	<hr>
+	<table class="table table-hover" id="table" style="margin-top: 100px;">
+		<thead>
+			<tr class="header">
+				<th>Tweet_id</th>
+				<th>@</th>
+				<th>Tweet</th>
+				<th>Date</th>
+			</tr>
+		</thead>
+	</table>
+	</div>
+
+<script type="text/javascript">   
+	var txt = '';
+	var tweetDimention;
+	var htArrayRowChart;
+	
+	function limpar(){
+		// tweetDimention.filterAll();
+		// htDim.filterAll();
+		dc.filterAll();
+		dc.renderAll();
+	}
+	
+	function filtroHT(hashtag){
+		dc.filterAll();
+
+		htDim.filterFunction(function(d){
+			if(d == hashtag)
+				return true;
+			return false;
+		});
+		dc.renderAll();
+	}
+
+	function busca(){
+		dc.filterAll();
+
+		var termo = document.getElementById("busca").value.toLowerCase();
+		var verify = new RegExp(termo, 'g');
+		texto = txt.toLowerCase();
+		var total = (texto.match(verify) || []).length;
+		// document.getElementById("buscaResult").innerHTML = "Nº: " +total;
+		console.log(total);
+		
+		tweetDimention.filterFunction(function(d){
+			var texto = '';
+			texto += d;
+			texto = texto.toLowerCase();
+			var total = (texto.match(verify) || []).length;
+			if(total>0)
+				return true;
+			return false;
+		});
+		dc.renderAll();
+	}
+
+	function buscaTermo(termo){
+		var verify = new RegExp(termo, 'g');
+		texto = txt.toLowerCase();
+		var total = (texto.match(verify) || []).length;
+		// document.getElementById("buscaResult").innerHTML = "Nº: " +total;
+		// console.log(total);
+		
+		tweetDimention.filterFunction(function(d){
+			var texto = '';
+			texto += d;
+			texto = texto.toLowerCase();
+			var total = (texto.match(verify) || []).length;
+			if(total>0)
+				return true;
+			return false;
+		});
+		dc.renderAll();
+	}
+    timeChart = dc.lineChart("#time-chart")
+	dataTable = dc.dataTable("#table");
+	
+	let parseDate = d3.time.format('%Y-%m-%d %H:%M:%S');
+	d3.csv("data/FullDF.csv", function(data){
+        // var dtgFormat = d3.utcParse("%Y");
+		var cont = 0;
+		data.forEach(function(d) {
+            d.id = d.id_str;
+            d.user = d.from_user;
+            d.dtg = parseDate.parse(d.formated_date.substr(0,19));
+			d.text = d.text; 
+			// d.users = d.users.slice(1,-1);
+			a = d.users.replace(/'/g, '"');
+			d.users = JSON.parse(a);
+			txt += d.text;
+			
+			a = d.hashtags.replace(/'/g, '"');
+			d.hashtags = JSON.parse(a);
+		
+			
+			cont++;
+        });
+		console.log(cont);
+		
+		facts = crossfilter(data);
+		tweetDimention = facts.dimension(function(d){return d.text;});
+
+        hourDimension = facts.dimension(d => d3.time.hour(d.dtg))
+
+        hourDimensionCount = hourDimension.group()
+
+		usersDim = facts.dimension(function(d){ return d.users;}, true);
+		usersGroup = usersDim.group();
+
+
+		htDim = facts.dimension(function(d){ return d.hashtags;}, true);
+		htGroup = htDim.group();
+
+		
+				
+		topicsArrayRowChart = dc.rowChart("#topics-array-rows")
+    	    .renderLabel(true)
+
+			.margins({top: 10, right: 30, bottom: 100, left:20})
+    	    .height(500)
+            .width(500)
+    	    .dimension(usersDim)
+    	    .group(usersGroup)
+    	    .cap(10)
+			.label(function(d){
+				return '@'+d.key;
+			})
+			.title(function(d){
+					return ''+ d.value.toLocaleString("pt-BR")+' menções';
+				})
+			.renderLabel(true)
+			.renderTitleLabel(true)
+			.othersGrouper(false)
+    	    .ordering(function(d){return -d.value;})
+    	    .xAxis().ticks(3);
+	
+		htArrayRowChart = dc.rowChart("#ht-array-rows")
+
+		.margins({top: 10, right: 30, bottom: 100, left:20})
+    	    .renderLabel(true)
+    	    .height(500)
+            .width(500)
+    	    .dimension(htDim)
+    	    .group(htGroup)
+			.label(function(d){
+				return '#'+d.key;
+			})
+
+			.title(function(d){
+					return ''+ d.value.toLocaleString("pt-BR")+' tweets';
+				})
+			.renderLabel(true)
+			.renderTitleLabel(true)
+    	    .cap(10)
+			.othersGrouper(false)
+    	    .ordering(function(d){return -d.value;})
+    	    .xAxis().ticks(3);
+			// '%Y-%m-%d %H:%M:%S'
+
+
+        timeChart
+            .width(1000)
+           .height(350)
+           .transitionDuration(500)
+           .margins({top: 10, right: 30, bottom: 50, left:80})
+           .dimension(hourDimension)
+           .group(hourDimensionCount)
+		   .renderHorizontalGridLines(true)
+			.renderVerticalGridLines(true)
+           .brushOn(true)
+           .elasticY(true)
+           .x(d3.time.scale().domain(d3.extent(data, function(d) { return d.dtg; })));
+
+		   dataAtual =  parseDate.parse('2021-07-05 00:00:00');
+			let minDate = d3.time.day.offset(dataAtual, -9),
+			maxDate = dataAtual;
+			timeChart.x(d3.time.scale().domain([minDate, maxDate]));
+			
+			format = d3.time.format("%d/%m")	
+			
+			timeChart.xAxis()
+			// .ticks(d3.time.days, 2)
+			.tickFormat(function (d) {
+				// console.log(d);
+				return format(d);
+			});
+		
+		
+		
+			dataTable
+				.width(960)
+			    .height(800)
+			    .dimension(tweetDimention)
+			    .group(function(d) {
+			        return "Tebalea de dados";
+			    })
+			    .size(20)
+			    .columns([
+						function(d) { return d.id; },
+			            function(d) { return d.user; },                    
+			            function (d) { return d.text; },                
+			            function (d) { return d.dtg; },			
+						
+					])
+			    // .sortBy(function(d) { return -d.nlikes; })
+			    // .order(d3.ascending);
+		
+		
+		
+		
+			
+        dc.renderAll()
+    });
+
+</script>
+
+
+ <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- Latest compiled and minified JavaScript -->
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</body>
+</html>
