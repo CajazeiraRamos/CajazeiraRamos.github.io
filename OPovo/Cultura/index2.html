@@ -88,13 +88,16 @@
 			.reduceSum(function(d){
 				return d.dotAtual;});
 
+		console.log(document.body.clientWidth);
 
 		var max_width = 600;
 		if (document.body.clientWidth > 200)
 			max_width = document.body.clientWidth;
 		// if(max_width<400)
 			// max_width=800; 
-			
+		
+		console.log(max_width);
+		
 		chart1
 			.width(max_width)
 			.height(500)
