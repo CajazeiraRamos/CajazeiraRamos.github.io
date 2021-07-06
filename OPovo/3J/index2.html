@@ -36,7 +36,7 @@
 			word-break: break-word;
 		}
 		h3{
-			margin-left: 5%;
+			margin-left: 7%;
 			font-weight: bold;
 		}
 		label{
@@ -85,12 +85,13 @@
 
     <div id='time-chart'><h3>Número de tweets por hora</h3></div>
 	
-	<label style="min-width: 500px;">Fonte: Twitter</label>
-	<hr>
-	<div id='topics-array-rows'><h3>Usuários mais citados</h3></div>
-	<div id='ht-array-rows'><h3>Principais Hashtags</h3></div>
-	
-	<label style="min-width: 500px;">Fonte: Twitter</label>
+	<!-- <label style="min-width: 500px;">Fonte: Twitter</label>
+	<hr> -->
+	<div id='topics-array-rows'><h3>&nbsp; Usuários mais citados</h3></div>
+	<div id='ht-array-rows'><h3>&nbsp; Principais Hashtags</h3></div>
+	<label style="min-width: 500px;">Fonte: Levantamento do Data.doc com base nos dados do Siop</label>
+
+	<!-- <label style="min-width: 500px;">Fonte: Twitter</label> -->
 	<hr>
 	<table class="table table-hover" id="table" style="margin-top: 100px;">
 		<thead>
@@ -209,11 +210,11 @@
 		
 				
 		topicsArrayRowChart = dc.rowChart("#topics-array-rows")
-    	    .renderLabel(true)
+    	    // .renderLabel(true)
 
-			.margins({top: 10, right: 30, bottom: 100, left:20})
-    	    .height(500)
-            .width(500)
+			.margins({top: 10, right: 30, bottom: 50, left:50})
+    	    .height(450)
+            .width(450)
     	    .dimension(usersDim)
     	    .group(usersGroup)
     	    .cap(10)
@@ -231,10 +232,9 @@
 	
 		htArrayRowChart = dc.rowChart("#ht-array-rows")
 
-		.margins({top: 10, right: 30, bottom: 100, left:20})
-    	    .renderLabel(true)
-    	    .height(500)
-            .width(500)
+		.margins({top: 10, right: 30, bottom: 50, left:50})
+    	    .height(450)
+            .width(450)
     	    .dimension(htDim)
     	    .group(htGroup)
 			.label(function(d){
@@ -254,8 +254,8 @@
 
 
         timeChart
-            .width(1000)
-           .height(350)
+            .width(900)
+           .height(300)
            .transitionDuration(500)
            .margins({top: 10, right: 30, bottom: 50, left:80})
            .dimension(hourDimension)
