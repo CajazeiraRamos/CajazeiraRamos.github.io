@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Data.doc/OPovo - Monitorando as #3J e #3JForaBolsonaro </title>
+	<meta charset="UTF-8"> 
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.0-alpha.6/crossfilter.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.js"></script>
+	<!-- <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script> -->
+   
+	<!-- 
+	<link rel="stylesheet" href="https://unpkg.com/dc@4/dist/style/dc.css">
+	<script src="js/crossfilter.js" charset="utf-8"></script>
+   <script src="https://unpkg.com/dc@4/dist/dc.js" charset="utf-8"></script>
+
+   <link rel = "stylesheet" href="https://cdn.jsdelivr.net/gh/jaklub/dc.js@grouped-or-stacked-bars-artifacts/dc.css
+	">
+	<script src="https://cdn.jsdelivr.net/gh/jaklub/dc.js@grouped-or-stacked-bars-artifacts/dc.js
+	" charset="utf-8"></script> -->
+
+   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<link rel="icon" href="https://yt3.ggpht.com/ytc/AAUvwniBqGmJubYSj-rjkhRMVK9svDC9HCDkzmAhL7JqATo=s900-c-k-c0x00ffffff-no-rj">
+
+	<style>
+		/* style="zmax-width: 1100px; font-size: 14px;" */
+		p{
+			font-family: var(--noto);
+    		font-weight: 400;
+		    font-size: 21px;
+			color: #333;
+			line-height: 32px;
+			margin-top: 0;
+			margin-bottom: 20px;
+			word-break: break-word;
+		}
+		h3{
+			margin-left: 2%;
+			font-weight: bold;
+		}
+		label{
+			margin-left: 3%;
+		}
+		.dc-html-legend{
+			margin-left: 3%;
+		}
+		.dc-legend-item-color{
+			height: 35px;
+			width: 35px;
+		}
+		.dc-legend-item-label{
+			fill: black;
+			font: 16px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		.dc-chart g.axis text{
+			fill: black;
+			font: 14px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		
+		.dc-chart g.row text {
+			fill: black;
+			font-family: var(--noto);
+			font-size: 16px;
+			font-weight: bold;
+		}
+		.dc-chart g.dc-legend-item text{
+			fill: black;
+			font: 14px/14px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+
+	</style>
+
+</head>
+<body>
+	<div class="container">
+		<h1>Como as manifestações contra o Governo ocuparam o Twitter? (Outro título?)</h1>
+        <p>
+           -----
+        </p>
+        <h3>Interações das #3J e #3JForaBolsonaro no Twitter</h3>
+    <div id='time-chart'></div>
+	
+    <label style="min-width: 1000px;">Fonte: Levantamento do Data.doc com base nos dados do Twitter</label>
+
+<script type="text/javascript">
+    var timeChart = dc.lineChart("#time-chart"), dimension, group;
+    var dtgFormat = d3.time.format.utc("%Y-%m-%d %H:%M:%S");
+
+    d3.csv("data/intPorDia.csv", function(data){
+        var cont = 0;
+		data.forEach(function(d) {
+            // d.ref = d.ref;
+            d.dtg = dtgFormat.parse(d.date);
+			// console.log(d.dtg);	
+            d.value = +d.NInterações;
+            // d.value = +d.interacoes;
+			
+			cont++;
+        });
+		// console.log(cont);
+	
+    
+    facts = crossfilter(data);
+		
+    dimension = facts.dimension(function(d){return d3.time.day(d.dtg)});
+
+    group = dimension.group()
+        .reduceSum(function(d){
+            return d.value;});
+
+
+	// list_of_colorsv0 = ['#fc8d62', '#66c2a5'];
+
+    // var format = d3.format("s");
+
+
+    timeChart
+        .width(900)
+           .height(300)
+           .transitionDuration(500)
+           .margins({top: 10, right: 30, bottom: 50, left:80})
+           .dimension(dimension)
+           .group(group)
+		   .renderHorizontalGridLines(true)
+			.renderVerticalGridLines(true)
+           .brushOn(true)
+           .elasticY(true)
+           .x(d3.time.scale().domain(d3.extent(data, function(d) { return d.dtg; })));
+
+           dia_format = d3.time.format("%d/%m")	
+			
+			timeChart.xAxis()
+			// .ticks(d3.time.days, 2)
+			.tickFormat(function (d) {
+				// console.log(d);
+				return dia_format(d);
+			});
+	
+
+        var format = d3.format(".2s");
+		timeChart.yAxis()
+	    	.tickFormat(function(d){
+	    		return '' + format(d)
+				.replace(/G/," bi ")
+				.replace(/M/," mi ")
+				.replace(/k/," mil ");
+		    	// return d.toLocaleString("pt-BR");
+		    });
+        dc.renderAll();
+});   
+
+</script>
+
+
+ <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- Latest compiled and minified JavaScript -->
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</body>
+</html>
