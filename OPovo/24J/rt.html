@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Data.doc/OPovo - Monitorando as #3J e #3JForaBolsonaro </title>
+	<meta charset="UTF-8"> 
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.4.0-alpha.6/crossfilter.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dc/2.1.1/dc.js"></script>
+	<!-- <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script> -->
+   
+	<!-- 
+	<link rel="stylesheet" href="https://unpkg.com/dc@4/dist/style/dc.css">
+	<script src="js/crossfilter.js" charset="utf-8"></script>
+   <script src="https://unpkg.com/dc@4/dist/dc.js" charset="utf-8"></script>
+
+   <link rel = "stylesheet" href="https://cdn.jsdelivr.net/gh/jaklub/dc.js@grouped-or-stacked-bars-artifacts/dc.css
+	">
+	<script src="https://cdn.jsdelivr.net/gh/jaklub/dc.js@grouped-or-stacked-bars-artifacts/dc.js
+	" charset="utf-8"></script> -->
+
+   	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<link rel="icon" href="https://yt3.ggpht.com/ytc/AAUvwniBqGmJubYSj-rjkhRMVK9svDC9HCDkzmAhL7JqATo=s900-c-k-c0x00ffffff-no-rj">
+
+	<style>
+		/* style="zmax-width: 1100px; font-size: 14px;" */
+		p{
+			font-family: var(--noto);
+    		font-weight: 400;
+		    font-size: 21px;
+			color: #333;
+			line-height: 32px;
+			margin-top: 0;
+			margin-bottom: 20px;
+			word-break: break-word;
+		}
+		h3{
+			margin-left: 7%;
+			font-weight: bold;
+		}
+		label{
+			margin-left: 3%;
+		}
+		.dc-html-legend{
+			margin-left: 3%;
+		}
+		.dc-legend-item-color{
+			height: 35px;
+			width: 35px;
+		}
+		.dc-legend-item-label{
+			fill: black;
+			font: 16px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		.dc-chart g.axis text{
+			fill: black;
+			font: 14px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		
+		.dc-chart g.row text {
+			fill: black;
+			font-family: var(--noto);
+			font-size: 16px;
+			font-weight: bold;
+		}
+		.dc-chart g.dc-legend-item text{
+			fill: black;
+			font: 14px/14px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+
+	</style>
+
+</head>
+<body>
+	<div class="container">
+
+    <h2>Midia Ninja e parlamentares de esquerda são os protagonistas na geração de conteúdo em protestos no Twitter</h2>
+    <!-- <p>
+        Destacamos neste gráfico os perfis com maior número de retweets envolvendo as #3J e #3JForaBolsonaro desde o dia 26 de junho.
+    </p> -->
+    <!-- <div id="observablehq-title-4a4afff1"></div> -->
+    <div style="width: 70%; margin-left: 15%;" id="observablehq-chart-4a4afff1"></div>
+    
+    <script type="module">
+    import {Runtime, Inspector} from "https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js";
+    import define from "https://api.observablehq.com/@alexandrecajamos/midia-ninja-e-parlamentares-de-esquerda-sao-os-protagonist.js?v=3";
+    new Runtime().module(define, name => {
+    // if (name === "title") return new Inspector(document.querySelector("#observablehq-title-4a4afff1"));
+    if (name === "chart") return new Inspector(document.querySelector("#observablehq-chart-4a4afff1"));
+    });
+    </script>
+
+<label style="min-width: 500px;">Fonte: Levantamento do Data.doc com base nos dados do Twitter</label>
+</div>
+
+ <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+ <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <!-- Latest compiled and minified JavaScript -->
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</body>
+</html>
