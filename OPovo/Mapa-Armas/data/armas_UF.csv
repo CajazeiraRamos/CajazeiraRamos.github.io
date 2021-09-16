@@ -1,0 +1,28 @@
+regiao,estado,cod_UF,total_2017,total_2020,Variação (%)
+CO,Distrito Federal,53,35693,236296,562
+NE,Paraíba,25,6815,17131,"151,4"
+NO,Amapá,16,2471,5646,"128,5"
+NO,Rondônia,11,10249,22790,"122,4"
+NE,Sergipe,28,4121,9147,122
+SD,Espírito Santo,32,14044,31155,"121,8"
+NO,Tocantins,17,4708,10428,"121,5"
+NE,Piauí,22,5390,11820,"119,3"
+NO,Roraima,14,2268,4727,"108,4"
+SD,Minas Gerais,31,54191,110039,"103,1"
+NE,Bahia,29,21577,43319,"100,8"
+CO,Goiás,52,27943,55702,"99,3"
+NE,Alagoas,27,8512,16604,"95,1"
+NO,Pará,15,13942,27024,"93,8"
+SU,Rio Grande do Sul,43,63738,122915,"92,8"
+NE,Maranhão,21,9252,17748,"91,8"
+CO,Mato Grosso,51,19978,38025,"90,3"
+NE,Rio Grande do Norte,24,8903,16791,"88,6"
+CO,Mato Grosso do Sul,50,12023,20492,"70,4"
+SD,Rio de Janeiro,33,33342,55801,"67,4"
+NE,Pernambuco,26,17927,29575,65
+SU,Santa Catarina,42,48939,80759,65
+NE,Ceará,23,13430,21973,"63,6"
+SU,Paraná,41,47634,76701,61
+NO,Acre,12,8520,13287,56
+NO,Amazonas,13,7866,10535,"33,9"
+SD,São Paulo,35,134496,173061,"28,7"
