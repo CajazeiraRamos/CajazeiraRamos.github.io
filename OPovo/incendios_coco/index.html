@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Focos de Incêndio</title>
+	<meta charset="UTF-8"> 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+	
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+   <!-- Make sure you put this AFTER Leaflet's CSS -->
+   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+
+
+   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+   <script src="js/crossfilter.js" charset="utf-8"></script>
+    <script src="js/dc.js" charset="utf-8"></script>
+
+	<style>
+			#map {
+				width: 600px;
+				height: 500px;
+                border-radius: 25px;
+				margin-left: 20px;
+			}
+			.info {
+				padding: 6px 8px;
+				font: 14px/16px Arial, Helvetica, sans-serif;
+				background: white;
+				background: rgba(255,255,255,0.8);
+				box-shadow: 0 0 15px rgba(0,0,0,0.2);
+				border-radius: 5px;
+			}
+			.info h4 {
+				margin: 0 0 5px;
+				color: rgb(65, 65, 65);
+			}
+
+			.legend {
+				text-align: left;
+				line-height: 18px;
+				color: #555;
+			}
+			.legend i {
+				width: 18px;
+				height: 18px;
+				float: left;
+				margin-right: 8px;
+				opacity: 0.7;
+			}
+
+			.dc-chart g.axis text{
+			fill: black;
+			font: 14px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		.btn{
+			fill: black;
+			font: 14px/16px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+
+		.dc-chart text.pie-slice{
+			fill: black;
+			font: 16px/18px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+		
+		.dc-chart g.row text {
+			fill: black;
+			font-family: var(--noto);
+			font-size: 14px;
+			font-weight: bold;
+		}
+		.dc-chart g.dc-legend-item text{
+			fill: black;
+			font: 14px/14px Arial, Helvetica, sans-serif;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+	
+    <div id="map">
+    </div>
+    <p style="margin-left: 15px;">Fonte: Levantamento do DATADOC com dados do <a href="https://queimadas.dgi.inpe.br/queimadas/bdqueimadas" target="_blank">BDQueimadas-INPE</a></p>
+	<script type="text/javascript" src="data/bairrosFortalJson.js"></script>
+	<script type="text/javascript" src="data/fortaleza.js"></script>
+	<script type="text/javascript" src="data/UCs.js"></script>
+	<script type="text/javascript">
+    
+    centro_fortaleza = [-3.8,-38.53];
+    centro_map = [-3.84,-38.61];
+
+
+	let map = L.map('map',{ dragging: !L.Browser.mobile, tap: !L.Browser.mobile }).setView(centro_fortaleza, 11);
+	// map.scrollWheelZoom.disable();
+    
+    // L.tileLayer("https://api.mapbox.com/styles/v1/cajazeiraramos/ckumpu6dj64gv19mw3es52qwo/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiY2FqYXplaXJhcmFtb3MiLCJhIjoiY2t1aWhlNGxlMHM1ZTJwbXg1NTl0eGFnYiJ9.fsmTcPSR244LBSvdDLVlTA",
+	// { 
+    //     maxZoom: 18
+    // }).addTo(map);
+	
+	L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+	{ attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
+	maxZoom: 18}).addTo(map);
+	map.scrollWheelZoom.disable();
+	map.touchZoom.disable();	
+	
+	let info = L.control();
+
+	info.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'info');
+		this.update();
+		return this._div;
+	};
+
+	info.update = function (feat) {
+		this._div.innerHTML = '<h5>Focos de Incêndio entre 2011 e 18/11/2021</h5>' +  (feat ?
+			'<b>' + feat.name + '</b><br /> Satelite: ' + feat.satelite + ''
+			: 'Passe o mouse sobre um círculo');
+	};
+
+	info.addTo(map);
+
+	let legend = L.control({position: 'bottomright'});
+
+	colors = ["#33a02c","#a6cee3","#e31a1c"];
+	text = ["Áreas de Proteção", "Fortaleza", "Focos de incêndio"];
+	legend.onAdd = function (map) {
+
+		let div = L.DomUtil.create('div', 'info legend'),
+			labels = [],
+            n = colors.length,
+			from, to;
+
+		for (let i = 0; i < n; i++) {
+			let c = colors[i];
+			labels.push(
+				'<i style="background:' + colors[i] + '"></i> ' + text[i] );
+		}
+
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
+   	legend.addTo(map);
+
+
+    function style(feature) {
+		return {
+			weight: 1,
+			opacity: 1,
+			color: '#a6cee3',
+			dashArray: '3',
+			fillOpacity: 0.4,
+		};
+	}
+
+	function styleUC(feature) {
+		return {
+			weight: 1,
+			opacity: 0.7,
+			color: '#33a02c',
+			dashArray: '3',
+			fillOpacity: 0.3,
+		};
+	}
+
+
+
+	geojson2 = L.geoJson(unidades_conservacao, {
+		style: styleUC,
+	}).addTo(map);
+
+	geojson = L.geoJson(bairrosData, {
+		style: style,
+	}).addTo(map);
+
+	let dataById = d3.map();
+
+    d3.csv("data/datasetINPE.csv", function(data){
+	
+	
+		
+		data.forEach(function(d) {
+			d.satelite = d.satelite;
+			d.name = d.datahora;
+			d.lat = d.latitude;
+			d.lng = d.longitude;			
+			
+			layer = L.circle([d.lat,d.lng], {radius: 5,color:'#e31a1c', fillOpacity:0.3});
+			layer.addTo(map);
+
+			d.layer_id = layer._leaflet_id;
+
+			dataById.set(d.layer_id, d)
+
+			layer.on('mouseover',function(d){
+				info.update(dataById.get(this._leaflet_id));
+			});
+		});
+	
+	});
+
+</script>
+
+</body>
+</html>
