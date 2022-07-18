@@ -7,7 +7,7 @@ layout: page
     </div>
     <div class="toright">
         <p align="justify">
- <a href="http://mdcc.ufc.br/teses-e-dissertacoes/doc_download/432-319-alexandre-ribeiro-cajazeira-ramos" target="_blank">Mestre em Ciência da Computação</a>, pelo programa de Mestrado e Doutorado em Ciência da Computação da Universidade Federal do Ceará (<a href="http://mdcc.ufc.br/" target="_blank">MDCC/UFC<a/>), Especialista em Gestão de TI (<a href="https://drive.google.com/file/d/1AuOBVzB-IMpIG901t5ardaVO2o-DBIHQ/view?usp=sharing" target="_blank">UCAM)</a> e <a href="https://sigaa.ufpi.br/sigaa/public/curso/curriculo.jsf?lc=pt_BR&id=74244" target="_blank">Bacharel em Sistemas de Informação</a> pela Universidade Federal do Piauí - CSHNB.
+ <a href="http://mdcc.ufc.br/teses-e-dissertacoes/doc_download/432-319-alexandre-ribeiro-cajazeira-ramos" target="_blank">Mestre em Ciência da Computação</a>, pelo programa de Mestrado e Doutorado em Ciência da Computação da Universidade Federal do Ceará (<a href="http://mdcc.ufc.br/" target="_blank">MDCC/UFC</a>), Especialista em Gestão de TI (<a href="https://drive.google.com/file/d/1AuOBVzB-IMpIG901t5ardaVO2o-DBIHQ/view?usp=sharing" target="_blank">UCAM)</a> e <a href="https://sigaa.ufpi.br/sigaa/public/curso/curriculo.jsf?lc=pt_BR&id=74244" target="_blank">Bacharel em Sistemas de Informação</a> pela Universidade Federal do Piauí - CSHNB.
 
 <hr>
 
@@ -20,8 +20,8 @@ Currículo Lattes ID: <a href="http://lattes.cnpq.br/0238517471078564" target="_
 <i><a href="https://twitter.com/CajazeiraRamos/" target="_blank">Twitter</a>, <a href="https://cajazeiraramos.github.io/" target="_blank">Github</a> e <a href="https://observablehq.com/collection/@cajazeiraramos/datadoc" target="_blank">Observable</a></i>: <b>@CajazeiraRamos</b><br>
 <a href="https://public.flourish.studio/story/1625709/" target="_blank"><i>Flourish</i></a>: <b>@alexandre.cajamos</b>
 
-            </p> 
-        
-    </div>
+
+</p>
+</div>
 </div>
  
